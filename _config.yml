@@ -7,10 +7,10 @@
 
 # Site Settings
 locale                   : "en-US"
-title                    : "Souhail's Home Page"
+title                    : "Souhail Bakkali"
 title_separator          : "-"
 name                     : &name "Souhail Bakkali"
-description              : &description "personal description"
+description              : &description "Associate Professor and Research Scientist in Multimodal AI, NLP, and Computer Vision"
 url                      : https://sbakkalii.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "sbakkalii/sbakkalii.github.io"
@@ -82,12 +82,12 @@ analytics:
 author:
   name             : "Souhail Bakkali"
   avatar           : "photo.png"
-  bio              : "Assistant Professor"
-  location         : "La Rochelle, France"
-  #employer         : "L3i, La Rochelle Université"
+  bio              : "Associate Professor and Research Scientist (Multimodal AI)"
+  location         : "Rennes, France"
+  employer         : "IRISA-Lab, ESIR, Université de Rennes"
   #pubmed           : "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
   googlescholar    : "https://scholar.google.com/citations?user=gO_Q48IAAAAJ&hl=fr"
-  email            :  "souhail.bakkali@univ-lr.fr"
+  email            :  "souhail.bakkali@irisa.fr"
   researchgate     :  "https://www.researchgate.net/profile/Souhail-Bakkali"
   uri              :
   bitbucket        :
@@ -102,7 +102,7 @@ author:
   instagram        :
   impactstory      : #"https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
   lastfm           :
-  linkedin         :
+  linkedin         : "souhail-bakkali"
   orcid            : "https://orcid.org/0000-0001-9383-3842"
   pinterest        :
   soundcloud       :

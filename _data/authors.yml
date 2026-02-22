@@ -1,18 +1,12 @@
 # Authors
 
-Name Name:
-  name        : "Name Name"
-  uri         : "http://name.com"
-  email       : "name@name.com"
-  bio         : "This is the first name."
-  avatar      : "bio-photo-2.jpg"
-  twitter     : "name"
-  google_plus : "Name"
-
-Name2 Name2:
-  name        : "Name2 Name2"
-  email       : "name2@name2.com"
-  bio         : "I ordered what?"
-  avatar      : "bio-photo.jpg"
-  twitter     : "name2"
-  google_plus : "Name"
+Souhail Bakkali:
+  name        : "Souhail Bakkali"
+  uri         : "https://sbakkalii.github.io/"
+  email       : "souhail.bakkali@irisa.fr"
+  bio         : "Associate Professor and Research Scientist (Multimodal AI, NLP, Computer Vision)"
+  avatar      : "photo.png"
+  github      : "Sbakkalii"
+  googlescholar: "https://scholar.google.com/citations?user=gO_Q48IAAAAJ"
+  orcid       : "https://orcid.org/0000-0001-9383-3842"
+  linkedin    : "https://linkedin.com/in/souhail-bakkali/"
