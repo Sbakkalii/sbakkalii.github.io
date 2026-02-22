@@ -2,10 +2,10 @@
 title: "VLCDoC: Vision-Language Contrastive Pre-training Model for Cross-Modal Document Classification"
 collection: publications
 permalink: /publication/2023-vlcdoc/
-date: 2023-01-01
+date: 2023-05-01
 venue: "Pattern Recognition"
 authors: "S. Bakkali, Z. Ming, M. Coustaty, M. Rusinol, O. Ramos Terrades"
-paperurl: "https://arxiv.org/pdf/2205.12029.pdf"
+paperurl: "https://arxiv.org/pdf/2205.12029"
 citation: "S. Bakkali, Z. Ming, M. Coustaty, M. Rusinol, O. Ramos Terrades. \"VLCDoC: Vision-Language Contrastive Pre-training Model for Cross-Modal Document Classification.\" Pattern Recognition 139:109419, 2023."
 ---
 

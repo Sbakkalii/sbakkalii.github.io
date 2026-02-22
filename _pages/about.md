@@ -24,11 +24,15 @@ redirect_from:
       <div class="stat-label">Peer-reviewed publications</div>
     </div>
     <div class="stat">
-      <div class="stat-value">223</div>
+      <div class="stat-value">226</div>
       <div class="stat-label">Citations (Google Scholar)</div>
     </div>
     <div class="stat">
-      <div class="stat-value">432K+ EUR</div>
+      <div class="stat-value">6</div>
+      <div class="stat-label">H-index</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">501.5K EUR</div>
       <div class="stat-label">Competitive funding</div>
     </div>
   </div>
@@ -48,7 +52,7 @@ My work centers on multimodal AI for document understanding, including vision-la
 
 Selected Impact
 ------
-I have authored 20 peer-reviewed publications (223 citations, H-index 6) and secured 432,000+ EUR in competitive funding as PI/Co-PI. I currently co-supervise PhD students and contribute to international collaborations across Europe and Asia.
+I have authored 20 peer-reviewed publications (226 citations, H-index 6) and secured 501,500 EUR in competitive funding as PI/Co-PI. I currently co-supervise PhD students and contribute to international collaborations across Europe and Asia.
 
 Research Activities
 ------
@@ -59,6 +63,7 @@ Grants and Funding
 - Co-PI: FlexChain (2025-2027), 124,000 EUR
 - Co-PI: ModamPadoc (RNA-LRU 2025-2027), 120,000 EUR
 - Co-PI: AI for ECO-WELLNESS (PHC PERIDOT 2024-2026), 28,000 EUR
+- Additional projects: 69,500 EUR
 
 Collaborations
 ======

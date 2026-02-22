@@ -2,7 +2,7 @@
 title: "Multimodal Document Understanding with Unified Vision and Language Cross-Modal Learning"
 collection: publications
 permalink: /publication/2022-thesis/
-date: 2022-01-01
+date: 2022-12-15
 venue: "PhD Thesis, Universite de La Rochelle"
 authors: "S. Bakkali"
 paperurl: "https://theses.hal.science/tel-04197696/"

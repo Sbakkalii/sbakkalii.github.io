@@ -2,7 +2,7 @@
 title: "LLMChain: Blockchain-based Reputation System for Sharing and Evaluating Large Language Models"
 collection: publications
 permalink: /publication/2024-llmchain/
-date: 2024-01-01
+date: 2024-07-02
 venue: "IEEE 48th Annual Computers, Software, and Applications Conference (COMPSAC)"
 authors: "M. A. Bouchiha, Q. Telnoff, S. Bakkali, R. Champagnat, M. Rabah, M. Coustaty, Y. Ghamri-Doudane"
 paperurl: "https://arxiv.org/pdf/2404.13236"

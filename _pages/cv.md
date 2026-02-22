@@ -15,7 +15,7 @@ Download PDF
 
 Professional Summary
 ======
-Enseignant-Chercheur Contractuel and Research Scientist working at the intersection of Multimodal AI, NLP, and Computer Vision. I design and lead applied research translating state-of-the-art methods into robust, scalable systems for document understanding and multimodal learning. My work includes vision-language architectures and efficient training/inference strategies, with 20 peer-reviewed publications (223 citations) in venues such as Pattern Recognition, WACV, and ICDAR. I have secured 432,000+ EUR in competitive funding, coordinated international collaborations, and managed large-scale computing to deliver production-grade outcomes.
+Enseignant-Chercheur Contractuel and Research Scientist working at the intersection of Multimodal AI, NLP, and Computer Vision. I design and lead applied research translating state-of-the-art methods into robust, scalable systems for document understanding and multimodal learning. My work includes vision-language architectures and efficient training/inference strategies, with 20 peer-reviewed publications (226 citations, H-index 6) in venues such as Pattern Recognition, WACV, and ICDAR. I have secured 501,500 EUR in competitive funding, coordinated international collaborations, and managed large-scale computing to deliver production-grade outcomes.
 
 Research Profile
 ======
@@ -23,8 +23,8 @@ Enseignant-Chercheur Contractuel in Computer Science specializing in multimodal 
 
 Research Metrics and Impact
 ======
-- Publications: 20 peer-reviewed papers; 223 citations; H-index 6 (Google Scholar)
-- Funding secured: 432,000+ EUR as PI/Co-PI
+- Publications: 20 peer-reviewed papers; 226 citations; H-index 6 (Google Scholar)
+- Funding secured: 501,500 EUR as PI/Co-PI
 - PhD supervision: ongoing co-supervision of doctoral students
 - Peer review: PR, IJCV, EAAI; PC/reviewer for ICDAR, ICPR, ICIP
 
@@ -74,13 +74,14 @@ Student Supervision and Mentoring
 - PhD co-supervision (current): topics include low-resource scene-text recognition, explainable multimodal understanding, and federated learning
 - Thesis supervision: multiple M1/M2 and B3 projects across France, India, and Vietnam, with workshop publications
 
-Research Grants and Funding (432K+ EUR)
+Research Grants and Funding (501.5K EUR)
 ======
 - PI: DocInnovate (ACI JCJC 2024), 7,000 EUR
 - Co-PI: FELM (EU-CONEXUS 2025-2027), 153,000 EUR
 - Co-PI: FlexChain (2025-2027), 124,000 EUR
 - Co-PI: ModamPadoc (RNA-LRU 2025-2027), 120,000 EUR
 - Co-PI: AI for ECO-WELLNESS (PHC PERIDOT 2024-2026), 28,000 EUR
+- Additional projects: 69,500 EUR
 
 Publications
 ======
