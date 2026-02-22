@@ -9,6 +9,10 @@ redirect_from:
 
 {% include base_path %}
 
+Download PDF
+======
+- Latest CV (PDF): /files/Sbakkali_CV-2.pdf
+
 Professional Summary
 ======
 Associate Professor and Research Scientist working at the intersection of Multimodal AI, NLP, and Computer Vision. I design and lead applied research translating state-of-the-art methods into robust, scalable systems for document understanding and multimodal learning. My work includes vision-language architectures and efficient training/inference strategies, with 20 peer-reviewed publications (223 citations) in venues such as Pattern Recognition, WACV, and ICDAR. I have secured 432,000+ EUR in competitive funding, coordinated international collaborations, and managed large-scale computing to deliver production-grade outcomes.

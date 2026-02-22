@@ -1,0 +1,227 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --ink: #1d1f1e;
+  --ink-muted: #4a4f4c;
+  --paper: #f7f3ed;
+  --paper-strong: #fffdf9;
+  --accent: #c66a3d;
+  --accent-2: #0f3d3e;
+  --accent-3: #2a7f62;
+  --shadow: 0 20px 50px rgba(15, 61, 62, 0.08);
+  --border-soft: rgba(15, 61, 62, 0.15);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -10% -10% auto -10%;
+  height: 45vh;
+  background: radial-gradient(circle at 15% 20%, rgba(198, 106, 61, 0.25), transparent 55%),
+    radial-gradient(circle at 70% 10%, rgba(15, 61, 62, 0.2), transparent 60%),
+    linear-gradient(120deg, rgba(15, 61, 62, 0.08), rgba(198, 106, 61, 0.08));
+  z-index: -2;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto -5% -10% -5%;
+  height: 45vh;
+  background: radial-gradient(circle at 80% 80%, rgba(42, 127, 98, 0.22), transparent 55%),
+    radial-gradient(circle at 25% 90%, rgba(198, 106, 61, 0.2), transparent 60%);
+  z-index: -2;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  letter-spacing: 0.01em;
+}
+
+h1.page__title {
+  font-size: clamp(2.1rem, 2.8vw, 3rem);
+  color: var(--accent-2);
+}
+
+a {
+  color: var(--accent-2);
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+.masthead {
+  background: rgba(247, 243, 237, 0.85);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.greedy-nav a {
+  color: var(--accent-2);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.greedy-nav a:hover {
+  color: var(--accent);
+}
+
+.page__content {
+  font-size: 1.02rem;
+}
+
+.page {
+  background: var(--paper-strong);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem 1.8rem;
+}
+
+.section-card {
+  background: var(--paper-strong);
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  padding: 1.3rem 1.5rem;
+  margin-bottom: 1.8rem;
+  box-shadow: 0 12px 30px rgba(15, 61, 62, 0.05);
+}
+
+.hero-panel {
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: center;
+  padding: 1.8rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(15, 61, 62, 0.12), rgba(198, 106, 61, 0.1));
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow);
+}
+
+.hero-title {
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  color: var(--accent-2);
+  margin: 0 0 0.4rem;
+}
+
+.hero-subtitle {
+  color: var(--ink-muted);
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(15, 61, 62, 0.08);
+  border: 1px solid var(--border-soft);
+  color: var(--accent-2);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.8rem;
+}
+
+.stat {
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--border-soft);
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent-2);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+.pub-list {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.pub-card {
+  padding: 1.2rem 1.4rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-soft);
+  background: #fff;
+  box-shadow: 0 12px 24px rgba(15, 61, 62, 0.06);
+}
+
+.pub-title {
+  margin: 0 0 0.4rem;
+  font-size: 1.25rem;
+  color: var(--accent-2);
+}
+
+.pub-authors {
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+}
+
+.pub-venue {
+  font-weight: 600;
+  color: var(--accent-3);
+  margin-top: 0.35rem;
+}
+
+.pub-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+}
+
+.pub-links a {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 2px solid rgba(198, 106, 61, 0.3);
+}
+
+.fade-up {
+  animation: fadeUp 0.7s ease both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1.2rem 1rem;
+  }
+}
