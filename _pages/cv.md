@@ -15,11 +15,11 @@ Download PDF
 
 Professional Summary
 ======
-Associate Professor and Research Scientist working at the intersection of Multimodal AI, NLP, and Computer Vision. I design and lead applied research translating state-of-the-art methods into robust, scalable systems for document understanding and multimodal learning. My work includes vision-language architectures and efficient training/inference strategies, with 20 peer-reviewed publications (223 citations) in venues such as Pattern Recognition, WACV, and ICDAR. I have secured 432,000+ EUR in competitive funding, coordinated international collaborations, and managed large-scale computing to deliver production-grade outcomes.
+Enseignant-Chercheur Contractuel and Research Scientist working at the intersection of Multimodal AI, NLP, and Computer Vision. I design and lead applied research translating state-of-the-art methods into robust, scalable systems for document understanding and multimodal learning. My work includes vision-language architectures and efficient training/inference strategies, with 20 peer-reviewed publications (223 citations) in venues such as Pattern Recognition, WACV, and ICDAR. I have secured 432,000+ EUR in competitive funding, coordinated international collaborations, and managed large-scale computing to deliver production-grade outcomes.
 
 Research Profile
 ======
-Associate Professor in Computer Science specializing in multimodal document analysis, information extraction, and cross-modal learning. Research spans document classification, few-shot learning, retrieval, abstractive summarization, and document QA, with additional focus on low-resource scene-text recognition, fairness and ethics of LLMs/LMMs, data privacy, and explainability.
+Enseignant-Chercheur Contractuel in Computer Science specializing in multimodal document analysis, information extraction, and cross-modal learning. Research spans document classification, few-shot learning, retrieval, abstractive summarization, and document QA, with additional focus on low-resource scene-text recognition, fairness and ethics of LLMs/LMMs, data privacy, and explainability.
 
 Research Metrics and Impact
 ======
@@ -30,7 +30,7 @@ Research Metrics and Impact
 
 Academic Appointments
 ======
-- Sep 2025 - Present: Associate Professor (Maître de Conférences), IRISA-Lab, ESIR, Université de Rennes, France (SHADOC Team)
+- Sep 2025 - Present: Enseignant-Chercheur Contractuel, IRISA-Lab, ESIR, Université de Rennes, France (SHADOC Team)
   - Research: Multimodal AI, document analysis and understanding, NLP, computer vision
   - Teaching: undergraduate and graduate computer science courses
 - Sep 2023 - Aug 2025: Associate Professor (Maître de Conférences), L3i-Lab, La Rochelle Université, France

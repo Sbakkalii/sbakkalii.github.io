@@ -11,7 +11,7 @@ redirect_from:
 <div class="hero-panel fade-up">
   <div>
     <h1 class="hero-title">Souhail Bakkali</h1>
-    <p class="hero-subtitle">Associate Professor and Research Scientist in Multimodal AI, NLP, and Computer Vision.</p>
+    <p class="hero-subtitle">Enseignant-Chercheur Contractuel and Research Scientist in Multimodal AI, NLP, and Computer Vision.</p>
     <div class="hero-meta">
       <span class="pill">IRISA-Lab, ESIR</span>
       <span class="pill">Universite de Rennes</span>
@@ -40,7 +40,7 @@ I received my Ph.D. in Computer Science in 2022 from [La Rochelle Université](h
 
 Current Role
 ------
-I am an Associate Professor (Maître de Conférences) and Research Scientist at IRISA-Lab, ESIR, Université de Rennes, within the SHADOC team (Rennes, France). Previously, I was an Associate Professor at L3i-Lab, La Rochelle Université (2023-2025), and a postdoctoral researcher and lecturer in 2023.
+I am an Enseignant-Chercheur Contractuel and Research Scientist at IRISA-Lab, ESIR, Université de Rennes, within the SHADOC team (Rennes, France). Previously, I was an Associate Professor at L3i-Lab, La Rochelle Université (2023-2025), and a postdoctoral researcher and lecturer in 2023.
 
 Research Interests
 ------
