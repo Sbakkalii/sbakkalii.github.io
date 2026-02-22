@@ -1,7 +1,7 @@
 ---
 layout: archive
-title: "Scientific Research"
-permalink: /publications/
+title: "Scientific Research (Legacy)"
+permalink: /scientific-research/
 author_profile: true
 redirect_from:
   - /resume

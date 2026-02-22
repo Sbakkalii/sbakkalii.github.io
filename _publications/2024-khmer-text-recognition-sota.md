@@ -5,6 +5,7 @@ permalink: /publication/2024-khmer-text-recognition-sota/
 date: 2024-01-01
 venue: "ASEAN Conference on Emerging Technologies"
 authors: "S. Keo, M. Coustaty, S. Bakkali, et al."
+paperurl: "https://scholar.google.com/scholar?q=State-of-the-Art+Khmer+Text+Recognition+Using+Deep+Learning+Models"
 citation: "S. Keo, M. Coustaty, S. Bakkali, et al. \"State-of-the-Art Khmer Text Recognition Using Deep Learning Models.\" ASEAN Conference on Emerging Technologies, 2024."
 ---
 
