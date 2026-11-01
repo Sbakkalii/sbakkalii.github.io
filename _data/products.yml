@@ -91,7 +91,8 @@ chain:
     tagline: "Document AI that gets better with every document."
     pitch: >-
       Mnemos keeps what your system has read, so the next contract, invoice or
-      report is understood in context. Errors are stopped before they are
+      report is understood in context, and it learns from the questions your
+      team asks. Errors are stopped before they are
       stored, amendments replace old terms on the right date, every fact
       cites its source, and anything can be deleted on request, provably.
     outcome: "A memory of your documents you can trust, audit and erase."
@@ -99,7 +100,7 @@ chain:
     outputs: ["What holds today, and since when", "The source of every fact", "Proof of deletion"]
     doc_types: [legal, financial, business, healthcare]
     demo_stage: remember
-    products: [mnemos, argus, chronos, ariadne, lethe, anamnesis]
+    products: [mnemos, hebb, argus, chronos, ariadne, lethe, anamnesis]
 
 # Document families the chain is built for, with the products each one uses.
 solutions:
@@ -576,6 +577,33 @@ products:
     metrics: [eg, ce]
     demo: lifecycle
     works_with: [kleis, argus, chronos, ariadne, lethe]
+
+  - id: hebb
+    name: "HebbRAG"
+    role: "Learns from use"
+    layer: remember
+    status: soon
+    tagline: "Sharper the more your team uses it."
+    pitch: >-
+      Every time an answer is verified, Mnemos strengthens the links between
+      the passages that led to it, so the next similar question takes fewer
+      steps and finds the bridge between documents straight away. Failed
+      answers weaken their links, and links nobody uses fade.
+    audience: "Teams who ask the same kinds of questions of the same documents, week after week."
+    inputs: ["Questions asked, and the answers your team verified or rejected"]
+    outputs: ["Shorter, faster paths to answers that recur", "Links between documents found by use"]
+    doc_types: [legal, financial, business, healthcare]
+    capabilities:
+      - title: "Verified answers teach the index"
+        body: "Answers confirmed by a reviewer, or checked against their sources, strengthen the paths that found them; answers that fail weaken them."
+        research: []
+      - title: "No self-confirming shortcuts"
+        body: "A link is credited only if the answer actually depends on it, some questions keep exploring links that were never reinforced, and unused links fade, so a wrong shortcut cannot keep confirming itself."
+        research: []
+      - title: "Measured on your questions"
+        body: "Pilots report how answers improve with question history, separately from document history, so you see what use itself adds."
+        research: []
+    works_with: [mnemos, ariadne, sibyl]
 
   - id: argus
     name: "Argus"
