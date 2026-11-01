@@ -148,7 +148,7 @@ redirect_from:
       <div class="stack">
         <p class="eyebrow"><span class="eyebrow__num">§ 03</span> Products</p>
         <h2 id="products-title">The whole chain, from ingestion to answers.</h2>
-        <p class="lede">{{ profile.company.name }}, which I co-founded, builds Document Intelligence for business, financial, historical and healthcare documents: {{ words[pd.products.size] | default: pd.products.size }} products in {{ words[pd.chain.size] | default: pd.chain.size }} stages. None is generally available yet.</p>
+        <p class="lede">{{ profile.company.name }}, which I co-founded, builds Document Intelligence for business, financial, historical and healthcare documents: {{ words[pd.chain.size] | default: pd.chain.size }} products that read, extract, answer and remember. None is generally available yet.</p>
       </div>
       <div class="cluster">
         <a class="link-arrow" href="{{ '/products/' | relative_url }}">All products and live demos</a>
@@ -164,17 +164,17 @@ redirect_from:
       <li class="chain-strip__stage{% if has_research %} chain-strip__stage--memory{% endif %}">
         <p class="chain-strip__num" aria-hidden="true">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</p>
         <h3 class="chain-strip__name"><a href="{{ '/products/' | relative_url }}#chain-{{ stage.id }}">{{ stage.name }}</a></h3>
-        <p class="chain-strip__verb">{{ stage.verb }}</p>
+        <p class="chain-strip__verb"><strong>{{ stage.label }}.</strong> {{ stage.verb }}</p>
         <ul class="chain-strip__products">
           {%- for pid in stage.products %}{% assign sp = pd.products | where: "id", pid | first %}{% if sp %}
           {%- capture href %}{% include product-url.html prod=sp mode="company" %}{% endcapture %}
-          <li><a href="{{ href | strip }}" title="{{ sp.role | escape }}">{{ sp.name }}</a></li>
+          <li><a href="{{ href | strip }}">{{ sp.role }}</a></li>
           {%- endif %}{% endfor %}
         </ul>
       </li>
       {%- endfor %}
     </ol>
-    <p class="chain-strip__note">Remember and Measure are the memory layer specified in my 2026 survey; the <a href="{{ '/products/' | relative_url }}#memory">products page</a> shows them in research detail, with demos.</p>
+    <p class="chain-strip__note">Mnemos is the memory layer specified in my 2026 survey; the <a href="{{ '/products/' | relative_url }}#memory">products page</a> shows them in research detail, with demos.</p>
   </div>
 </section>
 

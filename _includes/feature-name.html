@@ -1,0 +1,3 @@
+{%- comment -%}"Product · feature" label for a feature id of _data/products.yml. {% include feature-name.html id="argus" %}{%- endcomment -%}
+{%- assign fn_c = nil -%}{%- for c in site.data.products.chain -%}{%- if c.products contains include.id -%}{%- assign fn_c = c -%}{%- endif -%}{%- endfor -%}
+{%- assign fn_p = site.data.products.products | where: "id", include.id | first -%}{{ fn_c.name }} · {{ fn_p.role }}

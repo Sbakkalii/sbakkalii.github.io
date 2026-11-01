@@ -19,7 +19,8 @@ layout: null
   {%- capture purl -%}{% include product-url.html prod=prod %}{%- endcapture -%}
   {
     "type": "Product",
-    "title": {{ prod.name | append: " · " | append: prod.role | jsonify }},
+    {%- capture ftitle %}{% include feature-name.html id=prod.id %}{% endcapture %}
+    "title": {{ ftitle | strip | jsonify }},
     "url": {{ purl | strip | jsonify }},
     "text": {{ prod.tagline | append: " " | append: prod.pitch | strip | jsonify }}
   },

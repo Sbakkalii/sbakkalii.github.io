@@ -1,5 +1,6 @@
-# SynaptYon products: the whole Document Intelligence chain, from ingestion
-# to downstream applications, plus the persistent-memory layer specified in
+# SynaptYon products: four products (`chain`) covering the whole Document
+# Intelligence chain, built from 17 features (`products`), with the
+# persistent-memory layer specified in
 # "Amnesia by Design, Memory By Necessity" (Bakkali & Merimi,
 # arXiv:2609.32041). The same file drives the SynaptYon site
 # (github.com/Sbakkalii/synaptyon, _data/products.yml); keep the two copies
@@ -23,28 +24,82 @@ paper:
   url: "https://arxiv.org/abs/2609.32041"
   pdf: "https://arxiv.org/pdf/2609.32041"
 
-# The chain, in five stages. Every product belongs to exactly one stage.
+# What a client buys: four products, one per step of the chain. Each bundles
+# features (the entries of `products` below, listed in `products` here).
+# `slug` is the product page, /products/<slug>/; the anchors on it are the
+# feature ids. Evaluation (anamnesis) ships with Remember and in every pilot.
 chain:
   - id: ingest
-    name: "Ingest"
-    verb: "Capture, read and structure every page"
+    slug: grammata
+    name: "Grammata"
+    label: "Read"
+    status: soon
+    verb: "Every page, read"
+    tagline: "Every page, read: printed or handwritten, new or centuries old."
+    pitch: >-
+      Grammata takes documents in from wherever they arrive (scans, phone
+      photos, PDFs, mailboxes, archive boxes) and turns every page into clean,
+      structured text: printed or handwritten, modern or historical, tables
+      included, with a confidence for every word.
+    outcome: "Clean text and structure for every page, with a confidence for every word."
+    inputs: ["Scans, PDFs and phone photos", "Mailboxes and archive batches", "Printed, handwritten or historical pages"]
+    outputs: ["Text, line by line, with confidence", "Tables rebuilt cell by cell", "Page layout in reading order"]
+    doc_types: [historical, business, financial, healthcare]
+    demo_stage: read
     products: [agora, grammata, morphe]
   - id: understand
-    name: "Understand"
-    verb: "Classify, extract and verify"
+    slug: kleis
+    name: "Kleis"
+    label: "Extract"
+    status: soon
+    verb: "The data you need, from any document"
+    tagline: "The data you need, from any document."
+    pitch: >-
+      Kleis recognises what each document is, sends it to the right place,
+      and pulls out the fields, names and amounts your systems need, each one
+      checked and linked to the spot on the page it came from.
+    outcome: "Typed, checked fields your systems can use, each with its source."
+    inputs: ["Pages read by Grammata", "Your list of fields, or none"]
+    outputs: ["Document type and routing", "Fields, names and amounts", "Checks that fail, with the reason"]
+    doc_types: [business, financial, identity, healthcare]
+    demo_stage: extract
     products: [taxis, kleis, onoma, pistis]
   - id: apply
-    name: "Apply"
-    verb: "Answer, search, summarise and translate"
+    slug: sibyl
+    name: "Sibyl"
+    label: "Ask"
+    status: soon
+    verb: "Answers you can check"
+    tagline: "Ask your documents. Get answers you can check."
+    pitch: >-
+      Sibyl answers questions about a page or a whole archive, finds documents
+      by meaning, summarises long files and translates them with the right
+      terminology. It always shows the source, and says so when the answer is
+      not in the documents.
+    outcome: "Answers, summaries and translations, every one pointing to its source."
+    inputs: ["A question, in French or English", "One document or a whole collection"]
+    outputs: ["Answers with the source highlighted", "Search results by meaning", "Summaries and translations"]
+    doc_types: [legal, financial, historical, healthcare]
+    demo_stage: ask
     products: [sibyl, heuresis, epitome, hermeneus]
   - id: remember
-    name: "Remember"
-    verb: "Keep what was read, with provenance"
-    products: [mnemos, argus, chronos, ariadne, lethe]
-  - id: measure
-    name: "Measure"
-    verb: "Prove it works on your documents"
-    products: [anamnesis]
+    slug: mnemos
+    name: "Mnemos"
+    label: "Remember"
+    status: development
+    verb: "Better with every document"
+    tagline: "Document AI that gets better with every document."
+    pitch: >-
+      Mnemos keeps what your system has read, so the next contract, invoice or
+      report is understood in context. Errors are stopped before they are
+      stored, amendments replace old terms on the right date, every fact
+      cites its source, and anything can be deleted on request, provably.
+    outcome: "A memory of your documents you can trust, audit and erase."
+    inputs: ["Everything Grammata, Kleis and Sibyl produce"]
+    outputs: ["What holds today, and since when", "The source of every fact", "Proof of deletion"]
+    doc_types: [legal, financial, business, healthcare]
+    demo_stage: remember
+    products: [mnemos, argus, chronos, ariadne, lethe, anamnesis]
 
 # Document families the chain is built for, with the products each one uses.
 solutions:
@@ -162,12 +217,12 @@ products:
   # ------------------------------------------------------------- Ingest
   - id: agora
     name: "Agora"
-    role: "Ingestion & capture"
+    role: "Capture & quality checks"
     layer: ingest
     status: soon
     tagline: "Every document, one front door."
     pitch: >-
-      Agora takes documents in from wherever they arrive (uploads, scanners,
+      Grammata takes documents in from wherever they arrive (uploads, scanners,
       phone photos, mailboxes and archive batches), checks that each capture
       is usable, splits multi-document files and removes duplicates before
       anything downstream spends compute on them.
@@ -191,7 +246,7 @@ products:
 
   - id: grammata
     name: "Grammata"
-    role: "OCR & handwriting recognition"
+    role: "OCR & handwriting"
     layer: ingest
     status: soon
     tagline: "Print, handwriting, and the scripts others skip."
@@ -201,7 +256,7 @@ products:
       degraded historical pages and low-resource scripts, where generic OCR
       quietly fails.
     audience: "Archives, healthcare and any team whose documents are handwritten, old or not in Latin script."
-    inputs: ["Page images from Agora", "Printed, handwritten or mixed pages"]
+    inputs: ["Printed, handwritten or mixed pages"]
     outputs: ["Text lines with boxes", "Word-level confidence", "Reading order", "Language and script"]
     doc_types: [historical, healthcare, business, identity]
     capabilities:
@@ -220,17 +275,17 @@ products:
 
   - id: morphe
     name: "Morphe"
-    role: "Layout & table structure"
+    role: "Layout & tables"
     layer: ingest
     status: soon
     tagline: "Regions, reading order, every table cell."
     pitch: >-
-      Morphe turns a page into structure: titles, paragraphs, tables,
+      Grammata turns a page into structure: titles, paragraphs, tables,
       figures, stamps and signatures, in reading order, with tables rebuilt
       row by row and form fields paired with their labels. Downstream
       products read structure, not a flat string.
     audience: "Finance, audit and archive teams whose meaning lives in tables, forms and page layout."
-    inputs: ["Page images", "Text lines from Grammata"]
+    inputs: ["Page images", "The text, line by line"]
     outputs: ["Typed regions with boxes", "Reading order", "Table cells by row and column", "Label–value pairs", "Section tree"]
     doc_types: [financial, business, historical, legal]
     capabilities:
@@ -252,12 +307,12 @@ products:
     status: soon
     tagline: "Know what it is before you read it."
     pitch: >-
-      Taxis recognises the document type from its text, layout and image
+      Kleis recognises the document type from its text, layout and image
       together, and routes it to the right workflow: invoice to accounts
       payable, amendment to legal, register page to the right series. New
       types are learned from a handful of examples.
     audience: "Mailrooms, shared services and archives sorting thousands of documents a day."
-    inputs: ["Pages from Agora", "Text and layout from Grammata and Morphe"]
+    inputs: ["Pages read by Grammata"]
     outputs: ["Document type with confidence", "Routing decision", "Low-confidence queue for review"]
     doc_types: [business, financial, historical, healthcare, identity, legal]
     capabilities:
@@ -276,7 +331,7 @@ products:
 
   - id: kleis
     name: "Kleis"
-    role: "Key information extraction"
+    role: "Field extraction"
     layer: understand
     status: soon
     tagline: "The fields you need, with the box they came from."
@@ -286,7 +341,7 @@ products:
       value carries a confidence and the exact region it was read from, so a
       reviewer checks the source in one click.
     audience: "Accounts payable, onboarding, claims and clinical administration."
-    inputs: ["Structured pages from Morphe", "Document type from Taxis"]
+    inputs: ["Pages read by Grammata", "The document type"]
     outputs: ["Typed fields (dates, amounts, identifiers)", "Normalised values", "Confidence per field", "Source box per field"]
     doc_types: [business, financial, healthcare, identity]
     capabilities:
@@ -305,17 +360,17 @@ products:
 
   - id: onoma
     name: "Onoma"
-    role: "Named entities & linking"
+    role: "Names & entities"
     layer: understand
     status: soon
     tagline: "Who, what, where and when, across documents."
     pitch: >-
-      Onoma finds people, organisations, places, dates, amounts and domain
+      Kleis finds people, organisations, places, dates, amounts and domain
       entities such as drugs or contract parties, and links each mention to
       the same entity across every document it appears in, building a graph
       your other systems can query.
     audience: "Archives, legal, compliance and research teams connecting information across collections."
-    inputs: ["Text and structure from Grammata and Morphe"]
+    inputs: ["Text and structure from Grammata"]
     outputs: ["Entity spans with types", "Entity IDs linked across documents", "Relations between entities"]
     doc_types: [historical, legal, healthcare, financial]
     capabilities:
@@ -331,12 +386,12 @@ products:
 
   - id: pistis
     name: "Pistis"
-    role: "Document trust & consistency"
+    role: "Consistency & ID checks"
     layer: understand
     status: soon
     tagline: "Is this document what it claims to be?"
     pitch: >-
-      Pistis checks capture quality, the presence of the elements a document
+      Kleis checks capture quality, the presence of the elements a document
       type requires (photo, signature, stamp), and internal consistency: do
       the line items add up to the total, does the closing balance follow
       from the transactions. Failures go to review with the reason attached.
@@ -361,7 +416,7 @@ products:
   # -------------------------------------------------------------- Apply
   - id: sibyl
     name: "Sibyl"
-    role: "Question answering & DocVQA"
+    role: "Questions & answers"
     layer: apply
     status: soon
     tagline: "Ask the document. Get the cell."
@@ -382,7 +437,7 @@ products:
         body: "Visual question answering over layout, tables and figures, answered with the region highlighted."
         research: [2022-thesis]
       - title: "Answers for a date"
-        body: "Reading from Chronos, Sibyl answers with the clause valid today, or on the day you ask about."
+        body: "With Mnemos, Sibyl answers with the clause valid today, or on the day you ask about."
         research: [2026-amnesia-by-design]
     demo: pipeline
     demo_stage: ask
@@ -390,12 +445,12 @@ products:
 
   - id: heuresis
     name: "Heuresis"
-    role: "Search & retrieval"
+    role: "Search"
     layer: apply
     status: soon
     tagline: "Find it by meaning, by language or by look."
     pitch: >-
-      Heuresis searches collections by meaning rather than exact words,
+      Sibyl searches collections by meaning rather than exact words,
       across phrasings and languages, and finds pages by what they look like:
       the same form, the same stamp, the same layout. Results come with the
       passage and page that matched.
@@ -418,12 +473,12 @@ products:
 
   - id: epitome
     name: "Epitome"
-    role: "Summarisation"
+    role: "Summaries"
     layer: apply
     status: soon
     tagline: "The page that replaces the file."
     pitch: >-
-      Epitome writes short, faithful summaries of long and administrative
+      Sibyl writes short, faithful summaries of long and administrative
       documents, robust to OCR errors and domain vocabulary, and links each
       sentence back to the passages it summarises.
     audience: "Case handlers, managers and reviewers who need the gist before the detail."
@@ -443,12 +498,12 @@ products:
 
   - id: hermeneus
     name: "Hermeneus"
-    role: "Domain translation"
+    role: "Translation"
     layer: apply
     status: soon
     tagline: "Translation that keeps the terminology right."
     pitch: >-
-      Hermeneus translates documents with the vocabulary of their domain,
+      Sibyl translates documents with the vocabulary of their domain,
       retrieving in-domain terminology as it goes, with compact models that
       can run close to the data.
     audience: "Healthcare, research and cross-border teams working between French and English."
@@ -524,7 +579,7 @@ products:
 
   - id: argus
     name: "Argus"
-    role: "Validation gate"
+    role: "Quality gate"
     layer: remember
     inputs: ["Candidate fields and entities, with confidence"]
     outputs: ["Admitted evidence", "Rejected writes, with the reason", "Measured false-accept rate"]
@@ -532,7 +587,7 @@ products:
     status: soon
     tagline: "Nothing enters memory unverified."
     pitch: >-
-      A memory that stores its own mistakes gets worse with use. Argus sits
+      A memory that stores its own mistakes gets worse with use. Mnemos sits
       between reading and remembering: every observation is corroborated
       against the provenance ledger and scored for confidence, and anything
       below threshold is rejected with the state left exactly as it was.
@@ -582,7 +637,7 @@ products:
     status: soon
     tagline: "Knows which clause is in force today."
     pitch: >-
-      Documents revise one another. Chronos records, for every stored claim,
+      Documents revise one another. Mnemos records, for every stored claim,
       the interval during which it is authoritative, and resolves each new
       conflict into one of five outcomes instead of overwriting: support,
       supersede, scope-coexist, retain conflict, or escalate for review.
@@ -624,7 +679,7 @@ products:
 
   - id: ariadne
     name: "Ariadne"
-    role: "Provenance & citations"
+    role: "Source tracing"
     layer: remember
     inputs: ["Every write, consolidation and repair"]
     outputs: ["Citation from any answer to document, region and version", "Audit trail through schemas"]
@@ -632,7 +687,7 @@ products:
     status: soon
     tagline: "Every answer, traced to the bounding box."
     pitch: >-
-      Ariadne keeps the thread from any conclusion, however consolidated,
+      Mnemos keeps the thread from any conclusion, however consolidated,
       back to the document, region and version it came from. Provenance is
       not an extra step; it is an invariant that every operation preserves,
       through consolidation, supersession and repair.
@@ -671,7 +726,7 @@ products:
 
   - id: lethe
     name: "Lethe"
-    role: "Verifiable deletion"
+    role: "Verified deletion"
     layer: remember
     inputs: ["Deletion and retention requests"]
     outputs: ["Deletion across every store", "Repaired schemas", "Audit certificate"]
@@ -679,7 +734,7 @@ products:
     status: soon
     tagline: "Forget on request, and prove it."
     pitch: >-
-      Deleting the file is only Level 1. Lethe runs the five-level hierarchy:
+      Deleting the file is only Level 1. Mnemos runs the five-level hierarchy:
       physical removal, representation invalidation, consolidated schema
       repair, parametric unlearning and certified non-recoverability. It
       reports Forgetting Fidelity and Coverage Retention, so a deletion is
@@ -703,13 +758,13 @@ products:
         body: "Bound the residual leakage with membership and attribute-inference probes, and issue a certificate."
     capabilities:
       - title: "Past Level 2"
-        body: "Schema repair is where today's systems stop and where leakage remains; it is the core of Lethe."
+        body: "Schema repair is where today's systems stop and where leakage remains; it is the core of Mnemos."
         research: [2026-amnesia-by-design]
       - title: "Forgetting without collateral"
         body: "Coverage Retention checks that knowledge which should survive the deletion still does."
         research: [2026-amnesia-by-design]
       - title: "Honest about the open part"
-        body: "The paper states schema-repair sufficiency as a conjecture with conditions that do not generally hold; Lethe reports which levels a deletion reached."
+        body: "The paper states schema-repair sufficiency as a conjecture with conditions that do not generally hold; Mnemos reports which levels a deletion reached."
         research: [2026-amnesia-by-design]
     spec:
       - { ref: "§III-D", what: "Forgetting Fidelity and Coverage Retention, Eq. (13)–(14)" }
@@ -721,8 +776,8 @@ products:
 
   - id: anamnesis
     name: "Anamnesis"
-    role: "Evaluation harness"
-    layer: measure
+    role: "Evaluation on your documents"
+    layer: remember
     inputs: ["Your document stream", "Your system, or ours"]
     outputs: ["Five metrics, reported together", "Statefulness audit"]
     doc_types: [business, financial, legal, healthcare, historical]
@@ -730,7 +785,7 @@ products:
     tagline: "Prove that your system remembers."
     pitch: >-
       Leaderboards reward single-shot reading, so nobody builds memory.
-      Anamnesis evaluates persistence directly: the same model and the same
+      Mnemos evaluates persistence directly: the same model and the same
       future documents under three arms (warm state, retrieval-only and
       cold), over streams with session breaks, amendments, recurring
       families, deletion requests and unanswerable questions.

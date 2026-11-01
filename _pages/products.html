@@ -29,7 +29,7 @@ description: "SynaptYon, co-founded by Souhail Bakkali, builds the whole Documen
   <div class="container page-head__inner">
     <p class="eyebrow">Products · {{ profile.company.name }}</p>
     <h1>Document Intelligence, from the first page to the last answer.</h1>
-    <p class="lede">{{ profile.company.name }}, which I co-founded, builds the whole chain, from ingestion to downstream applications, for business, financial, historical and healthcare documents: {{ words[n_products] | default: n_products }} products in {{ words[n_stages] | default: n_stages }} stages. None is generally available yet. The memory layer comes from <a href="{{ survey.url | relative_url }}">{{ paper.short_title }}</a>, and below it is shown in research detail, with demos that run in your browser on fictional documents.</p>
+    <p class="lede">{{ profile.company.name }}, which I co-founded, builds the whole chain, from ingestion to downstream applications, for business, financial, historical and healthcare documents, in {{ words[n_stages] | default: n_stages }} products: read, extract, ask and remember. None is generally available yet. The memory layer comes from <a href="{{ survey.url | relative_url }}">{{ paper.short_title }}</a>, and below it is shown in research detail, with demos that run in your browser on fictional documents.</p>
     <div class="cluster">
       {%- if preview != blank %}
       <a class="btn" href="{{ company_products }}">{{ profile.company.name }} products {% include icon.html name="external" %}</a>
@@ -52,8 +52,8 @@ description: "SynaptYon, co-founded by Souhail Bakkali, builds the whole Documen
   <div class="container">
     <header class="section-head">
       <p class="eyebrow"><span class="eyebrow__num">§ 01</span> The chain</p>
-      <h2 id="chain-h">{{ words[n_stages] | default: n_stages | capitalize }} stages, {{ words[n_products] | default: n_products }} products.</h2>
-      <p class="lede">Documents come in, are understood, are put to work, are remembered with their provenance, and the whole chain is measured on your own documents. Every product belongs to one stage and links to its page on the {{ profile.company.name }} site.</p>
+      <h2 id="chain-h">{{ words[n_stages] | default: n_stages | capitalize }} products, one chain.</h2>
+      <p class="lede">Read every page, extract the data you need, ask questions with sources, and keep what was learned for the next document. Each product links to its page on the {{ profile.company.name }} site.</p>
     </header>
     <ol class="stage-list">
       {%- for stage in data.chain %}
@@ -62,8 +62,8 @@ description: "SynaptYon, co-founded by Souhail Bakkali, builds the whole Documen
       <li class="stage" id="chain-{{ stage.id }}">
         <div class="stage__head">
           <p class="stage__num" aria-hidden="true">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</p>
-          <h3 class="stage__name" id="chain-{{ stage.id }}-h">{{ stage.name }}</h3>
-          <p class="stage__verb">{{ stage.verb }}</p>
+          <h3 class="stage__name" id="chain-{{ stage.id }}-h"><a href="{{ company_products }}{{ stage.slug }}/">{{ stage.name }}</a></h3>
+          <p class="stage__verb"><strong>{{ stage.label }}.</strong> {{ stage.tagline }}</p>
           {%- if has_research %}
           <p><a class="link-arrow stage__more" href="#memory">Research view<span class="visually-hidden">: {{ stage.name }}</span></a></p>
           {%- endif %}
@@ -76,8 +76,7 @@ description: "SynaptYon, co-founded by Souhail Bakkali, builds the whole Documen
           {%- capture href %}{% include product-url.html prod=prod mode="company" %}{% endcapture %}
           <li>
             <a class="stage-item" href="{{ href | strip }}">
-              <span class="stage-item__name">{{ prod.name }}</span>
-              <span class="stage-item__role">{{ prod.role }}</span>
+              <span class="stage-item__name">{{ prod.role }}</span>
               <span class="stage-item__tagline">{{ prod.tagline }}</span>
               <span class="stage-item__status"><span class="badge badge--{{ st.tone }}">{{ st.label }}</span></span>
             </a>
@@ -107,9 +106,8 @@ description: "SynaptYon, co-founded by Souhail Bakkali, builds the whole Documen
         <div class="card__foot stack stack-sm">
           <p class="product__label" id="for-{{ sol.id }}-uses">Products used</p>
           <ul class="product__chips" aria-labelledby="for-{{ sol.id }}-uses">
-            {%- for pid in sol.products %}{% assign sp = data.products | where: "id", pid | first %}{% if sp %}
-            {%- capture href %}{% include product-url.html prod=sp mode="company" %}{% endcapture %}
-            <li><a class="chip" href="{{ href | strip }}" title="{{ sp.role | escape }}">{{ sp.name }}</a></li>
+            {%- for c in data.chain %}{% assign hit = false %}{% for pid in sol.products %}{% if c.products contains pid %}{% assign hit = true %}{% endif %}{% endfor %}{% if hit %}
+            <li><a class="chip" href="{{ company_products }}{{ c.slug }}/">{{ c.name }} · {{ c.label }}</a></li>
             {%- endif %}{% endfor %}
           </ul>
         </div>
@@ -124,7 +122,7 @@ description: "SynaptYon, co-founded by Souhail Bakkali, builds the whole Documen
     <header class="section-head">
       <p class="eyebrow"><span class="eyebrow__num">§ 03</span> The research view</p>
       <h2 id="memory-h">The memory layer, from the paper.</h2>
-      <p class="lede">The Remember and Measure stages are where the chain keeps what it reads. Their {{ words[memory.size] | default: memory.size }} products implement the persistent-state architecture specified in <a href="{{ survey.url | relative_url }}">{{ paper.short_title }}</a>: read a document, gate what it says, consolidate it, reconcile it with what came before, keep the trail back to its source, forget it on request, and measure whether any of it helped. Each layer names the part of the paper it implements, the product that owns it, and the work it builds on.</p>
+      <p class="lede">Mnemos is where the chain keeps what it reads. Its {{ words[memory.size] | default: memory.size }} parts implement the persistent-state architecture specified in <a href="{{ survey.url | relative_url }}">{{ paper.short_title }}</a>: read a document, gate what it says, consolidate it, reconcile it with what came before, keep the trail back to its source, forget it on request, and measure whether any of it helped. Each layer names the part of the paper it implements, the product that owns it, and the work it builds on.</p>
     </header>
     {% include components/stack.html %}
   </div>
@@ -138,10 +136,10 @@ description: "SynaptYon, co-founded by Souhail Bakkali, builds the whole Documen
       <div class="stack">
         <p class="eyebrow"><span class="eyebrow__num">§ 03.{{ forloop.index }}</span> {% for l in prod.layers %}{% assign layer = data.stack | where: "id", l | first %}{{ layer.name }}{% unless forloop.last %} · {% endunless %}{% endfor %}</p>
         <div class="product__name">
-          <h2 id="{{ prod.id }}-h">{{ prod.name }}</h2>
+          <h2 id="{{ prod.id }}-h">{{ prod.role }}</h2>
           <span class="badge badge--{{ st.tone }}">{{ st.label }}</span>
         </div>
-        <p class="product__role">{{ prod.role }}</p>
+        <p class="product__role">Part of Mnemos · codename {{ prod.name }}</p>
         <p class="product__tagline">{{ prod.tagline }}</p>
         {%- if prod.equation %}
         <p class="eq product__eq">{% include math.html text=prod.equation %}</p>
@@ -212,7 +210,7 @@ description: "SynaptYon, co-founded by Souhail Bakkali, builds the whole Documen
           <li><a class="chip" href="{{ explorer }}#harness" title="{{ m.measures | escape }}"><span class="chip__count">{{ m.abbr }}</span> {{ m.name }}</a></li>
           {%- endif %}{% endfor %}
         </ul>
-        <p class="product__note">Counterfactual metrics from the paper’s harness that apply to {{ prod.name }}. The paper specifies them; it reports no measurements.</p>
+        <p class="product__note">Counterfactual metrics from the paper’s harness that apply to {{ prod.role | downcase }}. The paper specifies them; it reports no measurements.</p>
       </div>
       {%- endif %}
       <div class="product__meta">
@@ -226,7 +224,7 @@ description: "SynaptYon, co-founded by Souhail Bakkali, builds the whole Documen
         </ul>
         {%- endif %}
         {%- if preview != blank %}
-        <p><a class="link-arrow" href="{{ preview }}products/{{ prod.id }}/">Full product page<span class="visually-hidden">: {{ prod.name }}</span></a></p>
+        <p>{% capture fhref %}{% include product-url.html prod=prod mode="company" %}{% endcapture %}<a class="link-arrow" href="{{ fhref | strip }}">On the Mnemos page<span class="visually-hidden">: {{ prod.role }}</span></a></p>
         {%- endif %}
       </div>
     </div>

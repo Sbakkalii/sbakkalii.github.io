@@ -63,7 +63,7 @@ layout: default
             {%- for layer in site.data.products.stack -%}
               {%- if layer.product == prod.id or prod.layers contains layer.id -%}{%- if layer.research contains p.slug -%}{%- assign hit = true -%}{%- endif -%}{%- endif -%}
             {%- endfor -%}
-            {%- if hit %}{% capture href %}{% include product-url.html prod=prod %}{% endcapture %}<li><a href="{{ href | strip }}">{{ prod.name }}</a> <span class="muted small">{{ prod.role }}</span></li>{% endif -%}
+            {%- if hit %}{% capture href %}{% include product-url.html prod=prod %}{% endcapture %}<li><a href="{{ href | strip }}">{% include feature-name.html id=prod.id %}</a> <span class="muted small">{{ prod.role }}</span></li>{% endif -%}
           {%- endfor -%}
         {%- endcapture -%}
         {%- if used_in != "" %}
