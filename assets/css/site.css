@@ -1,0 +1,27 @@
+---
+# One stylesheet for the whole site, assembled from _includes/css at build
+# time (no Sass step, so it builds unchanged on GitHub Pages).
+layout: null
+---
+{% include css/tokens.css %}
+{% include css/base.css %}
+{% include css/layout.css %}
+{% include css/ui.css %}
+{% include css/pages.css %}
+{% include css/components/doc-demo.css %}
+{% include css/components/doc-inspector.css %}
+{% include css/components/stack.css %}
+{% include css/components/timeline.css %}
+{% include css/components/capability-map.css %}
+{% include css/components/lineage.css %}
+{% include css/components/lifecycle.css %}
+{% include css/components/reconcile.css %}
+{% include css/components/contamination.css %}
+{% include css/components/substrates.css %}
+{% include css/components/audit.css %}
+{% include css/components/harness.css %}
+{% include css/components/unlearning.css %}
+{% include css/components/pub-explorer.css %}
+{% include css/components/search-demo.css %}
+{% include css/components/ledger-demo.css %}
+{% include css/components/palette.css %}

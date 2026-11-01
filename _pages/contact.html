@@ -1,0 +1,42 @@
+---
+layout: default
+title: "Contact"
+permalink: /contact/
+description: "Contact Souhail Bakkali: research collaboration, supervision, reviewing, and Document Intelligence product pilots with SynaptYon."
+---
+{%- assign profile = site.data.profile -%}
+<header class="page-head">
+  <div class="container page-head__inner">
+    <p class="eyebrow">Contact</p>
+    <h1>Get in touch</h1>
+    <p class="lede">Email is the best way to reach me, for research and for products alike.</p>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container grid grid-2">
+    <div class="card contact-card">
+      <p class="card__kicker">Email</p>
+      <h2 class="h3" style="font-size: var(--fs-xl)"><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></h2>
+      <dl class="kv">
+        <dt>Position</dt><dd>{{ profile.position }}</dd>
+        <dt>Team</dt><dd>{{ profile.team }}, {{ profile.lab }}</dd>
+        <dt>School</dt><dd>{{ profile.school }}, {{ profile.institution }}</dd>
+        <dt>City</dt><dd>{{ profile.location }}</dd>
+        <dt>Company</dt><dd>{{ profile.company.name }}, {{ profile.company.role | downcase }}</dd>
+      </dl>
+      <div class="cluster card__foot">
+        <a class="btn" href="mailto:{{ profile.email }}">{% include icon.html name="mail" %}Write an email</a>
+        <a class="btn btn--secondary" href="{{ profile.cv_pdf | relative_url }}">{% include icon.html name="file" %}CV (PDF)</a>
+      </div>
+    </div>
+    <div class="card contact-card">
+      <p class="card__kicker">Profiles</p>
+      <ul class="list-plain stack">
+        {%- for l in profile.links %}
+        <li><a class="cluster" style="--cluster: var(--sp-2)" href="{{ l.url }}" rel="me noopener"><span style="width: 18px; height: 18px; display: inline-flex">{% include icon.html name=l.id %}</span>{{ l.label }}</a></li>
+        {%- endfor %}
+      </ul>
+    </div>
+  </div>
+</section>

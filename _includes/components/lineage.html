@@ -1,0 +1,132 @@
+{%- comment -%}
+  Table I of the survey (representation lineage), and with mode="paper"
+  also Table II (adjacent paradigms against the target 𝒞*).
+  Usage: {% include components/lineage.html %} on /research/ (Table I only,
+  "My work" emphasised) or {% include components/lineage.html mode="paper" %}.
+  This partial renders the complete tables; assets/js/components/lineage.js
+  rebuilds Table I as a chronological matrix with column focus, a "my work"
+  toggle and a row inspector, and adds a computed gap count to Table II.
+  Data: site.data.paper.lineage, .paradigms, .target; rows with `own` link
+  to the publication whose slug matches (site.publications).
+{%- endcomment -%}
+{%- assign paper = site.data.paper -%}
+{%- assign lin = paper.lineage -%}
+{%- assign par = paper.paradigms -%}
+{%- if include.mode == "paper" -%}{%- assign mode = "paper" -%}{%- else -%}{%- assign mode = "research" -%}{%- endif -%}
+
+{%- assign own = "" | split: "" -%}
+{%- for r in lin.rows -%}{%- if r.own -%}
+  {%- assign op = site.publications | where: "slug", r.own | first -%}
+  {%- if op -%}
+  {%- capture item -%}{{ r.own | jsonify }}: {"title": {{ op.title | jsonify }}, "venue": {{ op.venue_short | jsonify }}, "url": {{ op.url | relative_url | jsonify }}}{%- endcapture -%}
+  {%- assign own = own | push: item -%}
+  {%- endif -%}
+{%- endif -%}{%- endfor -%}
+
+<div class="c-lineage c-lineage--{{ mode }}" data-component="lineage" data-mode="{{ mode }}" id="lineage-figures">
+  <script type="application/json" data-for="lineage">{
+    "mode": {{ mode | jsonify }},
+    "lineage": {{ lin | jsonify }},
+    "paradigms": {% if mode == "paper" %}{{ par | jsonify }}{% else %}null{% endif %},
+    "target": {{ paper.target.symbol | jsonify }},
+    "pubs": { {{ own | join: ", " }} }
+  }</script>
+
+  <figure class="figure c-lineage__fig" data-table="lineage" aria-labelledby="lineage-label">
+    <div class="figure__head">
+      <span class="figure__label" id="lineage-label"><b>Table I</b> · Representation lineage</span>
+      <span class="c-lineage__badges"><span class="badge badge--accent js-only">Interactive</span><span class="badge badge--plain badge--muted">From the paper</span></span>
+    </div>
+    <div class="figure__body figure__body--flush c-lineage__body">
+      <div class="table-wrap c-lineage__wrap" role="region" tabindex="0" aria-labelledby="lineage-label">
+        <table class="table c-lineage__table">
+          <caption class="visually-hidden">Table I: {{ lin.rows.size }} representation models for documents, with their modality, pretraining and four properties.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Method</th>
+              <th scope="col">Year</th>
+              <th scope="col">Modality</th>
+              <th scope="col">Pretraining</th>
+              {%- for c in lin.columns %}
+              <th scope="col" data-col="{{ c.key }}">{{ c.label }}</th>
+              {%- endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {%- for r in lin.rows %}
+            {%- assign op = nil -%}
+            {%- if r.own -%}{%- assign op = site.publications | where: "slug", r.own | first -%}{%- endif %}
+            <tr{% if r.own %} class="is-own"{% endif %}>
+              <th scope="row"><span class="c-lineage__method">{{ r.method }}</span>{% if op %} <a class="c-lineage__own" href="{{ op.url | relative_url }}">My work<span class="visually-hidden">: {{ op.title }}</span></a>{% endif %}</th>
+              <td class="c-lineage__y">{{ r.year }}</td>
+              <td class="c-lineage__txt">{{ r.modality }}</td>
+              <td class="c-lineage__txt">{{ r.pretraining }}</td>
+              {%- for c in lin.columns %}
+              {%- assign v = r[c.key] | default: "–" -%}
+              {%- case v -%}
+                {%- when "Yes", "✓" -%}{%- assign k = "full" -%}
+                {%- when "Partial" -%}{%- assign k = "partial" -%}
+                {%- when "Implicit" -%}{%- assign k = "implicit" -%}
+                {%- when "–" -%}{%- assign k = "none" -%}
+                {%- else -%}{%- assign k = "qual" -%}
+              {%- endcase %}
+              <td data-col="{{ c.key }}"><span class="mk mk--{{ k }}{% if v == '–' or v == '✓' %} mk--sym{% endif %}"><span class="mk__g" aria-hidden="true"></span><span class="mk__t">{{ v }}</span></span></td>
+              {%- endfor %}
+            </tr>
+            {%- endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <figcaption class="figure__caption c-lineage__caption">
+      {%- assign first = lin.rows | first -%}{%- assign last = lin.rows | last %}
+      <p>{{ lin.rows.size }} representation models for documents, {{ first.method }} ({{ first.year }}) to {{ last.method }} ({{ last.year }}). Rows marked <b>My work</b> are my models and link to their publication pages. Source: Table I of <a href="{{ paper.html_url }}">the paper</a>.</p>
+    </figcaption>
+  </figure>
+
+  {%- if mode == "paper" %}
+  <figure class="figure c-lineage__fig" data-table="paradigms" aria-labelledby="paradigms-label">
+    <div class="figure__head">
+      <span class="figure__label" id="paradigms-label"><b>Table II</b> · Adjacent paradigms against <span class="math">{{ paper.target.symbol }}</span></span>
+      <span class="c-lineage__badges"><span class="badge badge--accent js-only">Interactive</span><span class="badge badge--plain badge--muted">From the paper</span></span>
+    </div>
+    <div class="figure__body figure__body--flush c-lineage__body">
+      <div class="table-wrap c-lineage__wrap" role="region" tabindex="0" aria-labelledby="paradigms-label">
+        <table class="table c-lineage__table c-lineage__table--paradigms">
+          <caption class="visually-hidden">Table II: {{ par.rows.size | minus: 1 }} adjacent paradigms and the target {{ paper.target.symbol }}, against {{ par.columns.size }} properties.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Paradigm</th>
+              {%- for c in par.columns %}
+              <th scope="col" data-col="{{ c.key }}">{{ c.label }}</th>
+              {%- endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {%- for r in par.rows %}
+            <tr{% if r.target %} class="is-target"{% endif %}>
+              <th scope="row">{{ r.paradigm | replace: paper.target.symbol, "" | strip }}{% if r.target %} <span class="math">{{ paper.target.symbol }}</span>{% endif %}</th>
+              {%- for c in par.columns %}
+              {%- assign v = r[c.key] | default: "–" -%}
+              {%- case v -%}
+                {%- when "Yes", "✓" -%}{%- assign k = "full" -%}
+                {%- when "Partial" -%}{%- assign k = "partial" -%}
+                {%- when "Implicit" -%}{%- assign k = "implicit" -%}
+                {%- when "–" -%}{%- assign k = "none" -%}
+                {%- else -%}{%- assign k = "qual" -%}
+              {%- endcase %}
+              <td data-col="{{ c.key }}"><span class="mk mk--{{ k }}{% if v == '–' or v == '✓' %} mk--sym{% endif %}"><span class="mk__g" aria-hidden="true"></span><span class="mk__t">{{ v }}</span></span></td>
+              {%- endfor %}
+            </tr>
+            {%- endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <figcaption class="figure__caption c-lineage__caption">
+      {%- assign n_par = 0 -%}{%- for r in par.rows -%}{%- unless r.target -%}{%- assign n_par = n_par | plus: 1 -%}{%- endunless -%}{%- endfor %}
+      <p>{{ n_par }} adjacent paradigms against the conjunctive target <span class="math">{{ paper.target.symbol }}</span>, which needs all {{ par.columns.size }} properties jointly. Qualified marks such as Ext. index or Page are the paper’s own. Source: Table II of <a href="{{ paper.html_url }}">the paper</a>.</p>
+    </figcaption>
+  </figure>
+  {%- endif %}
+</div>

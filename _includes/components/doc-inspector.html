@@ -1,0 +1,51 @@
+{%- comment -%}
+  DocuMind document inspector (products page, #documind).
+  Static baseline: every field extracted from the four fictional documents in
+  _data/demo.yml, with its provenance and what it did to memory. The script
+  (assets/js/components/doc-inspector.js) adds the page view, the region
+  inspector, the field history, the validation gate and the erasure request,
+  and keeps this table in the disclosure below them.
+{%- endcomment -%}
+{%- assign demo = site.data.demo -%}
+{%- assign paper = site.data.paper -%}
+<figure class="figure c-doc-inspector" data-component="doc-inspector" id="doc-inspector">
+  <div class="figure__head">
+    <span class="figure__label"><b>DocuMind</b> · Document inspector</span>
+    <span class="c-doc-inspector__badges"><span class="badge badge--accent js-only">Interactive</span> <span class="badge badge--muted">Illustrative</span></span>
+  </div>
+  <script type="application/json" data-for="doc-inspector">{"page": {{ demo.page | jsonify }}, "documents": {{ demo.documents | jsonify }}, "noisy": {{ demo.noisy_observation | jsonify }}, "deletion": {{ demo.deletion_request | jsonify }}, "outcomes": {{ paper.reconciliation | jsonify }}, "levels": {{ paper.unlearning.levels | jsonify }}, "unlearning_note": {{ paper.unlearning.note | jsonify }}, "lifecycle": {{ paper.lifecycle | jsonify }}}</script>
+  <div class="c-doc-inspector__app" data-app hidden></div>
+  <details class="c-doc-inspector__alt" open data-alt>
+    <summary>Every extracted field, as a table</summary>
+    <div class="c-doc-inspector__alt-body">
+      <p class="small muted no-js-only">Four fictional documents read in order. Each row is a field: the value read, where it was read from, and how it met what memory already held.</p>
+      <div class="table-wrap" role="region" tabindex="0" aria-label="Fields extracted from the four documents">
+        <table class="table c-doc-inspector__table">
+          <caption>Provenance gives the document, the section or region type, and the page.</caption>
+          <thead>
+            <tr><th scope="col">Document</th><th scope="col">Field</th><th scope="col">Value</th><th scope="col">Provenance</th><th scope="col">Outcome against memory</th></tr>
+          </thead>
+          {%- for doc in demo.documents %}
+          <tbody>
+            {%- for f in doc.fields %}
+            {%- assign region = doc.regions | where: "id", f.region | first %}
+            {%- assign oc = nil %}
+            {%- if f.outcome %}{% assign oc = paper.reconciliation | where: "id", f.outcome | first %}{% endif %}
+            <tr>
+              {%- if forloop.first %}
+              <th scope="rowgroup" rowspan="{{ doc.fields.size }}"><span class="mono">{{ doc.ref }}</span><span class="c-doc-inspector__doc-sub">{{ doc.kind }} · {{ doc.date | date: "%-d %b %Y" }}</span></th>
+              {%- endif %}
+              <td>{{ f.label }}</td>
+              <td>{{ f.value }}{% if f.scope %} <span class="muted">({{ f.scope }})</span>{% endif %}</td>
+              <td class="mono c-doc-inspector__tprov">{{ doc.ref }} {% if region.section %}{{ region.section }}{% else %}{{ region.type }}{% endif %} · p.&nbsp;1</td>
+              <td><span class="c-doc-inspector__oc" data-outcome="{{ f.outcome | default: 'new' }}">{% if oc %}{{ oc.name }}{% else %}New claim{% endif %}</span>{% if f.note %}<span class="c-doc-inspector__note-cell">{{ f.note }}</span>{% endif %}</td>
+            </tr>
+            {%- endfor %}
+          </tbody>
+          {%- endfor %}
+        </table>
+      </div>
+    </div>
+  </details>
+  <figcaption class="figure__caption"><strong>How to read it.</strong> <span class="js-only">Dashed boxes are layout regions, drawn in the page's {{ demo.page.width }} × {{ demo.page.height }} coordinate box; highlighted ones yield fields.</span> Each field keeps its provenance (document, section, page<span class="js-only">, box</span>) and an outcome against what memory already held: one of the paper's five reconciliation outcomes, or a new claim. {{ demo.disclaimer }}</figcaption>
+</figure>

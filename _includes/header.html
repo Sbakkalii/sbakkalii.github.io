@@ -1,0 +1,32 @@
+{%- assign profile = site.data.profile -%}
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <a class="brand" href="{{ '/' | relative_url }}" aria-label="{{ profile.name }}, home">
+      {% include icon.html name="mark" %}
+      <span>
+        <span class="brand__name">{{ profile.name }}</span>
+        <span class="brand__role">Document Intelligence</span>
+      </span>
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      <ul class="site-nav__list" id="site-nav-list">
+        {%- for item in site.data.navigation.main %}
+          {%- assign prefix = page.url | slice: 0, item.match.size %}
+          <li><a class="site-nav__link" href="{{ item.url | relative_url }}"{% if prefix == item.match %} aria-current="page"{% endif %}>{{ item.title }}</a></li>
+        {%- endfor %}
+      </ul>
+    </nav>
+    <div class="site-header__actions">
+      <button type="button" class="icon-btn icon-btn--search js-only" data-search-open aria-label="Search the site" aria-keyshortcuts="Control+K Meta+K /">
+        {% include icon.html name="search" %}<span class="label">Search</span><kbd>Ctrl K</kbd>
+      </button>
+      <button type="button" class="icon-btn theme-toggle js-only" data-theme-toggle aria-pressed="false" aria-label="Switch to dark theme">
+        {% include icon.html name="moon" %}{% include icon.html name="sun" %}
+      </button>
+      <button type="button" class="icon-btn nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="site-nav-list" aria-label="Open menu">
+        {% include icon.html name="menu" %}{% include icon.html name="close" %}
+      </button>
+    </div>
+  </div>
+</header>

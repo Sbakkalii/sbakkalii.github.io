@@ -1,0 +1,291 @@
+/* lineage: Table I (representation lineage) and Table II (paradigms vs the
+   target). Styles scoped under .c-lineage. The matrix marks (.mk) are the
+   same family as audit.css and substrates.css: keep the three blocks in sync. */
+
+.c-lineage {
+  --mk-size: 0.8125rem;
+  --mk-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M8 0a8 8 0 1 0 0 16A8 8 0 1 0 8 0Zm-2.73 7.03 1.72 1.71 3.82-4 1.38 1.32-5.18 5.4-3.08-3.09Z'/%3E%3C/svg%3E");
+  --edge: var(--sp-5);
+  --year-w: 5.5rem;
+  display: grid;
+  gap: var(--sp-6);
+}
+.c-lineage__badges { display: inline-flex; flex-wrap: wrap; gap: var(--sp-2); }
+
+/* --- Matrix marks: glyph + the paper's own mark ---------------------------- */
+.c-lineage .mk { display: inline-flex; align-items: center; gap: 0.375rem; color: var(--ink); font-size: var(--fs-xs); font-weight: 500; line-height: 1.25; white-space: nowrap; vertical-align: middle; }
+.c-lineage .mk__g { position: relative; flex: none; width: var(--mk-size); height: var(--mk-size); border: 1.5px solid currentColor; border-radius: 50%; }
+.c-lineage .mk--full .mk__g { border: 0; background: currentColor; -webkit-mask: var(--mk-check) center / 100% 100% no-repeat; mask: var(--mk-check) center / 100% 100% no-repeat; }
+.c-lineage .mk--partial .mk__g { background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+.c-lineage .mk--implicit .mk__g { border-style: dotted; border-width: 2px; }
+.c-lineage .mk--none { color: var(--control); }
+.c-lineage .mk--none .mk__g { border-width: 1px; }
+.c-lineage .mk--sym .mk__t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.c-lineage .mk--says .mk__t { position: static; width: auto; height: auto; overflow: visible; clip-path: none; }
+.c-lineage .mk--says.mk--none { color: var(--ink-3); }
+.c-lineage .mk--qual { padding: 1px 6px; border: 1px dashed var(--control); border-radius: var(--radius-xs); background: var(--surface); color: var(--ink-2); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: 0.02em; }
+.c-lineage .mk--qual .mk__g { display: none; }
+
+/* --- Shared table frame ---------------------------------------------------- */
+.c-lineage__body { container: lineage / inline-size; }
+/* position: relative keeps visually hidden text inside the scroller. */
+.c-lineage .c-lineage__wrap {
+  position: relative;
+  border-width: 0;
+  border-radius: 0;
+  /* Scroll shadow at the right edge while columns remain hidden; the
+     "local" cover slides over it once the table is scrolled to its end. */
+  background:
+    linear-gradient(to left, var(--surface) 45%, transparent) right center / 2.5rem 100% no-repeat local,
+    linear-gradient(to left, var(--line-2), transparent) right center / 0.75rem 100% no-repeat scroll,
+    var(--surface);
+}
+/* Separate borders: collapsed ones vanish under sticky cells in Chrome. */
+.c-lineage__table { border-collapse: separate; border-spacing: 0; }
+/* Whole-pixel row heights keep the sticky columns' borders crisp. */
+.c-lineage__table th, .c-lineage__table td { padding: 0.625rem var(--sp-2); line-height: 1.375rem; vertical-align: middle; }
+.c-lineage__table tr > :first-child { padding-left: var(--edge); }
+.c-lineage__table tr > :last-child { padding-right: var(--edge); }
+.c-lineage__table thead th { padding-block: var(--sp-3); line-height: 1.5rem; }
+.c-lineage__table td[data-col], .c-lineage__table thead th[data-col] { text-align: center; }
+.c-lineage__table tbody th[scope="row"] { font-size: var(--fs-sm); }
+.c-lineage__table .c-lineage__txt, .c-lineage__table .c-lineage__y { color: var(--ink-2); font-size: var(--fs-xs); }
+.c-lineage__table .c-lineage__y { font-family: var(--font-mono); white-space: nowrap; }
+.c-lineage__table td, .c-lineage__table th { transition: background-color var(--dur-1) var(--ease); }
+
+/* "My work" link-tag, in the static and the interactive table. */
+.c-lineage__own {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+  padding: 0 6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: var(--radius-xs);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.c-lineage__own:hover { border-color: var(--accent); color: var(--accent-2); }
+
+/* Column and row buttons (same family as the audit's criterion headers). */
+.c-lineage__colbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  margin: -0.25rem -0.375rem;
+  padding: 0 0.375rem;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--control);
+  text-underline-offset: 0.35em;
+  white-space: nowrap;
+}
+.c-lineage__colbtn:hover { background: var(--surface-3); color: var(--ink); }
+.c-lineage__colbtn[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); text-decoration: none; }
+.c-lineage__rowbtn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  margin: -0.25rem -0.375rem;
+  padding: 0 0.375rem;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+}
+.c-lineage__rowbtn:hover { color: var(--accent); }
+.c-lineage__table--matrix .c-lineage__rowbtn { white-space: nowrap; }
+
+.c-lineage__table .is-focus { background: var(--accent-soft); }
+.c-lineage__table thead .is-focus { box-shadow: inset 0 2px 0 var(--accent); }
+
+/* --- Table I: chronological matrix ----------------------------------------- */
+.c-lineage__controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-3) var(--sp-5); min-height: 5.25rem; padding: var(--sp-4) var(--edge); border-bottom: 1px solid var(--line); }
+.c-lineage__readout { display: flex; flex: 1 1 22rem; align-items: center; gap: var(--sp-4); min-width: 0; }
+.c-lineage__hint { color: var(--ink-3); font-size: var(--fs-sm); }
+.c-lineage__count { flex: none; color: var(--ink-3); font-family: var(--font-serif); font-size: var(--fs-lg); font-weight: 600; line-height: 1; white-space: nowrap; }
+.c-lineage__count b { color: var(--ink); font-size: 2.5rem; letter-spacing: var(--tracking-tight); font-variant-numeric: lining-nums tabular-nums; }
+.c-lineage__count.is-zero b { color: var(--accent); }
+.c-lineage__rtext { display: grid; gap: var(--sp-1); min-width: 0; }
+.c-lineage__rhead { color: var(--ink); font-size: var(--fs-sm); font-weight: 600; line-height: 1.35; }
+.c-lineage__rgroups { display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-4); }
+.c-lineage__rgroup { display: inline-flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-xs); }
+.c-lineage__rgroup b { font-family: var(--font-mono); font-weight: 500; }
+.c-lineage__mine { min-height: 2.5rem; }
+.c-lineage__tick { position: relative; width: 0.875rem; height: 0.875rem; border: 1.5px solid currentColor; border-radius: 3px; }
+.c-lineage__mine[aria-pressed="true"] .c-lineage__tick { border: 0; border-radius: 50%; background: currentColor; -webkit-mask: var(--mk-check) center / 100% 100% no-repeat; mask: var(--mk-check) center / 100% 100% no-repeat; }
+
+.c-lineage__grid { display: grid; }
+.c-lineage__table--matrix { min-width: 31rem; }
+.c-lineage__table--matrix th, .c-lineage__table--matrix td { border-bottom: 0; }
+.c-lineage__table--matrix thead th { border-bottom: 1px solid var(--line); }
+.c-lineage__table--matrix tbody tr.is-first:not(:first-child) > * { border-top: 1px solid var(--line); }
+.c-lineage__table--matrix tbody tr:last-child > * { padding-bottom: var(--sp-4); }
+.c-lineage__table--matrix tbody tr:first-child > * { padding-top: var(--sp-3); }
+
+/* Year spine: a line through the year column, a dot where a year begins. */
+.c-lineage__yearh, .c-lineage__year {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  width: var(--year-w);
+  min-width: var(--year-w);
+  background: var(--surface);
+  text-align: left;
+}
+.c-lineage__table thead .c-lineage__yearh { z-index: 2; background: var(--surface-2); }
+.c-lineage__table tbody tr > td.c-lineage__year { padding-left: calc(var(--edge) + 1.125rem); color: var(--ink-2); font-family: var(--font-mono); font-size: var(--fs-2xs); white-space: nowrap; }
+.c-lineage__year::before { content: ""; position: absolute; top: 0; bottom: 0; left: calc(var(--edge) + 0.25rem); width: 1px; background: var(--line-2); }
+.c-lineage__row:first-child .c-lineage__year::before { top: 50%; }
+.c-lineage__row:last-child .c-lineage__year::before { bottom: 50%; }
+.c-lineage__row.is-first .c-lineage__year::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(var(--edge) + 0.25rem - 4px);
+  width: 9px;
+  height: 9px;
+  margin-top: -4.5px;
+  border: 1.5px solid var(--ink-3);
+  border-radius: 50%;
+  background: var(--surface);
+}
+.c-lineage__corner, .c-lineage__name {
+  position: sticky;
+  left: var(--year-w);
+  z-index: 1;
+  background: var(--surface);
+  box-shadow: inset -1px 0 0 var(--line);
+  text-align: left;
+}
+.c-lineage__table thead .c-lineage__corner { z-index: 2; background: var(--surface-2); }
+.c-lineage__nameline { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-1) var(--sp-3); }
+.c-lineage__meta { display: block; margin-top: 2px; color: var(--ink-3); font-size: var(--fs-2xs); font-weight: 400; line-height: 1rem; }
+
+/* Row states: hover/focus (active), and the author's models. */
+.c-lineage__row.is-active > * { background: var(--surface-3); }
+.c-lineage__row.is-active .c-lineage__rowbtn { color: var(--accent); }
+.c-lineage .is-mine .c-lineage__row.is-own > * { background: var(--accent-soft); }
+.c-lineage .is-mine .c-lineage__row.is-own > .c-lineage__name { box-shadow: inset 3px 0 0 var(--accent), inset -1px 0 0 var(--line); }
+.c-lineage .is-mine .c-lineage__row.is-own .c-lineage__own { border-color: var(--accent); background: var(--accent); color: var(--on-accent); }
+.c-lineage__table .c-lineage__row > .is-focus { background: var(--accent-soft); }
+.c-lineage .is-mine .c-lineage__row.is-own > .is-focus { background: color-mix(in srgb, var(--accent-soft) 84%, var(--accent)); }
+
+/* Inspector: shown beside the matrix when there is room; below that width
+   the modality and pretraining are shown under each name instead. */
+.c-lineage__inspector { display: none; }
+@container lineage (min-width: 54rem) {
+  .c-lineage__grid { grid-template-columns: minmax(0, 1fr) 16.5rem; }
+  .c-lineage__meta { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .c-lineage__inspector {
+    display: block;
+    position: sticky;
+    top: calc(var(--header-h) + var(--sp-4));
+    align-self: start;
+    min-height: 100%;
+    padding: var(--sp-5);
+    border-left: 1px solid var(--line);
+  }
+}
+.c-lineage__inspector > * + * { margin-top: var(--sp-3); }
+.c-lineage__ik { display: flex; align-items: center; gap: var(--sp-2); color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-lineage__ibadge { padding: 1px 6px; border-radius: var(--radius-xs); background: var(--accent); color: var(--on-accent); letter-spacing: 0.06em; }
+.c-lineage__iname { font-family: var(--font-serif); font-size: var(--fs-xl); font-weight: 600; letter-spacing: var(--tracking-tight); line-height: 1.15; }
+.c-lineage__ikv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--sp-1) var(--sp-3); margin: 0; font-size: var(--fs-sm); }
+.c-lineage__ikv dt { color: var(--ink-3); }
+.c-lineage__ikv dd { margin: 0; color: var(--ink); }
+.c-lineage__imarks { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.c-lineage__imarks li { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); padding: 0.4375rem var(--sp-2); border-bottom: 1px solid var(--line); font-size: var(--fs-sm); }
+.c-lineage__imarks li.is-focus { background: var(--accent-soft); }
+.c-lineage__imarks li > span:first-child { color: var(--ink-2); }
+.c-lineage__ipub { display: grid; gap: 2px; font-size: var(--fs-sm); line-height: 1.4; }
+.c-lineage__ipub span { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); }
+.c-lineage__ilist { display: grid; gap: var(--sp-2); margin: 0; padding: 0; list-style: none; }
+.c-lineage__ilist li { display: grid; gap: 1px; padding-left: var(--sp-3); border-left: 2px solid var(--accent); }
+.c-lineage__ilist a { font-weight: 600; text-decoration: none; }
+.c-lineage__ilist a:hover { text-decoration: underline; }
+.c-lineage__ilist span { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); }
+.c-lineage__ihint { color: var(--ink-3); font-size: var(--fs-xs); }
+
+/* --- Table II: paradigms against the target -------------------------------- */
+.c-lineage__table--paradigms { min-width: 38rem; }
+.c-lineage__table--paradigms thead th { white-space: normal; }
+.c-lineage__table--paradigms tbody th[scope="row"] { position: sticky; left: 0; z-index: 1; background: var(--surface); box-shadow: inset -1px 0 0 var(--line); white-space: nowrap; text-align: left; }
+@container lineage (max-width: 60rem) {
+  .c-lineage__table--paradigms tbody th[scope="row"] { min-width: 9rem; white-space: normal; }
+}
+.c-lineage__table--paradigms tbody tr:has(+ tr.is-target) > * { border-bottom: 0; }
+.c-lineage__table--paradigms thead th:first-child { position: sticky; left: 0; z-index: 2; background: var(--surface-2); text-align: left; }
+.c-lineage__table--paradigms tr.is-target > * { border-top: 2px solid var(--ink); background: var(--surface-2); }
+.c-lineage__table--paradigms tr.is-target > th[scope="row"] { background: var(--surface-2); font-weight: 700; }
+.c-lineage__table--paradigms tr.is-target .math { font-size: 1.1em; }
+.c-lineage__table--paradigms tr.is-active > * { background: var(--surface-3); }
+.c-lineage__table--paradigms td.is-gap { outline: 1.5px dashed var(--bad); outline-offset: -5px; }
+.c-lineage__table--paradigms tr.is-target > td.is-need { background: var(--accent-soft); }
+.c-lineage__gaph { white-space: nowrap; }
+.c-lineage__gaph .math { text-transform: none; font-size: 1.15em; letter-spacing: 0; }
+.c-lineage__gapcell { text-align: center; white-space: nowrap; }
+.c-lineage__gapval { display: block; color: var(--ink-3); font-size: var(--fs-2xs); line-height: 1.5rem; }
+.c-lineage__gapval b { color: var(--ink); font-family: var(--font-serif); font-size: var(--fs-lg); font-weight: 600; }
+.c-lineage__gapbar { display: flex; justify-content: center; gap: 2px; margin-top: 3px; }
+.c-lineage__gapbar i { width: 7px; height: 4px; border-radius: 1px; background: var(--line); }
+.c-lineage__gapbar i.is-met { background: var(--ink); }
+.c-lineage__gaps { display: grid; gap: var(--sp-2); min-height: 8.5rem; padding: var(--sp-4) var(--edge) var(--sp-5); border-top: 1px solid var(--line); }
+.c-lineage__gk { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-lineage__gk .math { text-transform: none; letter-spacing: 0; font-size: 1.2em; }
+.c-lineage__glead { max-width: 60ch; color: var(--ink); font-family: var(--font-serif); font-size: var(--fs-lg); font-weight: 600; line-height: 1.35; }
+.c-lineage__ghint { color: var(--ink-3); font-size: var(--fs-sm); }
+.c-lineage__glist { display: grid; gap: var(--sp-1); margin: 0; padding: 0; list-style: none; }
+.c-lineage__glist li { display: grid; grid-template-columns: 7rem minmax(0, 1fr); align-items: center; gap: var(--sp-3); font-size: var(--fs-sm); }
+.c-lineage__table--paradigms .c-lineage__rowbtn[aria-pressed="true"] { color: var(--accent); text-decoration: underline; text-underline-offset: 0.25em; }
+
+/* --- Narrow containers ----------------------------------------------------- */
+/* Table I keeps all four property columns on screen: the year moves into the
+   model cell and each mark stacks its glyph over its text. */
+.c-lineage__yinline, .c-lineage__gapinline { display: none; }
+@container lineage (max-width: 32rem) {
+  .c-lineage__table--matrix { min-width: 0; }
+  .c-lineage__table--matrix .c-lineage__yearh, .c-lineage__table--matrix .c-lineage__year { display: none; }
+  .c-lineage__table--matrix .c-lineage__corner, .c-lineage__table--matrix .c-lineage__name { left: 0; padding-left: var(--edge); }
+  .c-lineage__yinline { display: block; margin-bottom: 1px; color: var(--ink-3); font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.04em; line-height: 0.8125rem; }
+  .c-lineage__yinline.is-repeat { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .c-lineage__table--matrix thead th[data-col] { padding-inline: 2px; vertical-align: bottom; }
+  .c-lineage__table--matrix .c-lineage__colbtn { margin: 0; padding: 4px 3px; font-size: 10px; letter-spacing: 0.04em; line-height: 0.75rem; white-space: normal; text-underline-offset: 0.25em; }
+  .c-lineage__table--matrix td[data-col] { padding-inline: 2px; }
+  .c-lineage__table--matrix td[data-col] .mk { flex-direction: column; gap: 3px; font-size: 10px; line-height: 0.75rem; }
+  .c-lineage__table--matrix tr > :last-child { padding-right: var(--sp-2); }
+  .c-lineage__table--matrix .c-lineage__name { min-width: 8.5rem; }
+  .c-lineage__table--matrix .c-lineage__rowbtn { white-space: normal; }
+}
+/* Table II: the gap count moves under each name, so the six properties fit. */
+@container lineage (max-width: 52rem) {
+  .c-lineage__table--paradigms tbody th[scope="row"] { min-width: 8.75rem; max-width: 9.5rem; white-space: normal; }
+  .c-lineage__table--paradigms .c-lineage__gaph, .c-lineage__table--paradigms .c-lineage__gapcell { display: none; }
+  .c-lineage__gapinline { display: block; margin-top: 2px; color: var(--ink-3); font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.04em; line-height: 1rem; text-transform: uppercase; }
+}
+
+/* --- Captions and labels --------------------------------------------------- */
+.c-lineage__caption b { color: var(--ink-2); font-weight: 600; }
+.c-lineage .figure__label .math { font-size: 1.25em; letter-spacing: 0; text-transform: none; }
+
+@media (max-width: 640px) {
+  .c-lineage { --edge: var(--sp-4); --year-w: 4.75rem; }
+  .c-lineage__count b { font-size: 2rem; }
+}

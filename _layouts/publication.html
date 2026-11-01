@@ -1,0 +1,87 @@
+---
+layout: default
+---
+{%- assign p = page -%}
+{%- assign year = p.date | date: "%Y" -%}
+{%- assign products = site.data.products.products -%}
+<article>
+  <header class="page-head">
+    <div class="container page-head__inner">
+      <p class="eyebrow"><a href="{{ '/publications/' | relative_url }}">Publications</a> <span aria-hidden="true">/</span> {{ site.data.pubtypes[p.pub_type] | default: p.pub_type }} · {{ year }}</p>
+      <h1 class="h2" style="max-width: 32ch">{{ p.title }}</h1>
+      <p class="pub__authors" style="font-size: var(--fs-md)">{{ p.authors | replace: "S. Bakkali", "<strong>S. Bakkali</strong>" }}</p>
+      <div class="page-head__meta">
+        <span>{{ p.venue }}{% if p.pages %}, pp. {{ p.pages }}{% endif %}</span>
+        <span><time datetime="{{ p.date | date: '%Y-%m-%d' }}">{{ p.date | date: "%B %Y" }}</time></span>
+      </div>
+      <div class="cluster">
+        {%- if p.explorer %}<a class="btn" href="{{ p.explorer | relative_url }}">Open the interactive explorer {% include icon.html name="arrow" %}</a>{% endif %}
+        {%- if p.paperurl %}<a class="btn{% if p.explorer %} btn--secondary{% endif %}" href="{{ p.paperurl }}">{% include icon.html name="file" %}PDF</a>{% endif %}
+        {%- if p.arxiv %}<a class="btn btn--secondary" href="https://arxiv.org/abs/{{ p.arxiv }}">arXiv:{{ p.arxiv }}</a>{% endif %}
+        {%- if p.doi %}{% unless p.doi contains "10.48550" %}<a class="btn btn--secondary" href="https://doi.org/{{ p.doi }}">DOI</a>{% endunless %}{% endif %}
+        {%- if p.hal %}<a class="btn btn--secondary" href="https://hal.science/{{ p.hal }}">HAL</a>{% endif %}
+        {%- if p.url_ext %}<a class="btn btn--secondary" href="{{ p.url_ext }}">Publisher page {% include icon.html name="external" %}</a>{% endif %}
+      </div>
+    </div>
+  </header>
+
+  <div class="section">
+    <div class="container split split--text-wide split--top">
+      <div class="stack stack-lg">
+        <section aria-labelledby="summary-h" class="stack">
+          <h2 id="summary-h" class="h3">In one paragraph</h2>
+          <p class="lede" style="font-size: var(--fs-md)">{{ p.summary }}</p>
+          {%- if p.note %}<p class="callout">{{ p.note }}</p>{% endif %}
+          {{ content }}
+        </section>
+
+        <section aria-labelledby="cite-h" class="stack">
+          <div class="cluster" style="justify-content: space-between">
+            <h2 id="cite-h" class="h3">Cite</h2>
+            <button type="button" class="btn btn--sm btn--secondary js-only" data-copy="#bibtex">{% include icon.html name="copy" %}<span data-copy-label>Copy BibTeX</span></button>
+          </div>
+          <pre id="bibtex" class="bibtex" tabindex="0" aria-label="BibTeX entry"><code>{{ p.bibtex | escape }}</code></pre>
+        </section>
+      </div>
+
+      <aside class="stack" aria-label="About this publication">
+        <dl class="kv card">
+          <dt>Type</dt><dd>{{ site.data.pubtypes[p.pub_type] | default: p.pub_type }}</dd>
+          <dt>Venue</dt><dd>{{ p.venue_short | default: p.venue }}</dd>
+          <dt>Year</dt><dd>{{ year }}</dd>
+          <dt>Themes</dt>
+          <dd class="cluster" style="--cluster: var(--sp-1)">
+            {%- for t in p.themes %}{% assign theme = site.data.themes | where: "id", t | first %}<a class="tag" href="{{ '/publications/' | relative_url }}?theme={{ t }}">{{ theme.label | default: t }}</a>{% endfor %}
+          </dd>
+        </dl>
+
+        {%- capture used_in -%}
+          {%- for prod in products -%}
+            {%- assign hit = false -%}
+            {%- for cap in prod.capabilities -%}{%- if cap.research contains p.slug -%}{%- assign hit = true -%}{%- endif -%}{%- endfor -%}
+            {%- if hit %}<li><a href="{{ '/products/' | relative_url }}#{{ prod.id }}">{{ prod.name }}</a></li>{% endif -%}
+          {%- endfor -%}
+        {%- endcapture -%}
+        {%- if used_in != "" %}
+        <div class="card">
+          <p class="card__kicker">Builds into</p>
+          <ul class="list-plain stack stack-sm">{{ used_in }}</ul>
+        </div>
+        {%- endif %}
+
+        {%- assign main_theme = p.themes | first -%}
+        {%- assign related = site.publications | where_exp: "q", "q.themes contains main_theme" | where_exp: "q", "q.url != page.url" | sort: "date" | reverse -%}
+        {%- if related.size > 0 %}
+        <div class="card">
+          <p class="card__kicker">Related</p>
+          <ul class="list-plain stack stack-sm small">
+            {%- for r in related limit: 4 %}
+            <li><a href="{{ r.url | relative_url }}">{{ r.title }}</a> <span class="muted mono">{{ r.venue_short }}</span></li>
+            {%- endfor %}
+          </ul>
+        </div>
+        {%- endif %}
+      </aside>
+    </div>
+  </div>
+</article>

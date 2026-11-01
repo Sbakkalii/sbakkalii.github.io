@@ -1,0 +1,6 @@
+# Display labels for the `pub_type` front-matter field of publications.
+journal: "Journal"
+conference: "Conference"
+workshop: "Workshop"
+preprint: "Preprint"
+thesis: "Thesis"

@@ -1,0 +1,23 @@
+# Teaching (previously /teaching/). The detailed French record is in
+# _includes/content/teaching-record-fr.md.
+summary:
+  - { value: "800+", label: "hours taught (HeTD)" }
+  - { value: "200+", label: "students, 2020–2025" }
+  - { value: "7", label: "modules developed" }
+coordination:
+  - "Advanced Database Management Systems"
+  - "Foundations of AI"
+
+master:
+  - { course: "Neural Networks", level: "M2", program: "Data Science track", type: "Lectures & labs" }
+  - { course: "Big Data Systems Implementation", level: "M2", program: "Software Architect & Data Science", type: "Lectures & labs" }
+  - { course: "Secure Networks and Storage", level: "M1", program: "Software Architect track", type: "Lectures & labs" }
+  - { course: "Technologies for Combating Cybercrime", level: "M2", program: "Digital Trust and Law", type: "Labs" }
+  - { course: "Research and Scientific Project", level: "M1/M2", program: "Software Architect & Data Science", type: "Project supervision" }
+  - { course: "Professional Project and Computer Science", level: "M1", program: "Arts, Letters, Languages", type: "Project supervision" }
+  - { course: "Web Technologies", level: "M2", program: "Business Administration", type: "Lectures & labs" }
+
+bachelor:
+  - { course: "Advanced Database Management Systems", level: "B3", program: "Computer Science", type: "Lectures & labs (course head)" }
+  - { course: "Advanced Database Modeling", level: "B3", program: "Computer Science", type: "Labs" }
+  - { course: "Introduction to Computer Systems", level: "B1", program: "General Studies", type: "Labs" }

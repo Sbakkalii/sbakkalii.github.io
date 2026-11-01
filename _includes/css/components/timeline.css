@@ -1,0 +1,277 @@
+/* timeline: research trajectory. A swimlane chart (x = year, one lane per
+   theme) from 760 px, and a year list (the static baseline) below that or
+   on request. Dots are ink; emphasis and selection use the accent. */
+
+.c-timeline {
+  --tl-label-w: 12rem;
+  --tl-ms-row: 20px;
+}
+@media (max-width: 1100px) { .c-timeline { --tl-label-w: 8.5rem; } }
+
+/* --- Toolbar ---------------------------------------------------------------- */
+.c-timeline__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3) var(--sp-5);
+  margin-bottom: var(--sp-5);
+}
+.c-timeline__chips { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); min-width: 0; }
+.c-timeline__chips-label {
+  margin-right: var(--sp-1);
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.c-timeline__chips .chip { min-height: 34px; }
+.c-timeline__tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); margin-left: auto; }
+.c-timeline__clear[hidden] { display: none; }
+
+/* --- Chart ------------------------------------------------------------------ */
+.c-timeline__chart { position: relative; }
+.c-timeline__plot { position: relative; }
+.c-timeline__milestones { position: relative; margin-left: var(--tl-label-w); }
+.c-timeline__ms {   /* a flag: its underline meets the milestone's rule */
+  position: absolute;
+  margin: 0;
+  padding: 0 var(--sp-2) 0 6px;
+  border-bottom: 1px solid var(--ink-3);
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  line-height: calc(var(--tl-ms-row) - 1px);
+  white-space: nowrap;
+}
+.c-timeline__ms.is-end { padding: 0 6px 0 var(--sp-2); text-align: right; }
+.c-timeline__ms b { color: var(--ink); font-weight: 600; }
+
+.c-timeline__lanes { position: relative; border-bottom: 1px solid var(--line-2); }
+.c-timeline__lane {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--line);
+  transition: background-color var(--dur-2) var(--ease);
+}
+.c-timeline__lane-label {
+  display: flex;
+  flex: 0 0 var(--tl-label-w);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  min-width: 0;
+  padding: var(--sp-1) var(--sp-3) var(--sp-1) 0;
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  line-height: 1.25;
+  transition: color var(--dur-2) var(--ease), opacity var(--dur-2) var(--ease);
+}
+.c-timeline__lane-count { flex: none; color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: 400; }
+.c-timeline__track { position: relative; flex: 1 1 auto; min-width: 0; }
+
+/* Year columns, year boundaries and milestone rules, drawn behind the dots. */
+.c-timeline__grid { position: absolute; top: 0; right: 0; bottom: 0; left: var(--tl-label-w); pointer-events: none; }
+.c-timeline__col { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--line); }
+.c-timeline__col:nth-child(even) { background: color-mix(in srgb, var(--bg-2) 55%, transparent); }
+.c-timeline__col:last-child { border-right: 1px solid var(--line); }
+.c-timeline__rule {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  border-left: 1px dashed var(--ink-3);
+}
+
+.c-timeline__axis { position: relative; height: 30px; margin-left: var(--tl-label-w); }
+.c-timeline__year-label {
+  position: absolute;
+  top: 7px;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.04em;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+/* Dots: a 22 px target around a 9 px ring (13 px disc when featured). */
+.c-timeline__dot {
+  position: absolute;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+}
+.c-timeline__dot::before {
+  content: "";
+  position: absolute;
+  inset: 6.5px;
+  border: 1.5px solid var(--ink-2);
+  border-radius: 50%;
+  background: var(--surface);
+  transition: background-color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+}
+.c-timeline__dot.is-featured::before { inset: 4.5px; border-color: var(--ink); background: var(--ink); }
+.c-timeline__dot:hover::before { transform: scale(1.25); }
+.c-timeline__dot:focus-visible { outline: none; }
+.c-timeline__dot:focus-visible::before { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+.c-timeline__dot.is-selected { z-index: 3; }
+.c-timeline__dot.is-selected::before {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--surface), 0 0 0 4.5px var(--accent);
+}
+.c-timeline__dot.is-selected:not(.is-featured)::before { inset: 5.5px; }
+
+/* Theme emphasis: chosen lanes in the accent, the others fade back. */
+.c-timeline__lane.is-emph { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+.c-timeline__lane.is-emph .c-timeline__lane-label { color: var(--accent); font-weight: 600; }
+.c-timeline__lane.is-emph .c-timeline__dot::before { border-color: var(--accent); }
+.c-timeline__lane.is-emph .c-timeline__dot.is-featured::before { background: var(--accent); }
+.c-timeline__lane.is-muted .c-timeline__lane-label { opacity: 0.55; }
+.c-timeline__lane.is-muted .c-timeline__dot:not(.is-selected) { opacity: 0.3; }
+
+/* Hover preview */
+.c-timeline__tip {
+  position: absolute;
+  z-index: 5;
+  max-width: 19rem;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: var(--btn-bg);
+  box-shadow: var(--shadow-2);
+  color: var(--btn-ink);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  pointer-events: none;
+}
+.c-timeline__tip b { display: block; font-weight: 600; }
+.c-timeline__tip span { opacity: 0.75; font-family: var(--font-mono); font-size: var(--fs-2xs); }
+
+/* Detail card */
+.c-timeline__card {
+  margin-top: var(--sp-5);
+  padding: var(--sp-4) var(--sp-5);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+.c-timeline__card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1) var(--sp-2);
+  margin: 0;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.c-timeline__card-meta .badge { letter-spacing: 0.05em; }
+.c-timeline__card-title {
+  margin-top: var(--sp-2);
+  font-family: var(--font-serif);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
+}
+.c-timeline__card-title a { color: var(--ink); text-decoration: none; }
+.c-timeline__card-title a:hover { color: var(--accent); text-decoration: underline; }
+.c-timeline__card-authors { margin-top: var(--sp-1); color: var(--ink-2); font-size: var(--fs-sm); }
+.c-timeline__card-authors strong { color: var(--ink); font-weight: 600; }
+.c-timeline__card-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-4);
+  margin-top: var(--sp-3);
+}
+.c-timeline__card-tags { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
+.c-timeline__card-links { display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-4); font-size: var(--fs-sm); font-weight: 600; }
+.c-timeline__card-swap { transition: opacity var(--dur-1) var(--ease); }
+.c-timeline__card-swap.is-swapping { opacity: 0; transition: none; }
+
+/* --- Year list (static baseline, narrow view, and the "List" view) ---------- */
+.c-timeline__list { display: grid; gap: var(--sp-5); }
+.c-timeline__year { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: var(--sp-2) var(--sp-5); }
+.c-timeline__year-head {
+  position: relative;
+  align-self: start;
+  font-family: var(--font-serif);
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  letter-spacing: var(--tracking-tight);
+  line-height: 1.2;
+}
+.c-timeline__year-count {
+  display: block;
+  margin-top: 4px;
+  overflow-wrap: normal;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.c-timeline__items { margin: 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+.c-timeline__item,
+.c-timeline__milestone {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr) auto;
+  gap: var(--sp-1) var(--sp-3);
+  align-items: baseline;
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+}
+.c-timeline__glyph {
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--ink-2);
+  border-radius: 50%;
+  transform: translateY(1px);
+}
+.c-timeline__item.is-featured .c-timeline__glyph { width: 11px; height: 11px; margin-left: -1px; border-color: var(--ink); background: var(--ink); }
+.c-timeline__item-main a { color: var(--ink); font-weight: 500; text-decoration-color: var(--line-2); }
+.c-timeline__item-main a:hover { color: var(--accent); text-decoration-color: currentColor; }
+.c-timeline__item.is-featured .c-timeline__item-main a { font-weight: 600; }
+.c-timeline__venue { margin-left: var(--sp-1); color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); white-space: nowrap; }
+.c-timeline__venue::before { content: "· "; }
+.c-timeline__tags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+.c-timeline__milestone { grid-template-columns: 1rem minmax(0, 1fr); row-gap: 0; color: var(--ink-2); }
+.c-timeline__milestone::before {   /* a short dashed rule, as in the chart */
+  content: "";
+  grid-row: 1 / span 2;
+  align-self: stretch;
+  width: 0;
+  margin: 3px 0 3px 4px;
+  border-left: 1.5px dashed var(--ink-3);
+}
+.c-timeline__ms-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--sp-2); }
+.c-timeline__ms-date { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: 0.04em; text-transform: uppercase; }
+.c-timeline__ms-label { color: var(--ink); font-weight: 600; }
+.c-timeline__ms-detail { grid-column: 2; color: var(--ink-3); font-size: var(--fs-xs); }
+
+.c-timeline__list-status { margin: 0 0 var(--sp-4); color: var(--ink-3); font-size: var(--fs-sm); }
+
+@media (max-width: 640px) {
+  .c-timeline__year { grid-template-columns: minmax(0, 1fr); gap: var(--sp-2); }
+  .c-timeline__year-head { display: flex; align-items: baseline; gap: var(--sp-3); }
+  .c-timeline__year-count { margin: 0; }
+  .c-timeline__item { grid-template-columns: 1rem minmax(0, 1fr); }
+  .c-timeline__tags { grid-column: 2; justify-content: flex-start; }
+}
+.c-timeline.is-list .c-timeline__caption-js { display: none; }

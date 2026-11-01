@@ -1,0 +1,135 @@
+{%- comment -%}
+  Publication explorer for /publications/ (no parameters).
+
+  Static baseline: every publication, newest first, grouped by year (an h2 per
+  year), each with its links, and a year index. It is complete without
+  JavaScript. assets/js/components/pub-explorer.js then wires the js-only
+  controls rendered here (search, theme and type chips, first-authored toggle,
+  sort), filters and reorders these nodes in place, keeps the URL in sync
+  (?q=, ?theme=a,b, ?type=a,b, ?first=1, ?sort=oldest) and opens a Cite dialog
+  with the BibTeX from front matter, embedded below as JSON.
+{%- endcomment -%}
+{%- assign pubs = site.publications | sort: "date" | reverse -%}
+{%- assign by_year = pubs | group_by_exp: "p", "p.date | date: '%Y'" -%}
+{%- assign firsts = pubs | where: "first_author", true -%}
+{%- assign year_max = 1 -%}
+{%- for g in by_year %}{% if g.size > year_max %}{% assign year_max = g.size %}{% endif %}{% endfor -%}
+<div class="c-pub-explorer" data-component="pub-explorer" id="pub-explorer" data-eager>
+  <div class="c-pub-explorer__side">
+    <div class="c-pub-explorer__panel js-only" role="search" aria-label="Filter publications">
+      <div class="c-pub-explorer__search">
+        <label class="c-pub-explorer__label" for="pub-explorer-q">Search</label>
+        <div class="c-pub-explorer__field">
+          {% include icon.html name="search" %}
+          <input class="input c-pub-explorer__input" id="pub-explorer-q" type="search" name="q" placeholder="Title, author or venue" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-describedby="pub-explorer-q-hint">
+          <button type="button" class="c-pub-explorer__clear" data-pe-clear-q aria-label="Clear search" hidden>{% include icon.html name="close" %}</button>
+        </div>
+        <p class="visually-hidden" id="pub-explorer-q-hint">Results update as you type. Escape clears the search.</p>
+        <button type="button" class="btn btn--secondary btn--sm c-pub-explorer__toggle" data-pe-toggle aria-expanded="false" aria-controls="pub-explorer-facets">Filters<span class="c-pub-explorer__toggle-n" data-pe-active hidden></span></button>
+      </div>
+
+      <div class="c-pub-explorer__facets" id="pub-explorer-facets">
+        <div class="c-pub-explorer__group" role="group" aria-labelledby="pub-explorer-theme-label">
+          <p class="c-pub-explorer__label" id="pub-explorer-theme-label">Theme <span class="c-pub-explorer__hint">any of</span></p>
+          <div class="c-pub-explorer__chips">
+            {%- for t in site.data.themes %}
+            {%- assign n = pubs | where_exp: "p", "p.themes contains t.id" | size %}
+            <button type="button" class="chip c-pub-explorer__chip" aria-pressed="false" data-pe-theme="{{ t.id }}" title="{{ t.label | escape }}">{{ t.short | default: t.label }} <span class="chip__count" data-pe-count>{{ n }}</span><span class="visually-hidden"> publications</span></button>
+            {%- endfor %}
+          </div>
+        </div>
+
+        <div class="c-pub-explorer__group" role="group" aria-labelledby="pub-explorer-type-label">
+          <p class="c-pub-explorer__label" id="pub-explorer-type-label">Type <span class="c-pub-explorer__hint">any of</span></p>
+          <div class="c-pub-explorer__chips">
+            {%- for t in site.data.pubtypes %}
+            {%- assign n = pubs | where: "pub_type", t[0] | size %}
+            <button type="button" class="chip c-pub-explorer__chip" aria-pressed="false" data-pe-type="{{ t[0] }}">{{ t[1] }} <span class="chip__count" data-pe-count>{{ n }}</span><span class="visually-hidden"> publications</span></button>
+            {%- endfor %}
+          </div>
+        </div>
+
+        <div class="c-pub-explorer__group">
+          <button type="button" class="chip c-pub-explorer__chip c-pub-explorer__first" aria-pressed="false" data-pe-first><span class="c-pub-explorer__check" aria-hidden="true"></span>First-authored <span class="chip__count" data-pe-count>{{ firsts.size }}</span><span class="visually-hidden"> publications</span></button>
+        </div>
+      </div>
+    </div>
+
+    <nav class="c-pub-explorer__years" aria-labelledby="pub-explorer-years-label" data-toc>
+      <p class="c-pub-explorer__label" id="pub-explorer-years-label">By year</p>
+      <ol class="c-pub-explorer__year-list" style="--max: {{ year_max }}">
+        {%- for g in by_year %}
+        <li data-pe-nav="{{ g.name }}"><a class="c-pub-explorer__year-link" href="#y{{ g.name }}"><span class="c-pub-explorer__year-num">{{ g.name }}</span><span class="c-pub-explorer__year-bar" aria-hidden="true" style="--n: {{ g.size }}"><i></i></span><span class="c-pub-explorer__year-n" data-pe-nav-count>{{ g.size }}</span></a></li>
+        {%- endfor %}
+      </ol>
+    </nav>
+  </div>
+
+  <div class="c-pub-explorer__main">
+    <div class="c-pub-explorer__bar js-only">
+      <p class="c-pub-explorer__count" data-pe-status><b>{{ pubs.size }}</b> publications</p>
+      <button type="button" class="btn btn--ghost btn--sm c-pub-explorer__reset" data-pe-reset hidden>{% include icon.html name="reset" %}Clear filters</button>
+      <div class="segmented c-pub-explorer__sort" role="radiogroup" aria-label="Sort order">
+        <button type="button" role="radio" aria-checked="true" data-pe-sort="newest">Newest first</button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-pe-sort="oldest">Oldest first</button>
+      </div>
+    </div>
+
+    <div class="c-pub-explorer__groups" data-pe-groups>
+      {%- for g in by_year %}
+      <section class="c-pub-explorer__year" id="y{{ g.name }}" aria-labelledby="y{{ g.name }}-h" data-pe-year="{{ g.name }}">
+        <h2 class="c-pub-explorer__year-title" id="y{{ g.name }}-h">{{ g.name }} <span class="c-pub-explorer__year-count" data-pe-year-count>{{ g.size }} {% if g.size == 1 %}publication{% else %}publications{% endif %}</span></h2>
+        <ol class="pubs">
+          {%- for p in g.items %}
+          {%- assign type_label = site.data.pubtypes[p.pub_type] | default: p.pub_type %}
+          <li class="pub c-pub-explorer__item" id="pub-{{ p.slug }}" data-pe-id="{{ p.slug }}">
+            <div class="pub__venue"><strong data-pe-field="venue_short">{{ p.venue_short | default: g.name }}</strong><span>{{ type_label }}</span></div>
+            <div class="c-pub-explorer__body">
+              <h3 class="pub__title"><a href="{{ p.url | relative_url }}" data-pe-field="title">{{ p.title }}</a></h3>
+              <p class="pub__authors" data-pe-field="authors">{{ p.authors | replace: "S. Bakkali", "<strong>S. Bakkali</strong>" }}</p>
+              <p class="c-pub-explorer__venue"><span data-pe-field="venue">{{ p.venue }}</span>{% if p.pages %}, pp. {{ p.pages }}{% endif %}</p>
+              {%- if p.summary %}
+              <p class="pub__summary" data-pe-field="summary">{{ p.summary }}</p>
+              {%- endif %}
+              {%- if p.note %}
+              <p class="c-pub-explorer__note" data-pe-field="note">{{ p.note }}</p>
+              {%- endif %}
+              <div class="pub__meta">
+                <span class="pub__links">
+                  {%- if p.explorer %}<a href="{{ p.explorer | relative_url }}">Interactive explorer</a>{% endif %}
+                  {%- if p.paperurl %}<a href="{{ p.paperurl }}">PDF</a>{% endif %}
+                  {%- if p.arxiv %}<a href="https://arxiv.org/abs/{{ p.arxiv }}">arXiv</a>{% endif %}
+                  {%- if p.doi %}{% unless p.doi contains "10.48550" %}<a href="https://doi.org/{{ p.doi }}">DOI</a>{% endunless %}{% endif %}
+                  {%- if p.hal %}<a href="https://hal.science/{{ p.hal }}">HAL</a>{% endif %}
+                  {%- if p.url_ext %}<a href="{{ p.url_ext }}">Link</a>{% endif %}
+                  {%- if p.bibtex %}
+                  <button type="button" class="c-pub-explorer__cite js-only" data-pe-cite="{{ p.slug }}" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M4 18.5v-4.6c0-3.7 1.6-6.4 4.9-8.1l.9 1.5C8 8.4 7.1 9.9 7 11.9h3v6.6H4Zm9.5 0v-4.6c0-3.7 1.6-6.4 4.9-8.1l.9 1.5c-1.8 1.1-2.7 2.6-2.8 4.6h3v6.6h-6Z"/></svg>Cite<span class="visually-hidden"> “{{ p.title }}”</span></button>
+                  <a class="no-js-only" href="{{ p.url | relative_url }}#cite-h">Cite</a>
+                  {%- endif %}
+                </span>
+                {%- for t in p.themes %}{% assign theme = site.data.themes | where: "id", t | first %}<span class="tag">{{ theme.short | default: t }}</span>{% endfor %}
+              </div>
+            </div>
+          </li>
+          {%- endfor %}
+        </ol>
+      </section>
+      {%- endfor %}
+    </div>
+
+    <div class="c-pub-explorer__empty" data-pe-empty hidden>
+      <p class="c-pub-explorer__empty-title">No publication matches these filters.</p>
+      <p class="muted small" data-pe-empty-detail></p>
+      <button type="button" class="btn btn--secondary btn--sm" data-pe-reset>{% include icon.html name="reset" %}Clear filters</button>
+    </div>
+  </div>
+
+  {%- capture pe_json -%}
+  {"themes":{{ site.data.themes | jsonify }},"types":{{ site.data.pubtypes | jsonify }},"pubs":[
+  {%- for p in pubs -%}
+  {"id":{{ p.slug | jsonify }},"year":{{ p.date | date: "%Y" | jsonify }},"type":{{ p.pub_type | jsonify }},"themes":{{ p.themes | jsonify }},"first":{% if p.first_author %}true{% else %}false{% endif %},"title":{{ p.title | jsonify }},"authors":{{ p.authors | jsonify }},"venue":{{ p.venue | jsonify }},"venue_short":{{ p.venue_short | jsonify }},"pages":{{ p.pages | jsonify }},"summary":{{ p.summary | jsonify }},"note":{{ p.note | jsonify }},"url":{{ p.url | relative_url | jsonify }},"doi":{{ p.doi | jsonify }},"arxiv":{{ p.arxiv | jsonify }},"hal":{{ p.hal | jsonify }},"url_ext":{{ p.url_ext | jsonify }},"bibtex":{{ p.bibtex | jsonify }}}{% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+  ]}
+  {%- endcapture %}
+  <script type="application/json" data-for="pub-explorer">{{ pe_json | strip | replace: "</", "<\/" }}</script>
+</div>

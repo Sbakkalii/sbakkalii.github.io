@@ -1,0 +1,98 @@
+{%- comment -%}
+  Home hero demo: four fictional documents (site.data.demo) read in date
+  order, once by a stateless system and once by a stateful one.
+  Static baseline (no JavaScript): the first document as text, and what a
+  stateful system notes when the later documents arrive, built from the
+  fields' reconciliation outcomes. assets/js/components/doc-demo.js replaces
+  it with the interactive reader inside [data-app].
+{%- endcomment -%}
+{%- assign demo = site.data.demo -%}
+{%- assign docs = demo.documents -%}
+{%- assign first = docs | first -%}
+{%- assign outcomes = site.data.paper.reconciliation -%}
+{%- assign named_outcomes = outcomes | where_exp: "o", "o.defined == false" -%}
+<figure class="figure c-doc-demo" data-component="doc-demo" id="doc-demo" aria-labelledby="doc-demo-label">
+  <div class="figure__head">
+    <span class="figure__label" id="doc-demo-label"><b><span class="js-only">Live demo</span><span class="no-js-only">Example</span></b> · stateless vs stateful reading</span>
+    <span class="c-doc-demo__badges">
+      <span class="badge badge--accent js-only">Interactive</span>
+      <span class="badge badge--muted">Illustrative</span>
+    </span>
+  </div>
+
+  <div class="c-doc-demo__body">
+    <div class="c-doc-demo__static" data-static>
+      <div class="c-doc-demo__s-doc" role="group" aria-label="{{ first.title }} ({{ first.ref }}), {{ first.date }}">
+        <p class="c-doc-demo__s-kind">{{ first.kind }} · {{ first.ref }} · {{ first.date }}</p>
+        {%- for r in first.regions %}
+        {%- case r.type %}
+        {%- when "Title" %}
+        <p class="c-doc-demo__s-title">{{ r.text }}</p>
+        {%- when "Header" %}
+        <p class="c-doc-demo__s-meta">{{ r.text }}</p>
+        {%- when "Clause", "Paragraph" %}
+        <p class="c-doc-demo__s-clause">{{ r.text }}</p>
+        {%- when "Table" %}
+        <table class="c-doc-demo__s-table">
+          <caption>{{ r.text }}</caption>
+          <thead><tr>{% for cell in r.rows.first %}<th scope="col">{{ cell }}</th>{% endfor %}</tr></thead>
+          <tbody>
+            {%- for row in r.rows offset: 1 %}
+            <tr>{% for cell in row %}{% if forloop.first %}<th scope="row">{{ cell }}</th>{% else %}<td>{{ cell }}</td>{% endif %}{% endfor %}</tr>
+            {%- endfor %}
+          </tbody>
+        </table>
+        {%- endcase %}
+        {%- endfor %}
+      </div>
+
+      {%- capture later_kinds -%}
+        {%- for d in docs -%}
+          {%- assign noted = false -%}
+          {%- for f in d.fields -%}
+            {%- case f.outcome -%}{%- when "supersede", "support", "retain-conflict", "escalate" -%}{%- assign noted = true -%}{%- endcase -%}
+          {%- endfor -%}
+          {%- if noted %}|the {{ d.kind | downcase }}{% endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- assign later_kinds = later_kinds | remove_first: "|" | split: "|" %}
+      <div class="c-doc-demo__s-notes">
+        <p class="c-doc-demo__s-head" id="doc-demo-notes">What a stateful system notes when {% for k in later_kinds %}{% if forloop.last and forloop.length > 1 %} and {% elsif forloop.index > 1 %}, {% endif %}{{ k }}{% endfor %} arrive</p>
+        <ul class="c-doc-demo__s-list" aria-labelledby="doc-demo-notes">
+          {%- for d in docs %}
+          {%- assign di = forloop.index0 %}
+          {%- for f in d.fields %}
+          {%- case f.outcome %}
+          {%- when "supersede", "support", "retain-conflict", "escalate" %}
+          {%- comment -%} The claim in force before this document: the latest earlier value for the same key and scope. {%- endcomment -%}
+          {%- assign prev = nil %}
+          {%- for d2 in docs %}
+            {%- if forloop.index0 < di %}
+              {%- for f2 in d2.fields %}
+                {%- if f2.key == f.key and f2.scope == f.scope and f2.outcome != "support" and f2.outcome != "retain-conflict" and f2.outcome != "escalate" %}{% assign prev = f2 %}{% endif %}
+              {%- endfor %}
+            {%- endif %}
+          {%- endfor %}
+          {%- assign r = d.regions | where: "id", f.region | first %}
+          {%- assign oc = outcomes | where: "id", f.outcome | first %}
+          <li data-outcome="{{ f.outcome }}"><span class="c-doc-demo__s-outcome">{{ oc.name | default: f.outcome }}</span> <span><b>{{ f.label }}</b>
+            {%- case f.outcome %}
+            {%- when "supersede" %}: {{ prev.value }} → {{ f.value }} from {{ d.effective | default: d.date }}
+            {%- when "support" %}: {{ f.value }}, {{ prev.value }} stands
+            {%- else %} on the {{ d.kind | downcase }}: {{ f.value }} vs {{ prev.value }} in force
+            {%- endcase %} <span class="c-doc-demo__s-prov">({{ d.ref }}{% if r.section %} {{ r.section }}{% endif %})</span></span></li>
+          {%- endcase %}
+          {%- endfor %}
+          {%- endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="c-doc-demo__app js-only" data-app></div>
+  </div>
+
+  {%- assign number_words = "zero,one,two,three,four,five,six,seven,eight,nine,ten" | split: "," %}
+  <figcaption class="figure__caption c-doc-demo__caption">{{ demo.disclaimer }} Outcomes follow the paper’s {{ number_words[outcomes.size] | default: outcomes.size }} reconciliation outcomes; {% for o in named_outcomes %}{% if forloop.last and forloop.length > 1 %} and {% elsif forloop.index > 1 %}, {% endif %}{{ o.name | downcase }}{% endfor %} are named there without a definition, so their use here is our reading.</figcaption>
+
+  <script type="application/json" data-for="doc-demo">{"page":{{ demo.page | jsonify }},"documents":{{ docs | jsonify }},"outcomes":{{ outcomes | jsonify }}}</script>
+</figure>

@@ -1,0 +1,104 @@
+/* unlearning: five-level verifiable forgetting ladder (.c-unlearning) */
+
+.c-unlearning__badges { display: inline-flex; flex-wrap: wrap; gap: var(--sp-2); }
+
+/* --- Ladder (static list, enhanced by JS) ------------------------------- */
+.c-unlearning__levels { position: relative; display: grid; gap: var(--sp-2); margin: 0; padding: 0; list-style: none; }
+.c-unlearning__level { position: relative; display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: var(--sp-3); padding: var(--sp-3) var(--sp-4) var(--sp-3) var(--sp-3); border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); transition: border-color var(--dur-2) var(--ease), background-color var(--dur-2) var(--ease); }
+.c-unlearning__level + .c-unlearning__level::before { content: ""; position: absolute; top: calc(-1 * var(--sp-2) - 1px); left: calc(var(--sp-3) + 1.125rem); width: 1px; height: var(--sp-2); background: var(--line-2); }
+.c-unlearning__num { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border: 1.5px solid var(--control); border-radius: 50%; background: var(--surface); color: var(--ink-2); font-family: var(--font-serif); font-size: var(--fs-lg); font-weight: 600; line-height: 1; transition: background-color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
+.c-unlearning__level[data-status="unbuilt"] .c-unlearning__num { border-style: dashed; }
+.c-unlearning__rung { min-width: 0; }
+.c-unlearning__kicker { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-unlearning__name { margin-top: 2px; font-size: var(--fs-base); }
+.c-unlearning__desc { margin-top: var(--sp-1); color: var(--ink-2); font-size: var(--fs-sm); }
+.c-unlearning__meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); margin-top: var(--sp-2); }
+.c-unlearning__metric { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: 0.02em; }
+.c-unlearning__note { margin-top: var(--sp-4); padding: var(--sp-3) var(--sp-4); border-left: 3px solid var(--warn); border-radius: var(--radius-xs); background: var(--warn-soft); color: var(--ink); font-size: var(--fs-sm); }
+
+/* --- Interactive -------------------------------------------------------- */
+.c-unlearning__app { container: c-unlearning / inline-size; display: grid; gap: var(--sp-4); }
+.c-unlearning__app .c-unlearning__note { margin-top: 0; }
+.c-unlearning [aria-disabled="true"] { cursor: not-allowed; opacity: 0.45; }
+
+.c-unlearning__request { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: baseline; gap: var(--sp-1) var(--sp-4); padding: var(--sp-3) var(--sp-4); border: 1px dashed var(--st-P); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--st-P) 5%, var(--surface)); }
+.c-unlearning__request-k { color: var(--st-P); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-unlearning__request-k .math { text-transform: none; letter-spacing: 0; font-size: var(--fs-sm); }
+.c-unlearning__request-v { color: var(--ink); font-weight: 600; }
+.c-unlearning__request-doc { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); }
+
+.c-unlearning__controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+.c-unlearning__buttons { --cluster: var(--sp-2); }
+.c-unlearning__next { min-width: 11rem; }
+.c-unlearning__stop { min-height: 40px; white-space: normal; line-height: 1.3; text-align: left; }
+.c-unlearning__stop::before { content: ""; flex: none; width: 14px; height: 14px; border: 1.5px solid currentColor; border-radius: var(--radius-xs); }
+.c-unlearning__stop[aria-pressed="true"]::before { background: currentColor; box-shadow: inset 0 0 0 2px var(--ink); }
+.c-unlearning__status { color: var(--ink-2); font-size: var(--fs-sm); }
+
+.c-unlearning__callout { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); border: 1px solid var(--line); border-left: 3px solid var(--warn); border-radius: var(--radius-sm); background: var(--warn-soft); color: var(--ink); font-size: var(--fs-sm); }
+.c-unlearning__callout p { flex: 1 1 22rem; }
+
+.c-unlearning__layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: start; gap: var(--sp-5); }
+
+/* Rung states */
+.c-unlearning__level.is-done { border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+.c-unlearning__level.is-done .c-unlearning__num { border-style: solid; border-color: var(--ok); background: var(--ok); color: var(--surface); }
+.c-unlearning__level.is-next { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.c-unlearning__level.is-held { background: var(--surface-2); }
+.c-unlearning__level.is-held .c-unlearning__name, .c-unlearning__level.is-held .c-unlearning__desc { color: var(--ink-3); }
+.c-unlearning__effect { margin-top: var(--sp-2); padding: var(--sp-2) var(--sp-3); border-radius: var(--radius-xs); background: var(--ok-soft); color: var(--ink); font-size: var(--fs-sm); }
+.c-unlearning__effect-k { color: var(--ok); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-unlearning__level[data-level="4"] .c-unlearning__effect, .c-unlearning__level[data-level="5"] .c-unlearning__effect { background: var(--surface-3); color: var(--ink-2); }
+.c-unlearning__level[data-level="4"] .c-unlearning__effect-k, .c-unlearning__level[data-level="5"] .c-unlearning__effect-k { color: var(--ink-3); }
+.c-unlearning__level[data-level="4"].is-done .c-unlearning__num, .c-unlearning__level[data-level="5"].is-done .c-unlearning__num { border-style: dashed; border-color: var(--ink-3); background: var(--surface-3); color: var(--ink-2); }
+
+.c-unlearning__today { display: flex; align-items: center; gap: var(--sp-3); margin: var(--sp-1) 0; color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-unlearning__today::before, .c-unlearning__today::after { content: ""; flex: 1; border-top: 1.5px dashed var(--line-2); }
+.c-unlearning__today.is-active { color: var(--warn); }
+.c-unlearning__today.is-active::before, .c-unlearning__today.is-active::after { border-color: var(--warn); }
+.c-unlearning__today + .c-unlearning__level::before { display: none; }
+
+/* Stores and probes */
+.c-unlearning__panel { display: grid; gap: var(--sp-3); padding: var(--sp-4); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-2); }
+.c-unlearning__panel-title { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-unlearning__stores { display: grid; gap: var(--sp-2); margin: 0; padding: 0; list-style: none; }
+.c-unlearning__store { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--sp-3); padding: var(--sp-2) var(--sp-3); border: 1px solid var(--line-2); border-radius: var(--radius-xs); background: var(--surface); transition: background-color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
+.c-unlearning__store-name { color: var(--ink); font-size: var(--fs-sm); font-weight: 600; }
+.c-unlearning__store-what { grid-column: 1; color: var(--ink-2); font-family: var(--font-mono); font-size: var(--fs-2xs); overflow-wrap: anywhere; }
+.c-unlearning__store-state { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
+.c-unlearning__store[data-state="present"] { border-color: color-mix(in srgb, var(--warn) 50%, var(--line)); }
+.c-unlearning__store[data-state="present"] .c-unlearning__store-state { color: var(--warn); }
+.c-unlearning__store[data-state="removed"] { border-style: dashed; background: transparent; }
+.c-unlearning__store[data-state="removed"] .c-unlearning__store-what { color: var(--ink-3); text-decoration: line-through; }
+.c-unlearning__store[data-state="removed"] .c-unlearning__store-state { color: var(--ok); }
+.c-unlearning__store[data-state="na"] { border-style: dashed; background: transparent; }
+.c-unlearning__store[data-state="na"] .c-unlearning__store-name, .c-unlearning__store[data-state="na"] .c-unlearning__store-what, .c-unlearning__store[data-state="na"] .c-unlearning__store-state { color: var(--ink-3); }
+
+.c-unlearning__probes { display: grid; gap: var(--sp-3); padding-top: var(--sp-3); border-top: 1px solid var(--line); }
+.c-unlearning__probe-pair { display: grid; gap: var(--sp-3); }
+.c-unlearning__probe-k { margin-bottom: var(--sp-1); color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-unlearning__probe { --tone: var(--line-2); padding: var(--sp-2) var(--sp-3); border: 1px solid var(--line); border-left: 3px solid var(--tone); border-radius: var(--radius-xs); background: var(--surface); }
+.c-unlearning__probe[data-tone="present"] { --tone: var(--warn); }
+.c-unlearning__probe[data-tone="removed"], .c-unlearning__probe[data-tone="kept"] { --tone: var(--ok); }
+.c-unlearning__probe-q { color: var(--ink-2); font-size: var(--fs-sm); }
+.c-unlearning__probe-a { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-1) var(--sp-2); margin-top: 2px; }
+.c-unlearning__probe-v { color: var(--ink); font-family: var(--font-serif); font-size: var(--fs-lg); font-weight: 600; }
+.c-unlearning__probe-cite { padding: 0 var(--sp-2); border: 1px dashed var(--st-P); border-radius: var(--radius-xs); color: var(--st-P); font-family: var(--font-mono); font-size: var(--fs-2xs); }
+.c-unlearning__probe-verdict { margin-top: 2px; color: var(--ink-3); font-size: var(--fs-xs); }
+.c-unlearning__probe[data-tone="present"] .c-unlearning__probe-verdict { color: var(--warn); }
+.c-unlearning__caveat { color: var(--ink-3); font-size: var(--fs-xs); }
+
+@container c-unlearning (max-width: 680px) {
+  .c-unlearning__layout { grid-template-columns: minmax(0, 1fr); }
+  .c-unlearning__request { grid-template-columns: minmax(0, 1fr); }
+}
+@container c-unlearning (max-width: 440px) {
+  .c-unlearning__buttons { width: 100%; }
+  .c-unlearning__buttons .btn { flex: 1 1 auto; padding-inline: var(--sp-3); }
+  .c-unlearning__next { min-width: 0; flex-basis: 100%; }
+  .c-unlearning__level { grid-template-columns: 1.75rem minmax(0, 1fr); padding-inline: var(--sp-3); }
+  .c-unlearning__num { width: 1.75rem; height: 1.75rem; font-size: var(--fs-base); }
+  .c-unlearning__level + .c-unlearning__level::before { left: calc(var(--sp-3) + 0.875rem); }
+}
+.c-unlearning__meta .badge { white-space: normal; }
+.c-unlearning__level[data-level="4"].is-done, .c-unlearning__level[data-level="5"].is-done { border-color: var(--line); border-style: dashed; }

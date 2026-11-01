@@ -1,0 +1,85 @@
+{%- comment -%}
+  Capability map: Fig. 2 of the survey, redrawn by persistence band.
+  Static baseline: the bands (top = most persistent) with their groups,
+  scopes and members, the target over the empty top bands, and the
+  empty-band note. assets/js/components/capability-map.js upgrades it in
+  place: selectable groups, a detail panel and a "Highlight my work" toggle.
+  Data: site.data.paper.capability_map, .target, .lineage (rows with `own`
+  are the author's models) and .audit (for cross-references to Table IV).
+{%- endcomment -%}
+{%- assign paper = site.data.paper -%}
+{%- assign cm = paper.capability_map -%}
+{%- assign explorer = '/research/persistent-state/' | relative_url -%}
+
+{%- comment -%} Empty bands at the top hold the target; the first band with groups is the current frontier. {%- endcomment -%}
+{%- assign n_empty = 0 -%}
+{%- assign reached = false -%}
+{%- for b in cm.bands -%}
+  {%- if b.groups.size == 0 and reached == false -%}{%- assign n_empty = n_empty | plus: 1 -%}{%- else -%}{%- assign reached = true -%}{%- endif -%}
+{%- endfor -%}
+{%- assign empty_labels = "" | split: "" -%}
+{%- for b in cm.bands limit: n_empty -%}{%- assign empty_labels = empty_labels | push: b.label -%}{%- endfor -%}
+
+{%- assign own = "" | split: "" -%}
+{%- for r in paper.lineage.rows -%}{%- if r.own -%}
+  {%- assign op = site.publications | where: "slug", r.own | first -%}
+  {%- capture item -%}{{ r.method | jsonify }}: {"year": {{ r.year | jsonify }}, "title": {{ op.title | jsonify }}, "venue": {{ op.venue_short | jsonify }}, "url": {{ op.url | relative_url | jsonify }}}{%- endcapture -%}
+  {%- assign own = own | push: item -%}
+{%- endif -%}{%- endfor -%}
+
+<figure class="figure c-capability-map" data-component="capability-map" id="capability-map" aria-labelledby="capability-map-label">
+  <div class="figure__head">
+    <span class="figure__label" id="capability-map-label"><b>Capability map</b> · Fig. 2</span>
+    <span class="c-capability-map__badges"><span class="badge badge--accent js-only">Interactive</span><span class="badge badge--plain badge--muted">From the paper</span></span>
+  </div>
+  <div class="figure__body c-capability-map__body">
+    <div class="c-capability-map__plot" style="grid-template-rows: repeat({{ cm.bands.size }}, auto)">
+      <div class="c-capability-map__axis" aria-hidden="true"><span>More persistent</span></div>
+      {%- if n_empty > 0 %}
+      <div class="c-capability-map__target" style="grid-row: 1 / span {{ n_empty }}">
+        <p class="c-capability-map__target-label"><span class="visually-hidden">Target, spanning the {{ empty_labels | join: " and " }} bands: </span><span aria-hidden="true">Target </span><span class="math">{{ paper.target.symbol }}</span></p>
+        <ul class="c-capability-map__props">
+          {%- for t in paper.target.properties %}
+          <li>{{ t }}</li>
+          {%- endfor %}
+        </ul>
+      </div>
+      {%- endif %}
+      <ol class="c-capability-map__bands" aria-label="Persistence bands, most persistent first">
+        {%- for b in cm.bands %}
+        <li class="c-capability-map__band{% if b.groups.size == 0 %} is-empty{% endif %}{% if forloop.index0 == n_empty and n_empty > 0 %} is-frontier{% endif %}" data-band="{{ b.id }}">
+          <span class="c-capability-map__band-label">{{ b.label }}{% if b.groups.size == 0 %}<span class="c-capability-map__empty"><span aria-hidden="true">∅ </span>Empty<span class="visually-hidden">: no surveyed system reaches this band</span></span>{% endif %}</span>
+          <div class="c-capability-map__band-body">
+            {%- if b.groups.size > 0 %}
+            {%- if forloop.index0 == n_empty and n_empty > 0 %}
+            <span class="c-capability-map__frontier" aria-hidden="true">Current frontier</span>
+            <span class="c-capability-map__gap" aria-hidden="true"><span class="c-capability-map__gap-label">the gap</span></span>
+            {%- endif %}
+            <ul class="c-capability-map__groups">
+              {%- for g in b.groups %}
+              <li class="c-capability-map__group" data-group="{{ b.id }}:{{ forloop.index0 }}">
+                <p class="c-capability-map__group-head"><span class="c-capability-map__group-name">{{ g.name }}</span> <span class="c-capability-map__scope"><span class="visually-hidden">, scope: </span>{{ g.scope }}</span></p>
+                <ul class="c-capability-map__members">
+                  {%- for m in g.members %}<li class="c-capability-map__member">{{ m }}</li>{% endfor -%}
+                </ul>
+              </li>
+              {%- endfor %}
+            </ul>
+            {%- endif %}
+          </div>
+        </li>
+        {%- endfor %}
+      </ol>
+    </div>
+    <script type="application/json" data-for="capability-map">{
+      "bands": {{ cm.bands | jsonify }},
+      "emptyNote": {{ cm.empty_note | jsonify }},
+      "target": {{ paper.target | jsonify }},
+      "own": { {{ own | join: ", " }} },
+      "lineage": {{ paper.lineage.rows | map: "method" | jsonify }},
+      "audit": {{ paper.audit.rows | map: "name" | jsonify }},
+      "links": { "lineage": {{ explorer | append: "#lineage" | jsonify }}, "audit": {{ explorer | append: "#audit" | jsonify }} }
+    }</script>
+  </div>
+  <figcaption class="figure__caption"><strong>{{ cm.empty_note }}</strong> Redrawn from Fig. 2 of the paper, which places groups of systems, not individual cells, by how much they persist; position within a band carries no meaning.</figcaption>
+</figure>

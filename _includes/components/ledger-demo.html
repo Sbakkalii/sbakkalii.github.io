@@ -1,0 +1,182 @@
+{%- comment -%}
+  AgentForge decision-ledger demo (products page, #agentforge).
+
+  Static baseline: the ledger entry (decision, dossier, watch conditions, the
+  six timestamps) and the news stream with its routing signals and notes,
+  plus the two results the demo illustrates. assets/js/components/ledger-demo.js
+  adds the router, the timeline, the outcome at t_r and the two widgets.
+
+  Data: site.data.demo.ledger and site.data.demo.disclaimer. Notation, rules
+  and propositions follow the companion paper, read from site.publications.
+  Optional parameter: id (default "ledger-demo").
+{%- endcomment -%}
+{%- assign uid = include.id | default: "ledger-demo" -%}
+{%- assign L = site.data.demo.ledger -%}
+{%- assign D = L.decision -%}
+{%- assign paper = site.publications | where: "slug", "2026-fresh-at-decision" | first -%}
+{%- assign tv = D.times | where: "key", "t_v" | first -%}
+{%- assign td = D.times | where: "key", "t_d" | first -%}
+{%- assign tr = D.times | where: "key", "t_r" | first -%}
+{%- assign ta = D.times | where: "key", "t_a" | first -%}
+{%- assign sec_v = tv.date | date: "%s" | plus: 0 -%}
+{%- assign sec_d = td.date | date: "%s" | plus: 0 -%}
+{%- assign sec_a = ta.date | date: "%s" | plus: 0 -%}
+{%- comment -%} Whole days; +12 h absorbs a daylight-saving hour. {%- endcomment -%}
+{%- assign d_fresh = sec_d | minus: sec_v | plus: 43200 | divided_by: 86400 -%}
+{%- assign d_act = sec_a | minus: sec_d | plus: 43200 | divided_by: 86400 -%}
+{%- assign d_total = d_fresh | plus: d_act -%}
+<figure class="figure c-ledger-demo" data-component="ledger-demo" id="{{ uid }}" aria-labelledby="{{ uid }}-label">
+  <div class="figure__head">
+    <span class="figure__label" id="{{ uid }}-label">AgentForge · <b>Decision ledger</b></span>
+    <span class="cluster c-ledger-demo__badges">
+      <span class="badge badge--accent js-only">Interactive</span>
+      <span class="badge badge--muted">Illustrative</span>
+    </span>
+  </div>
+
+  <div class="figure__body c-ledger-demo__body">
+
+    <article class="c-ledger-demo__entry" aria-labelledby="{{ uid }}-entry-h">
+      <header class="c-ledger-demo__entry-head">
+        <h3 class="c-ledger-demo__kicker" id="{{ uid }}-entry-h">Ledger entry</h3>
+        <p class="c-ledger-demo__entry-status">Open · revisable until <span class="math">t<sub>r</sub></span> = <time datetime="{{ tr.date }}">{{ tr.date | date: "%-d %b %Y" }}</time></p>
+      </header>
+
+      <div class="c-ledger-demo__entry-grid">
+        <section class="c-ledger-demo__block c-ledger-demo__block--decision" aria-labelledby="{{ uid }}-decision-h">
+          <h4 class="c-ledger-demo__label" id="{{ uid }}-decision-h">Decision</h4>
+          <p class="c-ledger-demo__title">{{ D.title }}</p>
+          <dl class="c-ledger-demo__options">
+            <dt>Chosen</dt>
+            <dd><span class="c-ledger-demo__opt c-ledger-demo__opt--chosen">{{ D.chosen }}</span></dd>
+            <dt>Alternatives</dt>
+            <dd>
+              <ul class="list-plain">
+                {%- for alt in D.alternatives %}
+                <li class="c-ledger-demo__opt">{{ alt }}</li>
+                {%- endfor %}
+              </ul>
+            </dd>
+          </dl>
+          <p class="c-ledger-demo__evidence"><span class="c-ledger-demo__evidence-tab">Evidence</span>{{ D.evidence }}</p>
+        </section>
+
+        <section class="c-ledger-demo__block c-ledger-demo__block--dossier" aria-labelledby="{{ uid }}-dossier-h">
+          <h4 class="c-ledger-demo__label" id="{{ uid }}-dossier-h">Dossier</h4>
+          <ul class="c-ledger-demo__facts">
+            {%- for fact in D.dossier %}
+            <li>{{ fact }}</li>
+            {%- endfor %}
+          </ul>
+        </section>
+
+        <section class="c-ledger-demo__block c-ledger-demo__block--watch" aria-labelledby="{{ uid }}-watch-h">
+          <h4 class="c-ledger-demo__label" id="{{ uid }}-watch-h">Watch conditions</h4>
+          <ul class="c-ledger-demo__facts c-ledger-demo__facts--watch">
+            {%- for cond in D.watch %}
+            <li>{{ cond }}</li>
+            {%- endfor %}
+          </ul>
+        </section>
+
+        <section class="c-ledger-demo__block c-ledger-demo__block--times" aria-labelledby="{{ uid }}-times-h">
+          <h4 class="c-ledger-demo__label" id="{{ uid }}-times-h">Timestamps</h4>
+          <table class="c-ledger-demo__times">
+            <caption class="visually-hidden">The six timestamps of this decision</caption>
+            <thead class="visually-hidden">
+              <tr><th scope="col">Symbol</th><th scope="col">Meaning</th><th scope="col">Date</th></tr>
+            </thead>
+            <tbody>
+              {%- for t in D.times %}{% assign kp = t.key | split: "_" %}
+              <tr data-key="{{ t.key }}"{% if t.key == "t_r" %} class="is-deadline"{% endif %}>
+                <th scope="row"><span class="math">{{ kp[0] }}<sub>{{ kp[1] }}</sub></span></th>
+                <td>{{ t.label }}</td>
+                <td class="c-ledger-demo__date"><time datetime="{{ t.date }}">{{ t.date | date: "%-d %b %Y" }}</time></td>
+              </tr>
+              {%- endfor %}
+            </tbody>
+          </table>
+          <p class="c-ledger-demo__gaps">
+            <span><span class="math">t<sub>a</sub> − t<sub>v</sub></span> = <span class="math">Δ<sub>fresh</sub></span> + <span class="math">Δ<sub>act</sub></span> = {{ d_fresh }} + {{ d_act }} = {{ d_total }} days</span>
+            <span class="muted">with <span class="math">Δ<sub>fresh</sub> = t<sub>d</sub> − t<sub>v</sub></span> and <span class="math">Δ<sub>act</sub> = t<sub>a</sub> − t<sub>d</sub></span></span>
+          </p>
+        </section>
+      </div>
+    </article>
+
+    <div class="c-ledger-demo__run js-only" data-ledger="run"></div>
+
+    <section class="c-ledger-demo__stream" aria-labelledby="{{ uid }}-news-h">
+      <div class="c-ledger-demo__stream-head">
+        <h3 class="c-ledger-demo__kicker" id="{{ uid }}-news-h">News stream · {{ L.news.size }} items</h3>
+        <p class="c-ledger-demo__signals-key">Routing signals: <b>name</b> mentions a name from the decision · <b>dossier</b> matches its dossier · <b>watch</b> matches a watch condition.</p>
+      </div>
+      <ol class="c-ledger-demo__news" data-ledger="news">
+        {%- for n in L.news %}
+        <li class="c-ledger-demo__item" data-id="{{ n.id }}">
+          <p class="c-ledger-demo__item-meta">
+            <time datetime="{{ n.date }}">{{ n.date | date: "%-d %b %Y" }}</time>
+            <span class="c-ledger-demo__item-id">{{ n.id }}</span>
+            {%- if n.decisive %} <span class="c-ledger-demo__flag c-ledger-demo__flag--decisive">Decisive</span>{% endif %}
+            {%- if n.decoy %} <span class="c-ledger-demo__flag">Decoy</span>{% endif %}
+          </p>
+          <p class="c-ledger-demo__item-text">{{ n.text }}</p>
+          <ul class="c-ledger-demo__signals" aria-label="Routing signals">
+            <li class="c-ledger-demo__sig" data-signal="names" data-on="{% if n.names %}true{% else %}false{% endif %}">name <span aria-hidden="true">{% if n.names %}✓{% else %}–{% endif %}</span><span class="visually-hidden">: {% if n.names %}yes{% else %}no{% endif %}</span></li>
+            <li class="c-ledger-demo__sig" data-signal="dossier" data-on="{% if n.dossier %}true{% else %}false{% endif %}">dossier <span aria-hidden="true">{% if n.dossier %}✓{% else %}–{% endif %}</span><span class="visually-hidden">: {% if n.dossier %}yes{% else %}no{% endif %}</span></li>
+            <li class="c-ledger-demo__sig" data-signal="watch" data-on="{% if n.watch %}true{% else %}false{% endif %}">watch <span aria-hidden="true">{% if n.watch %}✓{% else %}–{% endif %}</span><span class="visually-hidden">: {% if n.watch %}yes{% else %}no{% endif %}</span></li>
+            {%- if n.after_activity %}
+            <li class="c-ledger-demo__sig c-ledger-demo__sig--time" data-signal="after_activity" data-on="true">starts after the activity</li>
+            {%- endif %}
+            {%- if n.late or n.date > tr.date %}
+            <li class="c-ledger-demo__sig c-ledger-demo__sig--time" data-signal="late" data-on="true">after <span class="math">t<sub>r</sub></span></li>
+            {%- endif %}
+          </ul>
+          <p class="c-ledger-demo__item-note">{{ n.effect }}</p>
+        </li>
+        {%- endfor %}
+      </ol>
+    </section>
+
+    <section class="c-ledger-demo__theory" aria-labelledby="{{ uid }}-theory-h">
+      <h3 class="c-ledger-demo__divider" id="{{ uid }}-theory-h">Why a decision goes stale, and what routing buys</h3>
+      <div class="c-ledger-demo__theory-grid">
+        <section class="c-ledger-demo__panel" aria-labelledby="{{ uid }}-p1-h">
+          <div class="c-ledger-demo__panel-head">
+            <h4 class="c-ledger-demo__kicker" id="{{ uid }}-p1-h">Proposition 1 · Freshness ceiling</h4>
+          </div>
+          <p class="c-ledger-demo__formula">
+            <span>Pr[<i>f</i> holds at <i>t</i><sub>a</sub>]</span>
+            <span>= <i>e</i><sup>−λ<sub>f</sub>Δ<sub>fresh</sub></sup> · <i>e</i><sup>−λ<sub>f</sub>Δ<sub>act</sub></sup></span>
+            <span>≤ <i>e</i><sup>−λ<sub>f</sub>Δ<sub>act</sub></sup></span>
+          </p>
+          <p class="c-ledger-demo__panel-text">If the fact <i>f</i> behind the evidence changes at a constant rate <span class="math">λ<sub>f</sub></span>, the chance it still holds at action time is capped by the gap between decision and action, however fresh the evidence was when the decision was made.</p>
+          <div class="c-ledger-demo__widget js-only" data-ledger="ceiling" data-d-fresh="{{ d_fresh }}" data-d-act="{{ d_act }}"></div>
+        </section>
+
+        <section class="c-ledger-demo__panel" aria-labelledby="{{ uid }}-acc-h">
+          <div class="c-ledger-demo__panel-head">
+            <h4 class="c-ledger-demo__kicker" id="{{ uid }}-acc-h">Accuracy factorisation</h4>
+            <span class="badge badge--muted js-only">Hypothetical inputs</span>
+          </div>
+          <p class="c-ledger-demo__formula">
+            <span><i>A</i> = (1 − <i>π</i>)<i>K</i></span>
+            <span>+ <i>π</i>[<i>ρS</i> + (1 − <i>ρ</i>)<i>L</i>]</span>
+          </p>
+          <p class="c-ledger-demo__panel-text">Accuracy splits into routing and judging: <i>π</i> is the share of decisions that should change, <i>ρ</i> the routing recall, <i>S</i> the rate of switching when the news is delivered, <i>L</i> the rate of switching when it is not, and <i>K</i> the rate of keeping a decision that should stand.</p>
+          <div class="c-ledger-demo__widget js-only" data-ledger="accuracy"></div>
+        </section>
+      </div>
+    </section>
+
+    <script type="application/json" data-for="ledger-demo">{"ledger": {{ L | jsonify }}, "disclaimer": {{ site.data.demo.disclaimer | jsonify }}, "consequence": "route blocked by the Le Havre strike"}</script>
+  </div>
+
+  <figcaption class="figure__caption c-ledger-demo__caption">
+    <span class="js-only"><strong>How to read.</strong> Pick a router: it decides which news reaches the open decision before its revision deadline <span class="math">t<sub>r</sub></span>, and the outcome is judged when the decision is carried out at <span class="math">t<sub>a</sub></span>. The demo assumes the agent switches whenever decisive news reaches it in time. </span>
+    {%- if paper %}
+    Timestamps, routing rules, Proposition 1 and the factorisation follow <a href="{{ paper.url | relative_url }}">{{ paper.title | split: ":" | first }}</a> ({{ paper.authors }}, {{ paper.venue_short }}), which also studies routing all items, BM25 and dense retrieval over the decision text, the dossier or the watch conditions, dependency queries and oracle routers.
+    {%- endif %}
+    <span class="note-illustrative c-ledger-demo__disclaimer">{{ site.data.demo.disclaimer }}</span>
+  </figcaption>
+</figure>

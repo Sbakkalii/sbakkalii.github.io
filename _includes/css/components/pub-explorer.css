@@ -1,0 +1,406 @@
+/* pub-explorer: styles scoped under .c-pub-explorer
+   From 1024 px: a sticky side panel (search, facets, year index) beside the
+   list. Below: a stacked toolbar above the list; on phones the facets fold
+   behind a "Filters" button. Publication rows reuse the global .pub styles. */
+
+.c-pub-explorer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+}
+html:not(.js) .c-pub-explorer__side { display: none; }
+
+.c-pub-explorer__label {
+  margin: 0 0 var(--sp-2);
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-caps);
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.c-pub-explorer__hint {
+  margin-left: var(--sp-1);
+  color: var(--ink-3);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+/* --- Search field ---------------------------------------------------------- */
+.c-pub-explorer__panel { display: grid; gap: var(--sp-5); }
+.c-pub-explorer__field { position: relative; }
+.c-pub-explorer__field > svg {
+  position: absolute;
+  top: 50%;
+  left: var(--sp-3);
+  width: 18px;
+  height: 18px;
+  color: var(--ink-3);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.c-pub-explorer__input { padding-inline: 2.5rem 2.75rem; font-size: var(--fs-sm); }
+.c-pub-explorer__input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+.c-pub-explorer__clear {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink-3);
+  transform: translateY(-50%);
+}
+.c-pub-explorer__clear:hover { background: var(--surface-3); color: var(--ink); }
+.c-pub-explorer__clear svg { display: block; width: 16px; height: 16px; }
+
+.c-pub-explorer__toggle { display: none; }
+.c-pub-explorer__toggle-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  margin-left: var(--sp-1);
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+}
+
+/* --- Facets ---------------------------------------------------------------- */
+.c-pub-explorer__facets { display: grid; gap: var(--sp-5); }
+.c-pub-explorer__chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.c-pub-explorer__chip { min-height: 32px; font-size: var(--fs-xs); }
+.c-pub-explorer__chip .chip__count { min-width: 1.4ch; font-variant-numeric: tabular-nums; text-align: right; }
+.c-pub-explorer__chip.is-empty:not([aria-pressed="true"]) { border-color: var(--line-2); border-style: dashed; color: var(--ink-3); }
+.c-pub-explorer__chip.is-empty:not([aria-pressed="true"]):hover { border-color: var(--control); color: var(--ink-2); }
+.c-pub-explorer__check {
+  display: inline-grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+}
+.c-pub-explorer__first[aria-pressed="true"] .c-pub-explorer__check::after {
+  content: "";
+  width: 8px;
+  height: 4px;
+  border-bottom: 2px solid currentColor;
+  border-left: 2px solid currentColor;
+  transform: translateY(-1px) rotate(-45deg);
+}
+
+/* --- Year index (side panel) ------------------------------------------------ */
+.c-pub-explorer__years { display: none; }
+.c-pub-explorer__year-list { margin: 0; padding: 0; list-style: none; }
+.c-pub-explorer__year-link {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 3rem;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-inline: calc(-1 * var(--sp-2));
+  padding: 4px var(--sp-2);
+  border-radius: var(--radius-xs);
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+}
+a.c-pub-explorer__year-link[href]:hover { background: var(--surface-3); color: var(--ink); }
+.c-pub-explorer__year-link[aria-current="true"] { color: var(--ink); font-weight: 600; }
+.c-pub-explorer__year-link[aria-current="true"] .c-pub-explorer__year-num { box-shadow: inset 0 -2px 0 var(--accent); }
+.c-pub-explorer__year-link[aria-disabled="true"] { color: var(--ink-3); cursor: default; }
+.c-pub-explorer__year-num { justify-self: start; }
+.c-pub-explorer__year-n { color: inherit; text-align: right; }
+.c-pub-explorer__year-bar { position: relative; height: 6px; }
+.c-pub-explorer__year-bar::before,
+.c-pub-explorer__year-bar i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 3px;
+}
+.c-pub-explorer__year-bar::before { content: ""; width: calc(var(--n) / var(--max, 10) * 100%); background: var(--line); }
+.c-pub-explorer__year-bar i {
+  width: calc(var(--m, var(--n)) / var(--max, 10) * 100%);
+  background: var(--ink-3);
+  transition: width var(--dur-2) var(--ease);
+}
+.c-pub-explorer.is-filtered .c-pub-explorer__year-bar i { background: var(--accent); }
+.c-pub-explorer__year-link[aria-current="true"] .c-pub-explorer__year-bar i { background: var(--ink); }
+.c-pub-explorer.is-filtered .c-pub-explorer__year-link[aria-current="true"] .c-pub-explorer__year-bar i { background: var(--accent); }
+
+/* --- Result bar -------------------------------------------------------------- */
+.c-pub-explorer__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-3);
+  padding-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--line);
+}
+.c-pub-explorer__count { color: var(--ink-2); font-size: var(--fs-sm); }
+.c-pub-explorer__count b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.c-pub-explorer__reset { min-height: 32px; padding-inline: var(--sp-2); color: var(--accent); }
+.c-pub-explorer__reset:hover { color: var(--accent-2); }
+.c-pub-explorer__reset svg { width: 14px; height: 14px; }
+.c-pub-explorer__sort { margin-left: auto; }
+.c-pub-explorer__sort button { min-height: 30px; font-size: var(--fs-xs); }
+
+/* --- Year groups ------------------------------------------------------------ */
+.c-pub-explorer__groups > .c-pub-explorer__year:not([hidden]) ~ .c-pub-explorer__year { margin-top: var(--sp-6); }
+.c-pub-explorer__year-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-5) 0 var(--sp-2);
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--font-serif);
+  font-size: var(--fs-xl);
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1.1;
+}
+.c-pub-explorer__year-count {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+/* Rows: the first visible row of a year has no top rule. */
+.c-pub-explorer .pubs > .pub { border-top: 0; }
+.c-pub-explorer .pubs > .pub:not([hidden]) ~ .pub { border-top: 1px solid var(--line); }
+.c-pub-explorer .pub { scroll-margin-top: calc(var(--header-h) + var(--sp-4)); }
+.c-pub-explorer .pub__venue span { display: block; }
+.c-pub-explorer__venue {
+  margin-top: 2px;
+  color: var(--ink-3);
+  font-family: var(--font-serif);
+  font-size: var(--fs-sm);
+  font-style: italic;
+  line-height: 1.45;
+}
+.c-pub-explorer__note {
+  margin-top: var(--sp-2);
+  padding-left: var(--sp-3);
+  border-left: 2px solid var(--line-2);
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+}
+.c-pub-explorer .pub__links { align-items: center; }
+.c-pub-explorer .pub mark { padding: 0 1px; }
+
+.c-pub-explorer__cite {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+}
+.c-pub-explorer__cite:hover { color: var(--accent-2); text-decoration: underline; text-underline-offset: 0.2em; }
+.c-pub-explorer__cite svg { width: 11px; height: 11px; flex: none; }
+
+/* --- Empty state: a dashed annotation box, like an empty document region --- */
+.c-pub-explorer__empty {
+  display: grid;
+  justify-items: start;
+  gap: var(--sp-2);
+  margin-top: var(--sp-6);
+  padding: var(--sp-6);
+  border: 1.5px dashed var(--line-2);
+  border-radius: var(--radius);
+}
+.c-pub-explorer__empty-title { color: var(--ink); font-family: var(--font-serif); font-size: var(--fs-lg); font-weight: 600; }
+.c-pub-explorer__empty .btn { margin-top: var(--sp-2); }
+.c-pub-explorer__empty .btn svg { width: 14px; height: 14px; }
+
+/* --- Cite dialog -------------------------------------------------------------- */
+.c-pub-explorer__dialog {
+  --veil: color-mix(in srgb, var(--ink) 34%, transparent);
+  width: min(42rem, calc(100vw - 2 * var(--sp-4)));
+  max-width: none;
+  max-height: min(88vh, 46rem);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-3);
+}
+.c-pub-explorer__dialog[open] { display: flex; flex-direction: column; }
+.c-pub-explorer__dialog::backdrop { background: var(--veil); }
+:root[data-theme="dark"] .c-pub-explorer__dialog { --veil: color-mix(in srgb, var(--bg) 72%, transparent); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .c-pub-explorer__dialog { --veil: color-mix(in srgb, var(--bg) 72%, transparent); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .c-pub-explorer__dialog[open] { animation: c-pub-explorer-in var(--dur-2) var(--ease-out); }
+}
+@keyframes c-pub-explorer-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.c-pub-explorer__dialog-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-4) var(--sp-4) var(--sp-5);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+.c-pub-explorer__dialog-heading { flex: 1; min-width: 0; padding-top: 2px; }
+.c-pub-explorer__dialog-kicker {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.c-pub-explorer__dialog-title {
+  margin-top: var(--sp-1);
+  font-family: var(--font-serif);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
+}
+.c-pub-explorer__dialog-close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-2);
+}
+.c-pub-explorer__dialog-close:hover { background: var(--surface-3); color: var(--ink); }
+.c-pub-explorer__dialog-close svg { width: 18px; height: 18px; }
+
+.c-pub-explorer__dialog-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-height: 0;
+  padding: var(--sp-4) var(--sp-5);
+}
+.c-pub-explorer__formats { align-self: flex-start; }
+.c-pub-explorer__formats button { min-height: 30px; font-size: var(--fs-xs); }
+.c-pub-explorer__citation {
+  flex: 1 1 auto;
+  min-height: 6rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+  font-size: var(--fs-xs);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.c-pub-explorer__citation.is-prose { font-family: var(--font-sans); font-size: var(--fs-sm); line-height: 1.6; }
+.c-pub-explorer__citation.is-prose code { font-family: inherit; font-size: inherit; }
+
+.c-pub-explorer__dialog-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  padding: var(--sp-3) var(--sp-5) var(--sp-4);
+  border-top: 1px solid var(--line);
+}
+.c-pub-explorer__copy { min-width: 9.5rem; }
+.c-pub-explorer__copy-icon { display: inline-flex; }
+.c-pub-explorer__copy-icon svg { width: 16px; height: 16px; }
+.c-pub-explorer__dialog-status { flex: 1; min-width: 10rem; color: var(--ok); font-size: var(--fs-sm); }
+.c-pub-explorer__dialog-link { font-size: var(--fs-sm); }
+
+/* --- Responsive ------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  .c-pub-explorer {
+    grid-template-columns: 15rem minmax(0, 1fr);
+    column-gap: clamp(var(--sp-6), 4vw, var(--sp-8));
+    align-items: start;
+  }
+  html:not(.js) .c-pub-explorer__side { display: block; }
+  .c-pub-explorer__side {
+    position: sticky;
+    top: calc(var(--header-h) + var(--sp-5));
+    display: grid;
+    gap: var(--sp-6);
+    max-height: calc(100vh - var(--header-h) - var(--sp-6));
+    margin: -4px;
+    padding: 4px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  .c-pub-explorer__years { display: block; padding-top: var(--sp-5); border-top: 1px solid var(--line); }
+  html:not(.js) .c-pub-explorer__years { padding-top: 0; border-top: 0; }
+}
+
+@media (max-width: 1023px) {
+  .c-pub-explorer__search > .c-pub-explorer__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .c-pub-explorer__facets { gap: var(--sp-3); }
+  .c-pub-explorer__group { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); align-items: start; gap: var(--sp-3); }
+  .c-pub-explorer__group > .c-pub-explorer__label { margin: 0; padding-top: 9px; }
+  .c-pub-explorer__group > .c-pub-explorer__first { grid-column: 2; justify-self: start; }
+  .c-pub-explorer__hint { display: block; margin: 2px 0 0; }
+}
+
+@media (max-width: 639px) {
+  .c-pub-explorer { gap: var(--sp-4); }
+  .c-pub-explorer__search { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-2); }
+  .c-pub-explorer__toggle { display: inline-flex; min-height: 44px; }
+  .c-pub-explorer__panel { gap: var(--sp-4); }
+  .c-pub-explorer__facets:not(.is-open) { display: none; }
+  .c-pub-explorer__facets { padding: var(--sp-4); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  .c-pub-explorer__chip { min-height: 36px; }
+  .c-pub-explorer__sort { margin-left: 0; }
+  .c-pub-explorer__bar { justify-content: space-between; }
+  .c-pub-explorer .pub { gap: var(--sp-1); padding-block: var(--sp-4); }
+  .c-pub-explorer .pub__venue { display: flex; flex-wrap: wrap; gap: 0 var(--sp-2); }
+  .c-pub-explorer .pub__venue span { display: inline; }
+  .c-pub-explorer .pub__venue span::before { content: "·"; margin-right: var(--sp-2); }
+  .c-pub-explorer__year-title { font-size: var(--fs-lg); }
+  .c-pub-explorer__dialog { width: calc(100vw - 2 * var(--sp-3)); max-height: calc(100dvh - 2 * var(--sp-3)); }
+  .c-pub-explorer__dialog-head { padding-left: var(--sp-4); }
+  .c-pub-explorer__dialog-body, .c-pub-explorer__dialog-foot { padding-inline: var(--sp-4); }
+}
+
+@media print {
+  .c-pub-explorer { display: block; }
+  .c-pub-explorer__side, .c-pub-explorer__bar, .c-pub-explorer__cite, .c-pub-explorer__dialog { display: none !important; }
+}

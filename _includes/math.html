@@ -1,0 +1,11 @@
+{%- comment -%}
+  Render plain-text notation from _data (E_t, P_cont(k), D_k+1, S_k^clean …)
+  with real sub/superscripts. Usage: {% include math.html text=paper.state.symbol %}
+  Longer patterns come first so "_cont" is not read as "_c" + "ont".
+  JavaScript components use mathHTML() from assets/js/lib/math.js instead.
+{%- endcomment -%}
+{%- assign m = include.text | escape -%}
+{%- assign m = m | replace: "_k+1", "<sub>k+1</sub>" | replace: "_t+1", "<sub>t+1</sub>" | replace: "^clean", "<sup>clean</sup>" | replace: "^corrupted", "<sup>corrupted</sup>" | replace: ")^k", ")<sup>k</sup>" -%}
+{%- assign m = m | replace: "_cont", "<sub>cont</sub>" | replace: "_cum", "<sub>cum</sub>" | replace: "_sch", "<sub>sch</sub>" | replace: "_sup", "<sub>sup</sub>" | replace: "_unl", "<sub>unl</sub>" | replace: "_del", "<sub>del</sub>" | replace: "_ret", "<sub>ret</sub>" | replace: "_true", "<sub>true</sub>" | replace: "_false", "<sub>false</sub>" | replace: "_KL", "<sub>KL</sub>" | replace: "_α", "<sub>α</sub>" -%}
+{%- assign m = m | replace: "_t", "<sub>t</sub>" | replace: "_k", "<sub>k</sub>" | replace: "_0", "<sub>0</sub>" | replace: "_e", "<sub>e</sub>" | replace: "_c", "<sub>c</sub>" | replace: "_m", "<sub>m</sub>" | replace: "_i", "<sub>i</sub>" | replace: "_1", "<sub>1</sub>" | replace: "_2", "<sub>2</sub>" -%}
+{{- m -}}

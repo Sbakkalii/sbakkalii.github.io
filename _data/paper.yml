@@ -1,0 +1,504 @@
+# "Amnesia by Design, Memory By Necessity: Persistent State for Document
+# Intelligence" (Bakkali & Merimi, arXiv:2609.32041, 25 Sep 2026).
+#
+# The interactive explorer at /research/persistent-state/ renders from this
+# file. Tables, equations, counts and lists are transcribed from the paper.
+# Prose fields are short summaries; anything that is our illustration rather
+# than the paper's text is marked `illustrative: true` and labelled on screen.
+
+id: amnesia-by-design
+title: "Amnesia by Design, Memory By Necessity: Persistent State for Document Intelligence"
+short_title: "Amnesia by Design, Memory by Necessity"
+authors:
+  - name: "Souhail Bakkali"
+    affiliation: "University of Rennes, CNRS, IRISA (UMR 6074), Rennes, France"
+  - name: "Ayoub Merimi"
+    affiliation: "ENSA Berrechid, Hassan First University, Settat, Morocco"
+arxiv: "2609.32041"
+arxiv_url: "https://arxiv.org/abs/2609.32041"
+html_url: "https://arxiv.org/html/2609.32041"
+pdf_url: "https://arxiv.org/pdf/2609.32041"
+date: "2026-09-25"
+category: "cs.CV"
+kind: "Survey with a formal framework, a benchmark audit and an evaluation harness"
+publication_url: "/publication/2026-amnesia-by-design/"
+no_results_note: "The paper is a survey and specification: it reports formal results and an audit, not experimental measurements."
+
+quotes:
+  storage: "Storage is not retrieval, and retrieval is not consolidation."
+  closing: "The field has learned to read documents. It must now learn to remember them."
+
+# The argument in four steps (our summary of the abstract and introduction).
+argument:
+  - title: "Document AI reads, then forgets"
+    body: "Systems extract fields, reason over tables and ground answers to page regions, yet process each document as if it were the first. An amendment read the next day starts from scratch: no schema retained, no contradiction detected."
+  - title: "It is a design choice, not a scale failure"
+    body: "Current systems are stateless functions, y = argmax P(y | D; θ), with frozen parameters and no session index. The paper calls this the statelessness bottleneck."
+  - title: "Scaling, context and retrieval do not remove it"
+    body: "Storage provides persistence and retrieval provides access, but neither consolidates observations into knowledge that improves how the next document is processed."
+  - title: "So the paper specifies persistent, evidence-grounded state"
+    body: "It formalizes the state, its lifecycle and invariants, bounds the risk of remembering wrong things, audits ten benchmarks, and proposes a longitudinal harness with five counterfactual metrics."
+
+counts:
+  - { value: 6, label: "state components" }
+  - { value: 6, label: "lifecycle operations" }
+  - { value: 10, label: "benchmarks audited" }
+  - { value: 8, label: "statefulness criteria" }
+  - { value: 5, label: "counterfactual metrics" }
+  - { value: 5, label: "unlearning levels" }
+
+contributions:
+  - "A survey of Document AI lineages, reviewed for persistence rather than capability."
+  - "A formal state specification with lifecycle operations and an operator set."
+  - "Theoretical bounds on contamination and Memory Harm."
+  - "A statefulness audit of ten benchmarks against eight criteria."
+  - "A longitudinal benchmark harness with five counterfactual metrics."
+
+# Eq. 3: each document is a tuple.
+document_tuple:
+  symbol: "D = (V, T, B, G, H, M)"
+  parts:
+    - { key: V, name: "Visual tensors" }
+    - { key: T, name: "Text tokens" }
+    - { key: B, name: "Bounding boxes" }
+    - { key: G, name: "Structural relation graphs" }
+    - { key: H, name: "Hierarchical parse trees" }
+    - { key: M, name: "Metadata" }
+
+# Eq. 4: persistent state at session t.
+state:
+  symbol: "S_t = (E_t, K_t, Γ_t, 𝒱_t, P_t, A_t)"
+  components:
+    - key: E
+      symbol: "E_t"
+      name: "Episodic evidence buffer"
+      role: "Admitted observations, appended with a timestamp and their provenance."
+    - key: K
+      symbol: "K_t"
+      name: "Consolidated semantic store"
+      role: "Schemas and facts abstracted from episodic traces."
+    - key: G
+      symbol: "Γ_t"
+      name: "Associative relation graph"
+      role: "Relations between entities, documents and schemas."
+    - key: V
+      symbol: "𝒱_t"
+      name: "Temporal validity index"
+      role: "When each claim holds; closed when newer evidence supersedes it."
+    - key: P
+      symbol: "P_t"
+      name: "Provenance ledger"
+      role: "Links every claim back to the document, region and version it came from."
+    - key: A
+      symbol: "A_t"
+      name: "Authorization and policy state"
+      role: "Who may read or change what; updated only by policy events."
+  invariant: "Provenance is an invariant across every operation."
+
+# Six lifecycle operations (Fig. 3).
+lifecycle:
+  - id: acquire
+    name: "Acquire"
+    body: "Extract the multimodal observation: text, layout, tables, visuals."
+  - id: validate
+    name: "Validate"
+    body: "Gate the observation before any persistent write."
+  - id: write
+    name: "Write"
+    body: "Append admitted evidence to the episodic store with a timestamp and provenance."
+  - id: consolidate
+    name: "Consolidate"
+    body: "Abstract episodic traces into schemas and relations, trading expected utility against storage cost."
+  - id: reconcile
+    name: "Update & reconcile"
+    body: "Resolve conflicts through temporal supersession and one of five outcomes."
+  - id: forget
+    name: "Forget"
+    body: "Remove targeted information across all stores and repair dependent abstractions."
+
+# Algorithm 1 (state transition), as a sequence of steps. `touches` lists the
+# state components a step reads (r) or writes (w), following the paper's
+# description of the algorithm.
+algorithm:
+  - id: observe
+    name: "Observe"
+    body: "Read the incoming document D_t as (V, T, B, G, H, M)."
+    touches: {}
+  - id: corroborate
+    name: "Corroborate"
+    body: "Check the observation against prior provenance."
+    touches: { P: r, K: r }
+  - id: validate
+    name: "Validate"
+    body: "Pre-write gate: admit the evidence or leave the state unchanged."
+    touches: {}
+    branch: "If the gate rejects, S_t+1 = S_t and the algorithm skips to Answer."
+  - id: write
+    name: "Write"
+    body: "Append the admitted evidence to the episodic store and extend provenance."
+    touches: { E: w, P: w }
+  - id: consolidate
+    name: "Consolidate"
+    body: "Abstract episodic traces into schemas and relations."
+    touches: { K: w, G: w }
+  - id: reconcile
+    name: "Reconcile"
+    body: "Check against temporal validity and apply supersession."
+    touches: { V: w, K: w, P: w }
+  - id: authorize
+    name: "Keep policy"
+    body: "Authorization stays as is unless a policy event occurs."
+    touches: { A: r }
+  - id: forget
+    name: "Forget (on request)"
+    body: "If a deletion request arrives, run unlearning across every store."
+    touches: { E: w, K: w, G: w, V: w, P: w }
+    optional: true
+  - id: answer
+    name: "Answer"
+    body: "Answer the query from the updated state, citing provenance."
+    touches: { E: r, K: r, G: r, V: r, P: r, A: r }
+
+operators:
+  - symbol: "𝒞_sch"
+    name: "Schema consolidation"
+  - symbol: "𝒮_sup"
+    name: "Temporal supersession"
+  - symbol: "𝒰_unl"
+    name: "Deterministic unlearning"
+
+consolidation_objective:
+  equation: "max_α  𝒥(α) − λ·ℛ(α)"
+  body: "Consolidation trades expected future utility 𝒥 against storage or retrieval cost ℛ."
+
+# Temporal supersession resolves a conflict with one of five outcomes. The
+# paper defines supersede and scope-coexist; the other three are named only,
+# so their descriptions here are our reading and are flagged on screen.
+reconciliation:
+  - id: support
+    name: "Support"
+    defined: false
+    body: "New evidence agrees with the stored claim and corroborates it."
+  - id: supersede
+    name: "Supersede"
+    defined: true
+    body: "The earlier claim's validity interval is closed at the effective time; the new evidence is authoritative from then on."
+  - id: scope-coexist
+    name: "Scope-coexist"
+    defined: true
+    body: "Claims with different populations or authority both stand, e.g. a preliminary statement next to its audited version."
+  - id: retain-conflict
+    name: "Retain conflict"
+    defined: false
+    body: "The contradiction cannot be resolved yet, so both claims are kept and marked as conflicting."
+  - id: escalate
+    name: "Escalate for review"
+    defined: false
+    body: "The conflict is handed to a person before the state changes."
+
+degenerate_regimes:
+  - name: "Zero-state"
+    body: "Nothing persists; every document is processed cold."
+  - name: "Monotonic append-only"
+    body: "Everything is kept and nothing is reconciled or forgotten."
+  - name: "Unstructured summarization"
+    body: "Experience is compressed into free text, losing structure and provenance."
+
+# Eq. 2: the conjunctive target 𝒞*: all six properties are required jointly.
+target:
+  symbol: "𝒞*"
+  properties:
+    - "Multimodal evidence"
+    - "Document structure"
+    - "Persistence"
+    - "Temporal validity"
+    - "Provenance"
+    - "Governance"
+
+# Theorem III.4 and Corollary III.7.
+theorem:
+  id: "Theorem III.4"
+  assumption: "step independence"
+  equation: "P_cont(k) = 1 − (1 − p_e · p_c)^k"
+  harm: "E[MH(k)] = w_m · P_cont(k) · D_KL(P_true ‖ P_false)"
+  variables:
+    - { symbol: "p_e", name: "observation error rate" }
+    - { symbol: "p_c", name: "gate false-accept rate" }
+    - { symbol: "k", name: "number of state updates (sessions)" }
+    - { symbol: "δ", name: "tolerated contamination probability" }
+  corollary:
+    id: "Corollary III.7"
+    points:
+      - "A perfect gate (p_c = 0) gives zero contamination."
+      - "For any p_c > 0, contamination approaches 1 as k grows: the gate controls the rate, not the asymptote."
+    horizon: "k ≤ ln(1 − δ) / ln(1 − p_e · p_c)"
+  conjecture: "Conjecture III.8: schema repair suffices for zero leakage under three stated conditions, which the authors note do not generally hold."
+
+# Table I: representation lineage.
+lineage:
+  columns:
+    - { key: layout, label: "Layout" }
+    - { key: visual, label: "Visual" }
+    - { key: ocr_free, label: "OCR-free" }
+    - { key: state, label: "Native state" }
+  rows:
+    - { method: "BERT", year: "2019", modality: "Text", pretraining: "MLM", layout: "–", visual: "–", ocr_free: "–", state: "–" }
+    - { method: "LayoutLMv1–v3", year: "2020–22", modality: "Text+Layout+Vision", pretraining: "MLM/MIM", layout: "✓", visual: "✓", ocr_free: "–", state: "–" }
+    - { method: "EAML", year: "2021", modality: "Image+Text", pretraining: "Mutual learning", layout: "–", visual: "✓", ocr_free: "–", state: "–", own: "2021-eaml" }
+    - { method: "SelfDoc", year: "2021", modality: "Cross-modal", pretraining: "Self-supervised", layout: "✓", visual: "✓", ocr_free: "–", state: "–" }
+    - { method: "UDoc", year: "2021", modality: "Cross-modal", pretraining: "Unified alignment", layout: "✓", visual: "✓", ocr_free: "–", state: "–" }
+    - { method: "DiT", year: "2022", modality: "Vision", pretraining: "MIM", layout: "Implicit", visual: "✓", ocr_free: "✓", state: "–" }
+    - { method: "Bi-VLDoc", year: "2022", modality: "Cross-modal", pretraining: "Bidirectional VL", layout: "✓", visual: "✓", ocr_free: "–", state: "–" }
+    - { method: "Donut", year: "2022", modality: "Vision→Text", pretraining: "Seq2seq", layout: "Implicit", visual: "✓", ocr_free: "✓", state: "–" }
+    - { method: "VLCDoC", year: "2023", modality: "Cross-modal", pretraining: "VL contrastive", layout: "–", visual: "✓", ocr_free: "–", state: "–", own: "2023-vlcdoc" }
+    - { method: "Pix2Struct", year: "2023", modality: "Vision→Text", pretraining: "Seq2seq", layout: "Implicit", visual: "✓", ocr_free: "✓", state: "–" }
+    - { method: "UDOP", year: "2023", modality: "Vision+Text+Layout", pretraining: "Generative", layout: "✓", visual: "✓", ocr_free: "Partial", state: "–" }
+    - { method: "DocLLM / LayoutLLM", year: "2024", modality: "Vision+Text+Layout", pretraining: "Instruction tuning", layout: "✓", visual: "✓", ocr_free: "Partial", state: "–" }
+    - { method: "GlobalDoc", year: "2025", modality: "Cross-modal", pretraining: "Unified VL", layout: "✓", visual: "✓", ocr_free: "–", state: "–", own: "2025-globaldoc" }
+
+# Table II: adjacent paradigms against the target 𝒞*.
+paradigms:
+  columns:
+    - { key: multimodal, label: "Multimodal" }
+    - { key: structure, label: "Doc structure" }
+    - { key: persistent, label: "Persistent" }
+    - { key: temporal, label: "Temporal" }
+    - { key: provenance, label: "Provenance" }
+    - { key: governance, label: "Governance" }
+  rows:
+    - { paradigm: "Continual learning", multimodal: "–", structure: "–", persistent: "✓", temporal: "–", provenance: "–", governance: "–" }
+    - { paradigm: "Agent memory", multimodal: "Partial", structure: "–", persistent: "✓", temporal: "Partial", provenance: "Partial", governance: "–" }
+    - { paradigm: "Multimodal RAG", multimodal: "✓", structure: "✓", persistent: "Ext. index", temporal: "–", provenance: "Page", governance: "–" }
+    - { paradigm: "Commercial LLM memory", multimodal: "Partial", structure: "–", persistent: "Context only", temporal: "–", provenance: "–", governance: "–" }
+    - { paradigm: "Target 𝒞*", multimodal: "✓", structure: "✓", persistent: "✓", temporal: "✓", provenance: "✓", governance: "✓", target: true }
+
+# Fig. 2 capability map, by persistence band (top = most persistent). The
+# caption places groups, not individual cells, so the explorer shows bands.
+capability_map:
+  bands:
+    - id: governed
+      label: "Governed"
+      groups: []
+    - id: semantic
+      label: "Semantic"
+      groups: []
+    - id: episodic
+      label: "Episodic"
+      groups:
+        - name: "Text-only agent memory"
+          scope: "Conversation / session"
+          members: ["MemGPT", "LoCoMo", "SYNAPSE", "GAAMA"]
+    - id: external
+      label: "External store"
+      groups:
+        - name: "Retrieval systems"
+          scope: "Collection"
+          members: ["ColPali / ViDoRe", "VisRAG", "GraphRAG", "LightRAG"]
+    - id: none
+      label: "No persistence"
+      groups:
+        - name: "Cross-modal & layout models, single-page benchmarks"
+          scope: "Page"
+          members: ["DocVQA", "ChartQA", "FUNSD", "LayoutLM", "Donut", "EAML", "SelfDoc", "UDoc", "VLCDoC", "GlobalDoc"]
+        - name: "Multi-page benchmarks"
+          scope: "Multi-page document"
+          members: ["MP-DocVQA", "DUDE", "LongDocURL", "M-LongDoc"]
+  empty_note: "The Semantic and Governed bands are empty: no surveyed system reaches them. The target 𝒞* sits there."
+
+# Table III: substrate options. Legend: ✓ native · Partial = extra engineering
+# · Implicit = emergent only · – = not achievable by design.
+substrates:
+  capabilities:
+    - { key: persist, label: "Persist" }
+    - { key: inspect, label: "Inspect" }
+    - { key: relate, label: "Relate" }
+    - { key: generalize, label: "Generalize" }
+    - { key: delete, label: "Delete" }
+    - { key: ground, label: "Ground" }
+  legend:
+    - { mark: "✓", meaning: "native" }
+    - { mark: "Partial", meaning: "achievable with extra engineering" }
+    - { mark: "Implicit", meaning: "emergent only" }
+    - { mark: "–", meaning: "not achievable by design" }
+  rows:
+    - { name: "Vector store", persist: "✓", inspect: "✓", relate: "Partial", generalize: "Partial", delete: "✓", ground: "Partial" }
+    - { name: "Knowledge graph", persist: "✓", inspect: "✓", relate: "✓", generalize: "Partial", delete: "✓", ground: "✓" }
+    - { name: "Document database", persist: "✓", inspect: "✓", relate: "✓", generalize: "–", delete: "✓", ground: "✓" }
+    - { name: "Parametric update", persist: "✓", inspect: "–", relate: "Implicit", generalize: "✓", delete: "–", ground: "–" }
+    - { name: "Episodic memory", persist: "✓", inspect: "✓", relate: "Partial", generalize: "–", delete: "✓", ground: "✓" }
+    - { name: "Hybrid", persist: "✓", inspect: "✓", relate: "✓", generalize: "✓", delete: "✓", ground: "✓", hybrid: true }
+  note: "The paper deliberately does not pick a substrate: the specification constrains behavior, not architecture."
+
+# Table IV: the statefulness audit.
+audit:
+  criteria:
+    - { key: sequential, label: "Sequential", name: "Sequential presentation" }
+    - { key: crossdoc, label: "Cross-doc", name: "Cross-document dependency" }
+    - { key: family, label: "Family", name: "Repeated-family benefit" }
+    - { key: temporal, label: "Temporal", name: "Temporal revision" }
+    - { key: provenance, label: "Provenance", name: "Provenance persistence" }
+    - { key: forgetting, label: "Forgetting", name: "Verifiable forgetting" }
+    - { key: session, label: "Session", name: "Session persistence" }
+    - { key: answerability, label: "Answerability", name: "Answerability" }
+  legend:
+    - { mark: "Yes", meaning: "the protocol requires the capability, with ground-truth labels" }
+    - { mark: "Partial", meaning: "a neighboring capability without the full persistent-state criterion" }
+    - { mark: "–", meaning: "neither required nor measured" }
+    - { mark: "Ext. index", meaning: "retrieval over an external corpus, without session-level persistence" }
+  provenance_note: "The Provenance column records grounding granularity (page, box, cell, …) rather than Yes / –."
+  rows:
+    - { name: "DocVQA", sequential: "–", crossdoc: "–", family: "–", temporal: "–", provenance: "Partial", forgetting: "–", session: "–", answerability: "–" }
+    - { name: "MP-DocVQA", sequential: "–", crossdoc: "–", family: "–", temporal: "–", provenance: "Page", forgetting: "–", session: "–", answerability: "–" }
+    - { name: "DUDE", sequential: "–", crossdoc: "–", family: "–", temporal: "–", provenance: "Page", forgetting: "–", session: "–", answerability: "Yes" }
+    - { name: "LongDocURL", sequential: "–", crossdoc: "–", family: "–", temporal: "–", provenance: "Box", forgetting: "–", session: "–", answerability: "–" }
+    - { name: "M-LongDoc", sequential: "–", crossdoc: "Partial", family: "–", temporal: "–", provenance: "Partial", forgetting: "–", session: "–", answerability: "–" }
+    - { name: "ViDoRe", sequential: "–", crossdoc: "–", family: "–", temporal: "–", provenance: "Page", forgetting: "–", session: "Ext. index", answerability: "–" }
+    - { name: "ChartQA", sequential: "–", crossdoc: "–", family: "–", temporal: "–", provenance: "Element", forgetting: "–", session: "–", answerability: "–" }
+    - { name: "FUNSD", sequential: "–", crossdoc: "–", family: "–", temporal: "–", provenance: "Box", forgetting: "–", session: "–", answerability: "–" }
+    - { name: "PubTables-1M", sequential: "–", crossdoc: "–", family: "–", temporal: "–", provenance: "Cell", forgetting: "–", session: "–", answerability: "–" }
+    - { name: "QASPER", sequential: "–", crossdoc: "–", family: "–", temporal: "–", provenance: "Section", forgetting: "–", session: "–", answerability: "Yes" }
+    - { name: "LoCoMo / SYNAPSE", sequential: "Yes", crossdoc: "–", family: "Partial", temporal: "Partial", provenance: "Text-only", forgetting: "–", session: "Yes", answerability: "Yes", adjacent: true }
+    - { name: "Proposed harness", sequential: "Yes", crossdoc: "Yes", family: "Yes", temporal: "Yes", provenance: "Span", forgetting: "Yes", session: "Yes", answerability: "Yes", proposed: true }
+  adjacent_note: "LoCoMo / SYNAPSE is adjacent, text-only conversational evaluation."
+  proposed_note: "The proposed-harness row is a specification, not a measured result."
+  finding: "None of the ten document benchmarks tests cross-session state evolution."
+
+# Fig. 4 and Section IV: the longitudinal harness.
+harness:
+  properties:
+    - "Sequential presentation"
+    - "Cross-document dependency"
+    - "Evolving content"
+    - "Consolidation opportunities"
+    - "Forgetting requirements"
+    - "Provenance queries"
+    - "Session boundaries"
+    - "Abstention"
+  arms:
+    - id: warm
+      symbol: "S_k"
+      name: "Warm state"
+      body: "Carries consolidated state from documents D_1 … D_k."
+    - id: retrieval
+      symbol: "R_k"
+      name: "Retrieval-only"
+      body: "An append-only index of the same documents, with no consolidation."
+    - id: cold
+      symbol: "S_0 = ∅"
+      name: "Cold baseline"
+      body: "Starts from empty state on every task."
+  metrics:
+    - id: eg
+      abbr: "EG"
+      name: "Experience Gain"
+      equation: "EG(k) = Q(D_k+1 | S_k) − Q(D_k+1 | R_k)"
+      measures: "Benefit of consolidation beyond retrieval access."
+      good: "positive"
+    - id: ce
+      abbr: "CE"
+      name: "Cost Efficiency"
+      equation: "CE(k) = 1 − C(D_k+1 | S_k) / C(D_k+1 | S_0)"
+      measures: "Inference cost saved by warm state, in tokens or FLOPs."
+      good: "positive"
+    - id: mh
+      abbr: "MH"
+      name: "Memory Harm"
+      equation: "MH(k) = Q(D_k+1 | S_k^clean) − Q(D_k+1 | S_k)"
+      measures: "Degradation induced by state; positive values mean memory hurt."
+      good: "bounded"
+    - id: ff
+      abbr: "FF"
+      name: "Forgetting Fidelity"
+      equation: "FF = 1 − Leak(X_del | S′_t) / Leak(X_del | S_t)"
+      measures: "How much of a deleted target still leaks from the post-deletion state (probe-based mutual-information bound)."
+      good: "high"
+    - id: cr
+      abbr: "CR"
+      name: "Coverage Retention"
+      equation: "CR = exp( Q(Y_ret | S′_t) − Q(Y_ret | S_t) )"
+      measures: "Whether knowledge that should survive a deletion still does."
+      good: "high"
+  cumulative_ce: "CE_cum(k) = 1 − Σ warm costs / Σ cold costs over sessions 1 … k+1. A memory system pays for itself when CE_cum(k) > 0 for the target stream length, even if per-task CE is zero in some sessions."
+  memory_harm_protocol: "Run a clean stream and a corrupted one over the same documents; the corrupted stream replaces a fraction ρ_c of observations with plausible but wrong values, such as a misread tax ID or a transposed table cell."
+  statistics: "A mixed-effects model with a log-exposure term f(k) = log(1 + k), a warm–cold indicator, family-level random intercepts and slopes, and AR(1) residuals; a paired bootstrap over streams for small samples."
+  success: "Positive Experience Gain and Cost Efficiency, bounded Memory Harm, and high Forgetting Fidelity and Coverage Retention, under all eight mandatory properties."
+
+# Fig. 6 and Algorithm 2: verifiable forgetting.
+unlearning:
+  levels:
+    - level: 1
+      name: "Physical object removal"
+      body: "Delete the raw file."
+      status: "implemented"
+      metric: "FF · CR"
+    - level: 2
+      name: "Representation invalidation"
+      body: "Remove embeddings and graph nodes derived from it."
+      status: "implemented"
+      metric: "FF · CR"
+    - level: 3
+      name: "Consolidated schema repair"
+      body: "Re-consolidate schemas that depended on the deleted evidence and repair links."
+      status: "unbuilt"
+      metric: "FF · CR"
+    - level: 4
+      name: "Parametric unlearning"
+      body: "Remove facts absorbed into model weights: exact retraining, influence-based approximation, certified residual checks."
+      status: "unbuilt"
+      metric: "Additional certification"
+    - level: 5
+      name: "Certified non-recoverability"
+      body: "Audit residual leakage cryptographically or statistically, then issue a certificate."
+      status: "unbuilt"
+      metric: "Additional certification"
+  note: "Passing one level does not imply success at the next. Current Document AI implements Levels 1–2; skipping Level 3 leaves non-zero leakage in the semantic store."
+
+provenance_chain:
+  equation: "σ₂ ↝ σ₁ ↝ {e₁, e₂, e₃} ↝ {D_i, ℓ_i, v_i}"
+  body: "Schemas abstract over evidence without cutting the chain back to the document, location and version. A system that cannot cite the exact table cell and footnote behind a claim cannot be deployed in an audit."
+
+bitemporal:
+  times: ["Publication time", "Event time", "Effective time", "Ingestion time"]
+
+enterprise:
+  domains:
+    - { name: "Legal discovery", body: "Millions of documents and non-monotonic amendments." }
+    - { name: "Healthcare", body: "Longitudinal patient models." }
+    - { name: "Financial auditing", body: "Unbroken provenance chains." }
+    - { name: "Scientific literature", body: "Synthesis over superseded findings." }
+  constraints:
+    - "Throughput and efficiency at scale"
+    - "Consistency, availability and cost trade-offs"
+    - "Multi-tenant isolation"
+    - "Permission-aware governance within a single document"
+    - "Security against persistent poisoning"
+    - "Retention and data-residency rules for remembered information"
+
+agenda:
+  - title: "Provenance-preserving consolidation"
+    body: "Abstract visual observations into schemas without losing links to source bounding boxes."
+  - title: "Adaptive evidence acquisition"
+    body: "Stop inspecting pages when the expected information gain falls below the compute cost."
+  - title: "Memory-conditioned top-down parsing"
+    body: "Show that warm-state parsers speed up layout detection on recurring document families."
+  - title: "Bitemporal state and non-monotonic supersession"
+    body: "Model publication, event, effective and ingestion time without losing audit trails."
+  - title: "Certified machine unlearning"
+    body: "Repair knowledge graphs and parametric priors after erasure requests."
+  - title: "Policy-aware governed memory"
+    body: "Embed multi-tenant access control in late-interaction retrieval and in the state itself."
+
+limitations:
+  - "The survey leans towards English, Latin-script, modern documents; low-resource languages and historical manuscripts are under-represented."
+  - "Cognitive science motivates hypotheses, not optimal design; the cortical-consolidation mapping is an analogy."
+  - "The state tuple, lifecycle and harness are formal specifications, not validated implementations."
+  - "Obtaining genuinely novel document streams, absent from training data, is the main benchmark limitation."
+
+bibtex: |-
+  @article{bakkali2026amnesia,
+    title   = {Amnesia by Design, Memory By Necessity: Persistent State for Document Intelligence},
+    author  = {Bakkali, Souhail and Merimi, Ayoub},
+    journal = {arXiv preprint arXiv:2609.32041},
+    year    = {2026},
+    url     = {https://arxiv.org/abs/2609.32041}
+  }

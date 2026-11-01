@@ -1,0 +1,108 @@
+---
+layout: default
+title: "Products"
+permalink: /products/
+description: "DocuMind, SynapseSearch and AgentForge: Document Intelligence products from SynaptYon, built on published research in document understanding, grounded retrieval and persistent document state. Try each in your browser."
+---
+{%- assign profile = site.data.profile -%}
+{%- assign data = site.data.products -%}
+
+<header class="page-head">
+  <div class="container page-head__inner">
+    <p class="eyebrow">Products · {{ profile.company.name }}</p>
+    <h1>From papers to products.</h1>
+    <p class="lede">{{ profile.company.name }}, which I co-founded, turns this research into three Document Intelligence products. None is generally available yet. For each: what it does, the published work it rests on, and a demo that runs in your browser on fictional documents.</p>
+    <div class="cluster">
+      {%- for prod in data.products %}{% assign st = data.statuses[prod.status] %}
+      <a class="chip" href="#{{ prod.id }}">{{ prod.name }} <span class="badge badge--{{ st.tone }}">{{ st.label }}</span></a>
+      {%- endfor %}
+      <a class="chip" href="#assets">Datasets &amp; benchmarks</a>
+    </div>
+  </div>
+</header>
+
+<section class="section section--alt" aria-labelledby="stack-h">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow"><span class="eyebrow__num">§ 01</span> The stack</p>
+      <h2 id="stack-h">Six layers, three products.</h2>
+      <p class="lede">Read and validate the page, remember what it says, answer from it, keep decisions valid, and govern all of it. Each layer cites the work it comes from.</p>
+    </header>
+    {% include components/stack.html %}
+  </div>
+</section>
+
+{%- for prod in data.products %}
+{%- assign st = data.statuses[prod.status] %}
+<section class="section product" id="{{ prod.id }}" aria-labelledby="{{ prod.id }}-h">
+  <div class="container">
+    <div class="product__head">
+      <div class="stack">
+        <p class="eyebrow"><span class="eyebrow__num">§ 0{{ forloop.index | plus: 1 }}</span> {% for l in prod.layers %}{% assign layer = data.stack | where: "id", l | first %}{{ layer.name }}{% unless forloop.last %} · {% endunless %}{% endfor %}</p>
+        <div class="product__name">
+          <h2 id="{{ prod.id }}-h">{{ prod.name }}</h2>
+          <span class="badge badge--{{ st.tone }}">{{ st.label }}</span>
+        </div>
+        <p class="product__tagline">{{ prod.tagline }}</p>
+      </div>
+      <div class="stack">
+        <p class="product__pitch">{{ prod.pitch }}</p>
+        <p class="product__was"><strong>For:</strong> {{ prod.audience }}</p>
+        <p class="product__was"><strong>Started as:</strong> “{{ prod.original }}”</p>
+      </div>
+    </div>
+
+    {% include components/{{ prod.demo }}.html %}
+
+    <ul class="caps">
+      {%- for cap in prod.capabilities %}
+      <li>
+        <h3>{{ cap.title }}</h3>
+        <p>{{ cap.body }}</p>
+        <div class="refs">
+          {%- for slug in cap.research %}{% assign rp = site.publications | where: "slug", slug | first %}{% if rp %}<a href="{{ rp.url | relative_url }}" title="{{ rp.title | escape }}">{{ rp.title | split: ":" | first | truncatewords: 6 }} · {{ rp.venue_short }}</a>{% endif %}{% endfor %}
+        </div>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+</section>
+{%- endfor %}
+
+<section class="section section--alt" id="assets" aria-labelledby="assets-h">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow"><span class="eyebrow__num">§ 05</span> Open research</p>
+      <h2 id="assets-h">Datasets, benchmarks and specifications.</h2>
+      <p class="lede">Published with collaborators; each links to its paper.</p>
+    </header>
+    <div class="grid grid-3">
+      {%- for a in data.assets %}{% assign ap = site.publications | where: "slug", a.pub | first %}
+      <a class="card card--link" href="{{ ap.url | relative_url }}">
+        <p class="card__kicker">{{ a.kind }} · {{ ap.venue_short }}</p>
+        <h3 class="card__title">{{ a.name }}</h3>
+        <p class="card__body">{{ a.body }}</p>
+      </a>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="pilot-h">
+  <div class="container split">
+    <div class="stack">
+      <p class="eyebrow"><span class="eyebrow__num">§ 06</span> Pilots</p>
+      <h2 id="pilot-h">Shape the products with your documents.</h2>
+      <p class="lede">The fastest way to know whether persistent document state helps your team is a pilot on a stream of your own documents, measured with the counterfactual metrics from the survey: does warm state beat retrieval alone, at what cost, and with what risk.</p>
+    </div>
+    <div class="card contact-card">
+      <p class="card__kicker">{{ profile.company.name }}</p>
+      <h3>Contact {{ profile.given_name }}</h3>
+      <p class="card__body">Tell me about the documents, the decisions they drive, and how often they change.</p>
+      <div class="cluster card__foot">
+        <a class="btn" href="mailto:{{ profile.email }}?subject=SynaptYon%20%E2%80%94%20product%20pilot">{% include icon.html name="mail" %}Email about a pilot</a>
+        <a class="btn btn--ghost" href="{{ '/research/persistent-state/' | relative_url }}#harness">How we would measure it</a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,25 +1,32 @@
-# main links links
+# Primary navigation. `match` marks the item active for any URL starting with it.
 main:
+  - title: "Research"
+    url: /research/
+    match: /research/
+  - title: "Products"
+    url: /products/
+    match: /products/
   - title: "Publications"
-    url: /publications/ 
-
+    url: /publications/
+    match: /publication
   - title: "Teaching"
-    url: /teaching/    
-  
-  - title: "Talks"
-    url: /talks/   
-
-  - title: "Research Activities"
+    url: /teaching/
+    match: /teaching/
+  - title: "Activities"
     url: /research-activities/
-
-  #- title: "Portfolio"
-  #  url: /portfolio/
-        
-  #- title: "Blog Posts"
-  #  url: /year-archive/
-    
+    match: /research-activities/
   - title: "CV"
-    url: /files/Sbakkali_CV-2.pdf
-    
-  #- title: "Contact"
-  #  url: /contact/
+    url: /cv/
+    match: /cv/
+
+footer:
+  - title: "Persistent state explorer"
+    url: /research/persistent-state/
+  - title: "Talks"
+    url: /talks/
+  - title: "Contact"
+    url: /contact/
+  - title: "PhD research statement"
+    url: /scientific-research/
+  - title: "Publications feed"
+    url: /feed/publications.xml

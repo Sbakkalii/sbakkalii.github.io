@@ -1,0 +1,79 @@
+# Who I am. Everything here is shown on the site; keep it factual and dated.
+
+name: "Souhail Bakkali"
+given_name: "Souhail"
+family_name: "Bakkali"
+headline: "Research scientist in Document Intelligence"
+position: "Enseignant-Chercheur Contractuel (lecturer-researcher)"
+team: "SHADOC team"
+lab: "IRISA (UMR 6074)"
+school: "ESIR"
+institution: "Université de Rennes"
+location: "Rennes, France"
+email: "souhail.bakkali@irisa.fr"
+photo: "/images/souhail-bakkali.jpg"
+photo_webp: "/images/souhail-bakkali-400.webp"
+photo_small_webp: "/images/souhail-bakkali-240.webp"
+cv_pdf: "/files/Sbakkali_CV-2.pdf"
+
+# One paragraph used on the home page and in structured data.
+summary: >-
+  I work on Document Intelligence: systems that read visually rich documents,
+  ground every answer in evidence on the page, and, as argued in my 2026
+  survey, carry what they read forward as persistent, provenance-linked state.
+  My research spans cross-modal vision-language document understanding,
+  grounded retrieval and question answering, and low-resource scene-text
+  recognition.
+
+# Short statements for the hero "facts" row.
+facts:
+  - label: "Now"
+    value: "IRISA · ESIR · Université de Rennes"
+  - label: "Before"
+    value: "Associate Professor, L3i, La Rochelle Université (2023–2025)"
+  - label: "PhD"
+    value: "La Rochelle Université, 2022 (European Doctorate label)"
+  - label: "Company"
+    value: "Co-founder, SynaptYon SARL"
+
+# Bibliometrics change over time: always show the source and the date.
+# Google Scholar could not be read automatically when this was written; these
+# figures come from the SynaptYon site draft (September 2026). Update them from
+# https://scholar.google.com/citations?user=gO_Q48IAAAAJ when they change.
+metrics:
+  source: "Google Scholar"
+  source_url: "https://scholar.google.com/citations?user=gO_Q48IAAAAJ"
+  as_of: "September 2026"
+  citations: 285
+  h_index: 9
+
+funding:
+  total: "€501.5K"
+  note: "competitive funding as PI / Co-PI"
+
+teaching_hours: "800+"
+
+links:
+  - id: scholar
+    label: "Google Scholar"
+    url: "https://scholar.google.com/citations?user=gO_Q48IAAAAJ"
+  - id: orcid
+    label: "ORCID"
+    url: "https://orcid.org/0000-0001-9383-3842"
+  - id: github
+    label: "GitHub"
+    url: "https://github.com/Sbakkalii"
+  - id: linkedin
+    label: "LinkedIn"
+    url: "https://www.linkedin.com/in/souhail-bakkali/"
+  - id: researchgate
+    label: "ResearchGate"
+    url: "https://www.researchgate.net/profile/Souhail-Bakkali"
+
+# synaptyon.com did not resolve (no DNS record) when this was written, so the
+# site links product enquiries to the email above. Set `url` once it is live.
+company:
+  name: "SynaptYon SARL"
+  role: "Co-founder · research & technology"
+  url:
+  tagline: "Applied AI studio: research, products, consulting"

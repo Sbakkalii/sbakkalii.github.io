@@ -1,0 +1,65 @@
+# Grants, collaborations, supervision, service and infrastructure.
+# Source: the CV (files/Sbakkali_CV-2.pdf) and the previous site.
+
+grants_total: "€501.5K"
+grants:
+  - role: "PI"
+    name: "DocInnovate"
+    program: "ACI JCJC"
+    period: "2024"
+    amount: "€7,000"
+  - role: "Co-PI"
+    name: "FELM"
+    program: "EU-CONEXUS"
+    period: "2025–2027"
+    amount: "€153,000"
+  - role: "Co-PI"
+    name: "FlexChain"
+    program: ""
+    period: "2025–2027"
+    amount: "€124,000"
+  - role: "Co-PI"
+    name: "ModamPadoc"
+    program: "RNA-LRU"
+    period: "2025–2027"
+    amount: "€120,000"
+  - role: "Co-PI"
+    name: "AI for ECO-WELLNESS"
+    program: "PHC PERIDOT"
+    period: "2024–2026"
+    amount: "€28,000"
+  - role: "—"
+    name: "Additional projects"
+    program: ""
+    period: ""
+    amount: "€69,500"
+
+collaborations:
+  academic:
+    - { name: "Computer Vision Center (CVC), Universitat Autònoma de Barcelona", country: "Spain" }
+    - { name: "KU Leuven", country: "Belgium" }
+    - { name: "L2TI", country: "France" }
+    - { name: "South East Technological University (SETU)", country: "Ireland" }
+    - { name: "Jožef Stefan Institute", country: "Slovenia" }
+    - { name: "University of Science and Technology of Hanoi (USTH)", country: "Vietnam" }
+    - { name: "Cambodia Academy of Digital Technology", country: "Cambodia" }
+    - { name: "MNS University", country: "Pakistan" }
+  industry:
+    - { name: "Allread ML Technologies", country: "Spain" }
+    - { name: "Siren", country: "France" }
+
+supervision:
+  - "Co-supervising PhD students on low-resource scene-text recognition, explainable multimodal document understanding and federated learning."
+  - "Supervised M1/M2 and B3 projects across France, India and Vietnam, some leading to workshop publications."
+
+service:
+  - { role: "Organizer and moderator", what: "Research Reading Group, L3i", when: "2023–present" }
+  - { role: "Organizer", what: "Seminars on deep multimodal learning, L3i", when: "" }
+  - { role: "Organizing committee", what: "ICPR 2024 Call for Competitions", when: "2024" }
+  - { role: "Organizing committee", what: "DAS 2022", when: "2022" }
+  - { role: "Journal reviewer", what: "Pattern Recognition, IJCV, EAAI, Neurocomputing, SN Computer Science", when: "" }
+  - { role: "Conference reviewer / PC", what: "ICDAR, ICPR, ICIP, LREC-COLING", when: "" }
+
+infrastructure:
+  - "Managed a GPU cluster supporting large-scale multimodal AI experiments."
+  - "Experiment tracking with MLflow and TensorBoard; reproducible workflows with Docker and SLURM."

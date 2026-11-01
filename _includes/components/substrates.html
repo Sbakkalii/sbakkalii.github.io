@@ -1,0 +1,71 @@
+{%- comment -%}
+  Table III of the survey: substrate options rated on six capabilities.
+  This partial renders the complete table, its legend and the paper's note;
+  assets/js/components/substrates.js adds a composer that combines single
+  substrates by best available mark (our illustration, labelled as such).
+  Data: site.data.paper.substrates. Marks share the glyph family of the
+  audit and lineage tables (assets/js/components/audit-marks.js).
+{%- endcomment -%}
+{%- assign sub = site.data.paper.substrates -%}
+{%- assign ncols = sub.capabilities.size | plus: 1 -%}
+
+<figure class="figure c-substrates" data-component="substrates" id="substrates-figure" aria-labelledby="substrates-label">
+  <script type="application/json" data-for="substrates">{{ sub | jsonify }}</script>
+  <div class="figure__head">
+    <span class="figure__label" id="substrates-label"><b>Table III</b> · Substrate options</span>
+    <span class="c-substrates__badges"><span class="badge badge--accent js-only">Interactive</span><span class="badge badge--warn js-only">Illustrative</span><span class="badge badge--plain badge--muted">From the paper</span></span>
+  </div>
+  <div class="figure__body figure__body--flush c-substrates__body">
+    <div class="table-wrap c-substrates__wrap" role="region" tabindex="0" aria-labelledby="substrates-label">
+      <table class="table c-substrates__table">
+        <caption class="visually-hidden">Table III: single substrates and a hybrid, rated on {{ sub.capabilities.size }} capabilities.</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="c-substrates__corner">Substrate</th>
+            {%- for c in sub.capabilities %}
+            <th scope="col" data-col="{{ c.key }}">{{ c.label }}</th>
+            {%- endfor %}
+          </tr>
+        </thead>
+        {%- for group in (1..2) %}
+        <tbody class="c-substrates__group{% if group == 2 %} c-substrates__group--hybrid{% endif %}" data-group="{% if group == 2 %}hybrid{% else %}single{% endif %}">
+          {%- for r in sub.rows %}
+          {%- if r.hybrid -%}{%- assign rg = 2 -%}{%- else -%}{%- assign rg = 1 -%}{%- endif -%}
+          {%- if rg == group %}
+          <tr data-row="{{ forloop.index0 }}">
+            <th scope="row">{{ r.name }}</th>
+            {%- for c in sub.capabilities %}
+            {%- assign v = r[c.key] | default: "–" -%}
+            {%- case v -%}
+              {%- when "Yes", "✓" -%}{%- assign k = "full" -%}
+              {%- when "Partial" -%}{%- assign k = "partial" -%}
+              {%- when "Implicit" -%}{%- assign k = "implicit" -%}
+              {%- when "–" -%}{%- assign k = "none" -%}
+              {%- else -%}{%- assign k = "qual" -%}
+            {%- endcase %}
+            <td data-col="{{ c.key }}"><span class="mk mk--{{ k }}{% if v == '–' or v == '✓' %} mk--sym{% endif %}"><span class="mk__g" aria-hidden="true"></span><span class="mk__t">{{ v }}</span></span></td>
+            {%- endfor %}
+          </tr>
+          {%- endif %}
+          {%- endfor %}
+        </tbody>
+        {%- endfor %}
+      </table>
+    </div>
+  </div>
+  <figcaption class="figure__caption c-substrates__caption">
+    <dl class="c-substrates__legend">
+      {%- for l in sub.legend %}
+      {%- case l.mark -%}
+        {%- when "Yes", "✓" -%}{%- assign k = "full" -%}
+        {%- when "Partial" -%}{%- assign k = "partial" -%}
+        {%- when "Implicit" -%}{%- assign k = "implicit" -%}
+        {%- when "–" -%}{%- assign k = "none" -%}
+        {%- else -%}{%- assign k = "qual" -%}
+      {%- endcase %}
+      <div><dt><span class="mk mk--{{ k }}"><span class="mk__g" aria-hidden="true"></span><span class="mk__t">{{ l.mark }}</span></span></dt><dd>{{ l.meaning }}</dd></div>
+      {%- endfor %}
+    </dl>
+    <p class="c-substrates__note"><strong>{{ sub.note }}</strong> Source: Table III of <a href="{{ site.data.paper.html_url }}">the paper</a>.</p>
+  </figcaption>
+</figure>

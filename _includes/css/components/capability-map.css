@@ -1,0 +1,452 @@
+/* capability-map: Fig. 2 redrawn as persistence bands (top = most persistent).
+   The static markup is the diagram; JS only adds selection, the toggle and
+   the detail panel, so nothing moves when the component upgrades. */
+
+.c-capability-map {
+  --cm-axis-w: 1.75rem;
+  --cm-label-w: 8.5rem;
+  --cm-band-py: var(--sp-4);
+  --cm-gap-h: 3rem;          /* clear space between the target and the frontier */
+}
+.c-capability-map__badges { display: inline-flex; flex-wrap: wrap; gap: var(--sp-2); }
+.c-capability-map__body { container-type: inline-size; }
+
+/* --- Plot grid: [axis] [band label] [band content], one row per band ----- */
+.c-capability-map__plot {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--cm-axis-w) var(--cm-label-w) minmax(0, 1fr);
+}
+
+.c-capability-map__axis {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.c-capability-map__axis::before {   /* the arrow shaft */
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: var(--sp-2);
+  left: 5px;
+  width: 1px;
+  background: var(--line-2);
+}
+.c-capability-map__axis::after {    /* the arrowhead */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1px;
+  border: 4.5px solid transparent;
+  border-top: 0;
+  border-bottom: 7px solid var(--line-2);
+}
+.c-capability-map__axis span {
+  position: relative;
+  margin-left: 10px;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.c-capability-map__bands {
+  grid-column: 2 / -1;
+  grid-row: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.c-capability-map__band {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  border-top: 1px solid var(--line);
+}
+.c-capability-map__band:first-child { border-top-color: transparent; }
+.c-capability-map__band.is-frontier { border-top: 1.5px solid var(--ink-2); }
+
+.c-capability-map__band-label {
+  grid-column: 1;
+  padding: calc(var(--cm-band-py) + 3px) var(--sp-3) var(--cm-band-py) 0;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-caps);
+  line-height: 1.35;
+  text-transform: uppercase;
+  transition: color var(--dur-2) var(--ease);
+}
+.c-capability-map__band.is-empty .c-capability-map__band-label { color: var(--ink-3); }
+
+.c-capability-map__band-body {
+  position: relative;
+  grid-column: 2;
+  min-width: 0;
+  padding-block: var(--cm-band-py);
+}
+/* Empty bands are hatched: nothing surveyed reaches them. */
+.c-capability-map__band.is-empty .c-capability-map__band-body {
+  background-image: repeating-linear-gradient(135deg, transparent 0 7px, color-mix(in srgb, var(--line-2) 55%, transparent) 7px 8px);
+}
+.c-capability-map__empty {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink-3);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+
+/* --- Groups and members --------------------------------------------------- */
+.c-capability-map__groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.c-capability-map__group {
+  position: relative;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  padding: var(--sp-3);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  transition: opacity var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease), background-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease);
+}
+.c-capability-map__group-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-1) var(--sp-3);
+  margin: 0 0 var(--sp-2);
+  line-height: 1.3;
+}
+.c-capability-map__group-name { color: var(--ink); font-size: var(--fs-sm); font-weight: 600; }
+.c-capability-map__scope {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.c-capability-map__scope::before { content: "Scope · "; }
+
+.c-capability-map__members {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.c-capability-map__member {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px var(--sp-2);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  line-height: 1.35;
+  white-space: nowrap;
+  transition: opacity var(--dur-2) var(--ease), background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
+}
+
+/* --- Target region and the gap --------------------------------------------- */
+.c-capability-map__target {
+  position: relative;
+  z-index: 1;
+  grid-column: 3;
+  justify-self: start;
+  width: min(100%, 40rem);
+  margin: calc(var(--sp-5) + 2px) 0 var(--cm-gap-h);
+  padding: var(--sp-4) var(--sp-4) var(--sp-3);
+  border: 1.5px dashed var(--bad);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--bad) 5%, var(--surface));
+}
+.c-capability-map__target-label {
+  position: absolute;
+  top: 0;
+  left: -1.5px;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+  padding: 1px 8px 2px;
+  border-radius: var(--radius-xs) var(--radius-xs) 0 0;
+  background: var(--bad);
+  color: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  transform: translateY(-100%);
+  white-space: nowrap;
+}
+.c-capability-map__target-label .math { font-size: var(--fs-sm); letter-spacing: 0; text-transform: none; }
+.c-capability-map__props {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-2) var(--sp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  line-height: 1.35;
+}
+.c-capability-map__props li { position: relative; padding-left: 14px; }
+.c-capability-map__props li::before {
+  content: "";
+  position: absolute;
+  top: 0.45em;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border: 1.5px solid var(--bad);
+  border-radius: 1px;
+}
+
+/* "Current frontier": just above the frontier line, at the right. */
+.c-capability-map__frontier {
+  position: absolute;
+  right: var(--sp-3);
+  bottom: 100%;
+  margin-bottom: 5px;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+/* The gap: an arrow from the frontier group up to the target's lower edge. */
+.c-capability-map__gap {
+  position: absolute;
+  z-index: 2;
+  top: calc(-1 * var(--cm-gap-h));
+  left: var(--sp-6);
+  width: 2px;
+  height: calc(var(--cm-gap-h) + var(--cm-band-py));
+  background: repeating-linear-gradient(to bottom, var(--bad) 0 4px, transparent 4px 7px);
+  pointer-events: none;
+}
+.c-capability-map__gap::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -4px;
+  border: 5px solid transparent;
+  border-top: 0;
+  border-bottom: 8px solid var(--bad);
+}
+.c-capability-map__gap-label {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  padding: 0 4px;
+  background: var(--surface);
+  color: var(--bad);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  transform: translateY(-62%);
+  white-space: nowrap;
+}
+
+/* --- Enhanced: toolbar, selection, highlight, detail panel ----------------- */
+.c-capability-map__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+.c-capability-map__toolbar .chip { min-height: 36px; }
+.c-capability-map__mine-note { margin: 0; color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.45; }
+.c-capability-map__mine-note a { font-weight: 600; }
+
+.c-capability-map__group-btn {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-1) var(--sp-3);
+  width: 100%;
+  margin: 0 0 var(--sp-2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: 1.3;
+  text-align: left;
+}
+.c-capability-map__group-btn:focus-visible { outline: none; }
+.c-capability-map__group.is-enhanced { cursor: pointer; }
+.c-capability-map__group.is-enhanced:hover { border-color: var(--control); }
+.c-capability-map__group:has(.c-capability-map__group-btn:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.c-capability-map.has-selection .c-capability-map__group:not(.is-selected) { opacity: 0.5; }
+.c-capability-map__group.is-selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.c-capability-map__band.is-selected-band .c-capability-map__band-label { color: var(--accent); }
+
+.c-capability-map.is-mine-on .c-capability-map__member { opacity: 0.42; }
+.c-capability-map.is-mine-on .c-capability-map__member.is-mine {
+  border-color: color-mix(in srgb, var(--mark-ink) 40%, transparent);
+  background: var(--mark);
+  color: var(--mark-ink);
+  font-weight: 600;
+  opacity: 1;
+}
+.c-capability-map.is-mine-on .c-capability-map__member.is-mine::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.c-capability-map__detail {
+  margin-top: var(--sp-6);
+  padding: var(--sp-4) var(--sp-5);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  transition: border-color var(--dur-2) var(--ease);
+}
+.c-capability-map__detail.is-active { border-left-color: var(--accent); }
+.c-capability-map__detail-hint { margin: 0; color: var(--ink-3); font-size: var(--fs-sm); }
+.c-capability-map__detail-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--sp-3);
+}
+.c-capability-map__detail-top .btn { margin: -6px -8px 0 0; }
+.c-capability-map__detail-kicker {
+  margin: 0;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.c-capability-map__detail-kicker b { color: var(--accent); font-weight: 500; }
+.c-capability-map__detail-title {
+  margin: var(--sp-1) 0 var(--sp-3);
+  font-family: var(--font-serif);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.25;
+}
+.c-capability-map__detail-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.c-capability-map__detail-list li {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 4px 3px var(--sp-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+}
+.c-capability-map__detail-list li.is-plain { padding-right: var(--sp-2); }
+.c-capability-map__detail-list li > a:first-child { font-weight: 600; }
+.c-capability-map__ref {
+  padding: 0 5px;
+  border-radius: 2px;
+  background: var(--surface-3);
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  line-height: 1.7;
+  text-decoration: none;
+  white-space: nowrap;
+}
+a.c-capability-map__ref:hover { background: var(--accent-soft); color: var(--accent); }
+.c-capability-map__ref--mine { background: var(--mark); color: var(--mark-ink); }
+.c-capability-map__detail-foot { margin: var(--sp-3) 0 0; color: var(--ink-3); font-size: var(--fs-xs); }
+.c-capability-map__detail-panel { transition: opacity var(--dur-2) var(--ease); }
+.c-capability-map__detail-panel.is-swapping { opacity: 0; transition: none; }
+
+/* --- Narrower containers ------------------------------------------------------ */
+@container (max-width: 44rem) {
+  .c-capability-map__props { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container (max-width: 34rem) {
+  /* Custom properties are set on the plot: a container query cannot restyle
+     the container's own ancestors. */
+  .c-capability-map__plot {
+    --cm-label-w: 5.75rem;
+    --cm-band-py: var(--sp-3);
+    --cm-gap-h: 2.75rem;
+    grid-template-columns: 0 var(--cm-label-w) minmax(0, 1fr);
+  }
+  .c-capability-map__axis { display: none; }
+  .c-capability-map__band-label { padding-right: var(--sp-2); font-size: 10px; letter-spacing: 0.04em; overflow-wrap: anywhere; }
+  .c-capability-map__target { width: 100%; padding-inline: var(--sp-3); }
+  .c-capability-map__props { grid-template-columns: minmax(0, 1fr); gap: 6px; font-size: var(--fs-xs); }
+  .c-capability-map__gap { left: var(--sp-5); }
+  /* The frontier note moves under the band label, clear of the gap arrow. */
+  .c-capability-map__frontier {
+    top: calc(var(--cm-band-py) + 2.1em);
+    right: auto;
+    bottom: auto;
+    left: calc(-1 * var(--cm-label-w));
+    width: calc(var(--cm-label-w) - var(--sp-2));
+    margin: 0;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    line-height: 1.35;
+    white-space: normal;
+  }
+  .c-capability-map__scope { white-space: normal; }
+  .c-capability-map__group { padding: var(--sp-2) var(--sp-3) var(--sp-3); }
+  .c-capability-map__member { white-space: normal; }
+  .c-capability-map__detail { padding: var(--sp-3) var(--sp-4); }
+}

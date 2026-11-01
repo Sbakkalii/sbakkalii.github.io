@@ -1,0 +1,20 @@
+---
+layout: default
+title: "Page not found"
+permalink: /404.html
+sitemap: false
+noindex: true
+description: "This page does not exist."
+---
+<section class="notfound">
+  <div class="container container--narrow stack stack-lg">
+    <p class="notfound__code">404 · not found</p>
+    <h1>This page was not retained.</h1>
+    <p class="lede">Unlike the systems in my research, this site does not remember everything. The page may have moved, or it never existed.</p>
+    <div class="cluster">
+      <a class="btn" href="{{ '/' | relative_url }}">Home</a>
+      <a class="btn btn--secondary" href="{{ '/publications/' | relative_url }}">Publications</a>
+      <button type="button" class="btn btn--ghost js-only" data-search-open>{% include icon.html name="search" %}Search the site</button>
+    </div>
+  </div>
+</section>

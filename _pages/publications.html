@@ -1,0 +1,27 @@
+---
+layout: default
+title: "Publications"
+permalink: /publications/
+description: "All publications of Souhail Bakkali: document understanding, grounded retrieval, persistent document state, Khmer scene text, translation and graph learning. Search, filter and copy BibTeX."
+---
+{%- assign profile = site.data.profile -%}
+{%- assign peer = site.publications | where_exp: "p", "p.pub_type != 'preprint'" | where_exp: "p", "p.pub_type != 'thesis'" -%}
+{%- assign firsts = site.publications | where: "first_author", true -%}
+
+<header class="page-head">
+  <div class="container page-head__inner">
+    <p class="eyebrow">Publications</p>
+    <h1>Publications</h1>
+    <p class="lede">{{ site.publications.size }} publications, {{ peer.size }} of them peer-reviewed, {{ firsts.size }} as first author. Search by title, author or venue, filter by theme and type, and copy a BibTeX entry from the list or any paper’s page.</p>
+    <div class="page-head__meta">
+      <span>{{ profile.metrics.citations }} citations · h-index {{ profile.metrics.h_index }} (<a href="{{ profile.metrics.source_url }}">{{ profile.metrics.source }}</a>, {{ profile.metrics.as_of }})</span>
+      <span><a href="{{ '/feed/publications.xml' | relative_url }}">Atom feed</a></span>
+    </div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container">
+    {% include components/pub-explorer.html %}
+  </div>
+</section>

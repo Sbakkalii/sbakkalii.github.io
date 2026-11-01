@@ -1,0 +1,62 @@
+{%- comment -%}
+  Verifiable forgetting: the five-level unlearning hierarchy (Fig. 6,
+  Algorithm 2). Static baseline: the levels as an ordered list with their
+  description, status and evaluation. assets/js/components/unlearning.js adds
+  an erasure run on the fictional SOW-2 of _data/demo.yml.
+{%- endcomment -%}
+{%- assign paper = site.data.paper -%}
+{%- assign demo = site.data.demo -%}
+{%- assign u = paper.unlearning -%}
+<figure class="figure c-unlearning" data-component="unlearning" id="fig-unlearning">
+  <div class="figure__head">
+    <span class="figure__label"><b>Verifiable forgetting</b> · Fig. 6 · Algorithm 2</span>
+    <span class="c-unlearning__badges js-only">
+      <span class="badge badge--accent">Interactive</span>
+      <span class="badge badge--warn">Illustrative</span>
+    </span>
+  </div>
+  <div class="figure__body c-unlearning__body">
+    <ol class="c-unlearning__levels" data-unlearning-levels>
+      {%- for l in u.levels %}
+      <li class="c-unlearning__level" data-level="{{ l.level }}" data-status="{{ l.status }}">
+        <span class="c-unlearning__num" aria-hidden="true">{{ l.level }}</span>
+        <div class="c-unlearning__rung">
+          <p class="c-unlearning__kicker">Level {{ l.level }}</p>
+          <h3 class="c-unlearning__name">{{ l.name }}</h3>
+          <p class="c-unlearning__desc">{{ l.body }}</p>
+          <p class="c-unlearning__meta">
+            {%- if l.status == "implemented" %}
+            <span class="badge badge--ok">Implemented in current Document AI</span>
+            {%- else %}
+            <span class="badge badge--muted">Unbuilt</span>
+            {%- endif %}
+            <span class="c-unlearning__metric">Evaluated by:
+              {%- assign parts = l.metric | split: " · " -%}
+              {%- for p in parts -%}
+                {%- assign m = paper.harness.metrics | where: "abbr", p | first -%}
+                {%- if m %} {{ m.name }}{% else %} {{ p }}{% endif %}{% unless forloop.last %} ·{% endunless %}
+              {%- endfor -%}
+            </span>
+          </p>
+        </div>
+      </li>
+      {%- endfor %}
+    </ol>
+    <p class="c-unlearning__note">{{ u.note }}</p>
+    <script type="application/json" data-for="unlearning">{
+      "unlearning": {{ u | jsonify }},
+      "metrics": {{ paper.harness.metrics | jsonify }},
+      "conjecture": {{ paper.theorem.conjecture | jsonify }},
+      "demo": {
+        "disclaimer": {{ demo.disclaimer | jsonify }},
+        "documents": {{ demo.documents | jsonify }},
+        "deletion_request": {{ demo.deletion_request | jsonify }}
+      }
+    }</script>
+  </div>
+  <figcaption class="figure__caption">
+    Levels, their status and how each is evaluated are Fig. 6 of the paper.
+    <span class="js-only">The erasure run is our illustration on fictional documents; leakage is shown qualitatively (present or removed), nothing is measured.</span>
+    {{ demo.disclaimer }}
+  </figcaption>
+</figure>

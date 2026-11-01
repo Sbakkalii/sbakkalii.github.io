@@ -1,0 +1,225 @@
+---
+layout: default
+title: "Souhail Bakkali"
+permalink: /
+description: "Souhail Bakkali — research scientist in Document Intelligence at IRISA, Université de Rennes, and co-founder of SynaptYon. Multimodal document understanding, grounded retrieval, and persistent evidence-grounded document state."
+body_class: page-home
+redirect_from:
+  - /about/
+  - /about.html
+---
+{%- assign profile = site.data.profile -%}
+{%- assign paper = site.data.paper -%}
+{%- assign all_pubs = site.publications | sort: "date" | reverse -%}
+{%- assign peer = site.publications | where_exp: "p", "p.pub_type != 'preprint'" | where_exp: "p", "p.pub_type != 'thesis'" -%}
+{%- assign featured = all_pubs | where: "featured", true -%}
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero__grid">
+    <div class="hero__text">
+      <p class="eyebrow"><span class="eyebrow__num">Document Intelligence</span> · research &amp; products</p>
+      <h1 id="hero-title" class="display hero__title">Document AI that reads — <em>and remembers.</em></h1>
+      <p class="hero__lede">I build systems that understand visually rich documents, <strong>ground every answer in evidence on the page</strong>, and carry what they read forward as <strong>persistent, provenance-linked state</strong>, so the amendment that arrives tomorrow is read in the light of the contract signed today.</p>
+      <div class="cluster">
+        <a class="btn" href="{{ '/research/persistent-state/' | relative_url }}">Explore the 2026 survey {% include icon.html name="arrow" %}</a>
+        <a class="btn btn--secondary" href="{{ '/products/' | relative_url }}">See the products</a>
+      </div>
+      <div class="hero__person">
+        <picture>
+          <source srcset="{{ profile.photo_small_webp | relative_url }}" type="image/webp">
+          <img class="hero__photo" src="{{ profile.photo | relative_url }}" width="56" height="56" alt="Portrait of {{ profile.name }}">
+        </picture>
+        <div>
+          <div class="hero__person-name">{{ profile.name }}</div>
+          <div class="hero__person-role">{{ profile.headline }} · {{ profile.team }}, {{ profile.lab }}, {{ profile.institution }}</div>
+        </div>
+      </div>
+      <dl class="hero__facts">
+        {%- for f in profile.facts %}
+        <div><dt>{{ f.label }}</dt><dd>{{ f.value }}</dd></div>
+        {%- endfor %}
+      </dl>
+    </div>
+    <div class="hero__demo">
+      {% include components/doc-demo.html %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight" aria-label="At a glance">
+  <div class="container">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat__value">{{ site.publications.size }}</div>
+        <div class="stat__label">publications</div>
+        <div class="stat__source">{{ peer.size }} peer-reviewed</div>
+      </div>
+      <div class="stat">
+        <div class="stat__value">{{ profile.metrics.citations }}</div>
+        <div class="stat__label">citations</div>
+        <div class="stat__source"><a href="{{ profile.metrics.source_url }}">{{ profile.metrics.source }}</a> · {{ profile.metrics.as_of }}</div>
+      </div>
+      <div class="stat">
+        <div class="stat__value">{{ profile.metrics.h_index }}</div>
+        <div class="stat__label">h-index</div>
+        <div class="stat__source">{{ profile.metrics.source }} · {{ profile.metrics.as_of }}</div>
+      </div>
+      <div class="stat">
+        <div class="stat__value">{{ profile.funding.total }}</div>
+        <div class="stat__label">{{ profile.funding.note }}</div>
+        <div class="stat__source"><a href="{{ '/research-activities/' | relative_url }}#grants">Grants</a></div>
+      </div>
+      <div class="stat">
+        <div class="stat__value">{{ profile.teaching_hours }}</div>
+        <div class="stat__label">hours taught</div>
+        <div class="stat__source"><a href="{{ '/teaching/' | relative_url }}">Teaching</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="bottleneck" aria-labelledby="bottleneck-title">
+  <div class="container split split--text-wide split--top">
+    <div class="stack stack-lg">
+      <header class="stack">
+        <p class="eyebrow"><span class="eyebrow__num">§ 01</span> The problem</p>
+        <h2 id="bottleneck-title">Today’s document AI has amnesia, by design.</h2>
+        <p class="lede">Models now read contracts, extract fields and point to the page region behind each answer — then forget all of it. My 2026 survey with Ayoub Merimi names this the <em>statelessness bottleneck</em> and specifies what it takes to remove it.</p>
+      </header>
+      <div class="chain" role="list">
+        <div class="chain__item" role="listitem">
+          <div class="chain__k">Storage</div>
+          <div class="chain__v">gives persistence</div>
+          <div class="chain__d">Files and indexes outlive the session, but nothing is learned from them.</div>
+        </div>
+        <div class="chain__item" role="listitem">
+          <div class="chain__k">Retrieval</div>
+          <div class="chain__v">gives access</div>
+          <div class="chain__d">The right page can be found again, but each document is still read cold.</div>
+        </div>
+        <div class="chain__item chain__item--target" role="listitem">
+          <div class="chain__k">Consolidation</div>
+          <div class="chain__v">gives experience</div>
+          <div class="chain__d">Observations become provenance-linked knowledge that improves the next reading.</div>
+        </div>
+      </div>
+      <blockquote class="pullquote">
+        <p>“{{ paper.quotes.storage }}”</p>
+        <footer>{{ paper.short_title }} · arXiv:{{ paper.arxiv }}</footer>
+      </blockquote>
+      <p><a class="link-arrow" href="{{ '/research/persistent-state/' | relative_url }}">Open the interactive explorer of the paper</a></p>
+    </div>
+    <figure class="figure">
+      <div class="figure__head"><span class="figure__label"><b>Persistent state</b> · Eq. 4</span><span class="badge badge--plain badge--muted">From the paper</span></div>
+      <div class="figure__body stack">
+        <p class="eq" aria-label="S sub t equals the tuple E, K, Gamma, V, P, A, each at session t">{% include math.html text=paper.state.symbol %}</p>
+        <div class="tuple">
+          {%- for c in paper.state.components %}
+          <div class="tuple__item" data-st="{{ c.key }}">
+            <div class="tuple__sym">{% include math.html text=c.symbol %}</div>
+            <div class="tuple__name">{{ c.name }}</div>
+            <div class="tuple__role">{{ c.role }}</div>
+          </div>
+          {%- endfor %}
+        </div>
+      </div>
+      <figcaption class="figure__caption">Six components of persistent, evidence-grounded document state. <strong>{{ paper.state.invariant }}</strong></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section section--alt" id="stack" aria-labelledby="stack-title">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow"><span class="eyebrow__num">§ 02</span> From papers to products</p>
+      <h2 id="stack-title">One stack, from the page to the decision.</h2>
+      <p class="lede">Each layer comes from published work and maps to one of the products I am building with SynaptYon. Pick a layer to see the research behind it.</p>
+    </header>
+    {% include components/stack.html %}
+  </div>
+</section>
+
+<section class="section" id="products" aria-labelledby="products-title">
+  <div class="container">
+    <header class="section-head section-head--row">
+      <div class="stack">
+        <p class="eyebrow"><span class="eyebrow__num">§ 03</span> Products</p>
+        <h2 id="products-title">Three products, built on the research.</h2>
+      </div>
+      <a class="link-arrow" href="{{ '/products/' | relative_url }}">All products and live demos</a>
+    </header>
+    <div class="grid grid-3">
+      {%- for prod in site.data.products.products %}
+      {%- assign st = site.data.products.statuses[prod.status] %}
+      <a class="card card--link product-card" href="{{ '/products/' | relative_url }}#{{ prod.id }}">
+        <div class="product-card__head">
+          <span class="product-card__name">{{ prod.name }}</span>
+          <span class="badge badge--{{ st.tone }}">{{ st.label }}</span>
+        </div>
+        <p class="product-card__tagline">{{ prod.tagline }}</p>
+        <p class="card__body">{{ prod.audience }}</p>
+        <div class="product-card__layers card__foot">
+          {%- for l in prod.layers %}{% assign layer = site.data.products.stack | where: "id", l | first %}<span class="tag">{{ layer.name }}</span>{% endfor %}
+        </div>
+      </a>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" id="trajectory" aria-labelledby="trajectory-title">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow"><span class="eyebrow__num">§ 04</span> Research trajectory</p>
+      <h2 id="trajectory-title">From fusing text and image to remembering documents.</h2>
+      <p class="lede">Since 2019: cross-modal document understanding, then retrieval and grounded answers, low-resource scripts, and now persistent state. Filter by theme.</p>
+    </header>
+    {% include components/timeline.html %}
+  </div>
+</section>
+
+<section class="section" id="selected" aria-labelledby="selected-title">
+  <div class="container">
+    <header class="section-head section-head--row">
+      <div class="stack">
+        <p class="eyebrow"><span class="eyebrow__num">§ 05</span> Selected publications</p>
+        <h2 id="selected-title">Selected work.</h2>
+      </div>
+      <a class="link-arrow" href="{{ '/publications/' | relative_url }}">All {{ site.publications.size }} publications</a>
+    </header>
+    <ol class="pubs">
+      {%- for p in featured limit: 6 %}
+        {% include pub-item.html pub=p summary=true %}
+      {%- endfor %}
+    </ol>
+  </div>
+</section>
+
+<section class="section section--alt" id="contact" aria-labelledby="contact-title">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow"><span class="eyebrow__num">§ 06</span> Work together</p>
+      <h2 id="contact-title">Research collaboration, or a product pilot.</h2>
+    </header>
+    <div class="grid grid-2">
+      <div class="card contact-card">
+        <p class="card__kicker">Academic</p>
+        <h3>Co-supervision, joint projects, reviewing</h3>
+        <p class="card__body">I work with groups across Europe and Asia on document understanding, low-resource scripts and grounded retrieval, and co-supervise PhD students.</p>
+        <div class="cluster card__foot">
+          <a class="btn" href="mailto:{{ profile.email }}">{% include icon.html name="mail" %}{{ profile.email }}</a>
+          <a class="btn btn--ghost" href="{{ '/research-activities/' | relative_url }}">Collaborations</a>
+        </div>
+      </div>
+      <div class="card contact-card">
+        <p class="card__kicker">{{ profile.company.name }}</p>
+        <h3>Document Intelligence for your documents</h3>
+        <p class="card__body">If your team handles contracts, invoices, records or reports that change over time, I would like to hear about it. The products are in development; early pilots shape them.</p>
+        <div class="cluster card__foot">
+          <a class="btn" href="mailto:{{ profile.email }}?subject=SynaptYon%20%E2%80%94%20product%20pilot">{% include icon.html name="mail" %}Discuss a pilot</a>
+          <a class="btn btn--ghost" href="{{ '/products/' | relative_url }}">Products</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

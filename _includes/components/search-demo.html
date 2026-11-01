@@ -1,0 +1,107 @@
+{%- comment -%}
+  SynapseSearch demo (products page): grounded, time-aware question answering
+  over the fictional passages of _data/demo.yml. Without JavaScript it lists
+  the suggested questions and the collection, grouped by document, with the
+  dates each passage is valid. assets/js/components/search-demo.js adds the
+  question box, the "As of" date, the cited answer and the retrieval trace.
+{%- endcomment -%}
+{%- assign demo = site.data.demo -%}
+{%- assign docs = demo.documents | concat: demo.extra_documents -%}
+{%- assign layer = site.data.products.stack | where: "id", "answer" | first -%}
+{%- assign mtrace = site.publications | where: "slug", "2025-hybrid-rag" | first -%}
+{%- assign survey = site.publications | where: "slug", "2026-amnesia-by-design" | first -%}
+{%- assign uid = include.id | default: "synapsesearch-demo" -%}
+{%- assign n_passages = demo.passages | size -%}
+{%- assign n_docs = 0 -%}
+{%- for d in docs -%}{%- assign dps = demo.passages | where: "doc", d.id -%}{%- if dps.size > 0 -%}{%- assign n_docs = n_docs | plus: 1 -%}{%- endif -%}{%- endfor -%}
+<figure class="figure c-search-demo" data-component="search-demo" id="{{ uid }}" aria-labelledby="{{ uid }}-label">
+  <div class="figure__head">
+    <p class="figure__label" id="{{ uid }}-label">Demo · <b>{{ layer.verb | default: "Cite, or abstain" }}</b></p>
+    <div class="cluster c-search-demo__badges">
+      <span class="badge badge--accent js-only">Interactive</span>
+      <span class="badge">Illustrative</span>
+    </div>
+  </div>
+
+  <div class="figure__body c-search-demo__body">
+    <div class="c-search-demo__app" data-app hidden></div>
+
+    <div class="c-search-demo__static no-js-only">
+      <p class="c-search-demo__static-lede">With JavaScript on, this demo answers questions like these from the {{ n_passages }} passages below, in English or French and as of a chosen date, quoting and citing its evidence, or abstaining when no passage in force supports an answer.</p>
+      <ul class="c-search-demo__questions">
+        {%- for q in demo.suggested_questions %}
+        <li{% if q contains "é" or q contains " ?" %} lang="fr"{% endif %}>{{ q | escape }}</li>
+        {%- endfor %}
+      </ul>
+    </div>
+
+    <details class="c-search-demo__corpus" data-corpus open>
+      <summary class="c-search-demo__corpus-summary">
+        <span class="c-search-demo__corpus-title">The collection</span>
+        <span class="c-search-demo__corpus-count">{{ n_passages }} passages · {{ n_docs }} documents</span>
+      </summary>
+      <div class="table-wrap c-search-demo__table-wrap" role="region" tabindex="0" aria-label="The {{ n_passages }} fictional passages, by document, with the dates each is valid">
+        <table class="table c-search-demo__table">
+          <thead>
+            <tr>
+              <th scope="col">Section</th>
+              <th scope="col">Passage</th>
+              <th scope="col">Valid</th>
+              <th scope="col" class="js-only" data-status-head>Status</th>
+            </tr>
+          </thead>
+          {%- for d in docs %}
+          {%- assign ps = demo.passages | where: "doc", d.id | sort: "section" %}
+          {%- if ps.size > 0 %}
+          <tbody>
+            <tr class="c-search-demo__doc">
+              <th scope="rowgroup" colspan="4"><span class="c-search-demo__doc-ref">{{ d.ref }}</span> {{ d.title | escape }} <span class="c-search-demo__doc-date">· <time datetime="{{ d.date }}">{{ d.date | date: "%-d %b %Y" }}</time>{% if d.effective %} · in force from <time datetime="{{ d.effective }}">{{ d.effective | date: "%-d %b %Y" }}</time>{% endif %}</span></th>
+            </tr>
+            {%- for p in ps %}
+            <tr id="{{ uid }}-{{ p.id }}" data-passage="{{ p.id }}">
+              <th scope="row" class="c-search-demo__sec">{{ p.section }}</th>
+              <td class="c-search-demo__text">{{ p.text | escape }}</td>
+              <td class="c-search-demo__valid">
+                <time datetime="{{ p.valid_from }}">{{ p.valid_from | date: "%-d %b %Y" }}</time> –{% if p.valid_to %} <time datetime="{{ p.valid_to }}">{{ p.valid_to | date: "%-d %b %Y" }}</time>{% endif %}
+                {%- if p.superseded_by %}{% assign sp = demo.passages | where: "id", p.superseded_by | first %}{% assign sd = docs | where: "id", sp.doc | first %}
+                <span class="c-search-demo__by">superseded by {{ sd.ref }} {{ sp.section }}</span>
+                {%- endif %}
+              </td>
+              <td class="js-only c-search-demo__status" data-status></td>
+            </tr>
+            {%- endfor %}
+          </tbody>
+          {%- endif %}
+          {%- endfor %}
+        </table>
+      </div>
+    </details>
+  </div>
+
+  <figcaption class="figure__caption c-search-demo__caption">
+    <p class="note-illustrative">Illustrative · BM25 + query expansion + reciprocal rank fusion over {{ n_passages }} fictional passages, in your browser. Not the product.</p>
+    <p><strong>How to read it.</strong> Ask in English or French, or pick a question, then switch the date to see superseded clauses become history. An answer is given only from a passage in force that covers the question’s key terms, quoted with its span highlighted and cited by document, section and page; otherwise the demo abstains and says what it searched. Semantic query expansion, reciprocal rank fusion and strict grounding with abstention come from {% if mtrace %}<a href="{{ mtrace.url | relative_url }}">{{ mtrace.title | split: ":" | first }}</a> ({{ mtrace.venue_short }}){% else %}MTRACE{% endif %}, validity intervals from {% if survey %}<a href="{{ survey.url | relative_url }}">the {{ survey.venue_short | remove: "arXiv " }} survey</a>{% else %}the survey{% endif %}; a simple extractive rule stands in for the generator. {{ demo.disclaimer }}</p>
+  </figcaption>
+
+  <script type="application/json" data-for="search-demo">
+  {
+    "passages": {{ demo.passages | jsonify }},
+    "documents": [
+      {%- for d in docs %}
+      {
+        "id": {{ d.id | jsonify }},
+        "ref": {{ d.ref | jsonify }},
+        "title": {{ d.title | jsonify }},
+        "kind": {{ d.kind | jsonify }},
+        "date": {{ d.date | jsonify }},
+        "effective": {{ d.effective | jsonify }},
+        "regions": [{% for r in d.regions %}{ "type": {{ r.type | jsonify }}, "section": {{ r.section | jsonify }}, "text": {{ r.text | jsonify }}, "box": {{ r.box | jsonify }} }{% unless forloop.last %},{% endunless %}{% endfor %}]
+      }{% unless forloop.last %},{% endunless %}
+      {%- endfor %}
+    ],
+    "page": {{ demo.page | jsonify }},
+    "questions": {{ demo.suggested_questions | jsonify }},
+    "expansions": {{ demo.expansions | jsonify }}
+  }
+  </script>
+</figure>

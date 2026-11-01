@@ -1,0 +1,30 @@
+# Research themes. Publications list theme ids in their `themes:` front matter;
+# the publication explorer, research page and product pages read this file.
+- id: understanding
+  label: "Document understanding"
+  short: "Understanding"
+  description: "Cross-modal vision-language representations for classifying, retrieving and summarizing visually rich documents."
+- id: memory
+  label: "Persistent state & decisions"
+  short: "Memory"
+  description: "What document systems should retain across documents and sessions: provenance-linked state, supersession, governed forgetting, and decisions that stay valid after they are made."
+- id: retrieval
+  label: "Grounded retrieval & QA"
+  short: "Retrieval"
+  description: "Retrieval-augmented generation that answers only from evidence, cites it, and abstains when the evidence is insufficient."
+- id: text
+  label: "Scene text & low-resource scripts"
+  short: "Text"
+  description: "Detection, recognition and generation of text in complex, low-resource scripts such as Khmer, including handwriting."
+- id: trust
+  label: "Trust, identity & security"
+  short: "Trust"
+  description: "Identity documents, document quality, and reputation systems for evaluating language models."
+- id: language
+  label: "Language & translation"
+  short: "Language"
+  description: "Neural machine translation for specialized domains, knowledge distillation, compression, and knowledge-graph-to-text generation."
+- id: graphs
+  label: "Graph learning"
+  short: "Graphs"
+  description: "Graph representations and benchmarks for structured document data."

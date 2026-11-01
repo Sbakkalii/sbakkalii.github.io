@@ -1,0 +1,48 @@
+{%- comment -%}
+  Five outcomes of temporal supersession (paper page, #reconcile).
+  Static baseline: the five outcomes from _data/paper.yml, each with an
+  example from the fictional stream in _data/demo.yml. The script
+  (assets/js/components/reconcile.js) reads the four documents one at a
+  time, with outcome cards, a tally and the claims ledger, and keeps this
+  table in the disclosure below them.
+{%- endcomment -%}
+{%- assign paper = site.data.paper -%}
+{%- assign demo = site.data.demo -%}
+{%- assign defined = paper.reconciliation | where: "defined", true | map: "name" -%}
+{%- assign named = paper.reconciliation | where: "defined", false | map: "name" -%}
+<figure class="figure c-reconcile" data-component="reconcile" id="reconcile-stream">
+  <div class="figure__head">
+    <span class="figure__label"><b>Temporal supersession</b> · the five outcomes of <span class="math">{% include math.html text="𝒮_sup" %}</span></span>
+    <span class="c-reconcile__badges"><span class="badge badge--accent js-only">Interactive</span> <span class="badge badge--muted">Illustrative</span></span>
+  </div>
+  <script type="application/json" data-for="reconcile">{"outcomes": {{ paper.reconciliation | jsonify }}, "documents": {{ demo.documents | jsonify }}}</script>
+  <div class="c-reconcile__app" data-app hidden></div>
+  <details class="c-reconcile__alt" open data-alt>
+    <summary>The five outcomes, as a table</summary>
+    <div class="c-reconcile__alt-body">
+      <div class="table-wrap" role="region" tabindex="0" aria-label="The five reconciliation outcomes, with an example from the demo">
+        <table class="table c-reconcile__table">
+          <thead>
+            <tr><th scope="col">Outcome</th><th scope="col">What happens</th><th scope="col">Example from the demo stream</th></tr>
+          </thead>
+          <tbody>
+            {%- for o in paper.reconciliation %}
+            {%- assign ex_doc = nil %}
+            {%- assign ex = nil %}
+            {%- for d in demo.documents %}
+              {%- assign hit = d.fields | where: "outcome", o.id | first %}
+              {%- if hit %}{% assign ex_doc = d %}{% assign ex = hit %}{% break %}{% endif %}
+            {%- endfor %}
+            <tr>
+              <th scope="row"><span class="c-reconcile__oc" data-outcome="{{ o.id }}">{{ o.name }}</span></th>
+              <td>{{ o.body }}{% if o.defined %} <span class="c-reconcile__defined">Defined in the paper.</span>{% else %} <span class="c-reconcile__reading">Named in the paper; description is our reading.</span>{% endif %}</td>
+              <td>{% if ex %}<b>{{ ex.label }}</b> <span class="c-reconcile__ex-src">{{ ex_doc.ref }}, “{{ ex.value }}”</span><span class="c-reconcile__ex-note">{{ ex.note }}</span>{% else %}—{% endif %}</td>
+            </tr>
+            {%- endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </details>
+  <figcaption class="figure__caption"><strong>How to read it.</strong> <span class="js-only">Read the four fictional documents in order: each field meets the claims already stored and gets one outcome; the ledger is the resulting validity index.</span> Outcome names come from the paper, which defines {{ defined | join: " and " | downcase }} and only names {{ named | join: ", " | downcase }}; for those, the descriptions are our reading. “New claim” is not one of the five: nothing was stored yet. {{ demo.disclaimer }}</figcaption>
+</figure>

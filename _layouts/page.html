@@ -1,0 +1,25 @@
+---
+layout: default
+---
+{%- comment -%}
+  Generic inner page. Front matter: title, eyebrow, lede, description,
+  full_width (skip the prose wrapper for pages that compose their own layout).
+{%- endcomment -%}
+<header class="page-head">
+  <div class="container page-head__inner">
+    {%- if page.eyebrow %}<p class="eyebrow">{{ page.eyebrow }}</p>{% endif %}
+    <h1>{{ page.title }}</h1>
+    {%- if page.lede %}<p class="lede">{{ page.lede }}</p>{% endif %}
+  </div>
+</header>
+{%- if page.full_width %}
+{{ content }}
+{%- else %}
+<div class="section">
+  <div class="container">
+    <div class="prose">
+{{ content }}
+    </div>
+  </div>
+</div>
+{%- endif %}

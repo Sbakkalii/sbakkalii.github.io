@@ -1,0 +1,213 @@
+# Synthetic documents for the in-browser demos (hero, DocuMind, the paper
+# explorer, SynapseSearch, AgentForge). Every party, number and date is
+# fictional. Page coordinates are in a 600 × 848 (A4) box: [x, y, w, h].
+
+disclaimer: "Fictional documents. The demo runs entirely in your browser; it illustrates the ideas, it is not the product."
+
+parties:
+  supplier: "Halden Freight SAS"
+  client: "Orvelle Analytics SA"
+
+page: { width: 600, height: 848 }
+
+documents:
+  - id: msa
+    kind: "Contract"
+    title: "Master Services Agreement"
+    ref: "MSA-2026-014"
+    date: "2026-03-02"
+    regions:
+      - { id: msa-title, type: Title, box: [60, 56, 480, 34], text: "MASTER SERVICES AGREEMENT" }
+      - { id: msa-meta, type: Header, box: [60, 96, 480, 18], text: "No. MSA-2026-014 · Rennes, 2 March 2026" }
+      - { id: msa-1, type: Clause, section: "§1", box: [60, 136, 480, 50], text: "1. Parties. This Agreement is made between Halden Freight SAS (the “Supplier”) and Orvelle Analytics SA (the “Client”)." }
+      - { id: msa-2, type: Clause, section: "§2", box: [60, 196, 480, 34], text: "2. Term. Twenty-four (24) months from 2 March 2026." }
+      - { id: msa-4, type: Clause, section: "§4.2", box: [60, 240, 480, 34], text: "4.2 Payment terms. Invoices are payable within thirty (30) days of receipt." }
+      - id: msa-5
+        type: Table
+        section: "§5"
+        box: [60, 286, 480, 112]
+        text: "5. Rates."
+        rows:
+          - ["Service", "Unit", "Rate"]
+          - ["Standard pallet", "pallet", "€42.00"]
+          - ["Express pallet", "pallet", "€68.00"]
+          - ["Storage", "pallet-week", "€3.10"]
+      - { id: msa-7, type: Clause, section: "§7.1", box: [60, 412, 480, 34], text: "7.1 Liability. The Supplier’s aggregate liability is capped at €250,000 per contract year." }
+      - { id: msa-9, type: Clause, section: "§9", box: [60, 456, 480, 34], text: "9. Governing law. This Agreement is governed by French law; courts of Rennes." }
+      - { id: msa-sig, type: Signature, box: [60, 690, 480, 86], text: "For the Supplier · For the Client" }
+      - { id: msa-foot, type: Footer, box: [60, 804, 480, 16], text: "MSA-2026-014 · page 1" }
+    fields:
+      - { key: parties, label: "Parties", value: "Halden Freight SAS ↔ Orvelle Analytics SA", region: msa-1 }
+      - { key: term, label: "Term", value: "24 months from 2026-03-02", region: msa-2 }
+      - { key: payment_terms, label: "Payment terms", value: "30 days", region: msa-4 }
+      - { key: rate_standard, label: "Standard pallet rate", value: "€42.00", region: msa-5 }
+      - { key: rate_express, label: "Express pallet rate", value: "€68.00", region: msa-5 }
+      - { key: rate_storage, label: "Storage rate", value: "€3.10 / pallet-week", region: msa-5 }
+      - { key: liability_cap, label: "Liability cap", value: "€250,000 / year", scope: "all services", region: msa-7 }
+      - { key: governing_law, label: "Governing law", value: "French law, courts of Rennes", region: msa-9 }
+
+  - id: sow2
+    kind: "Statement of work"
+    title: "Statement of Work No. 2 — Cold-chain services"
+    ref: "SOW-2"
+    date: "2026-06-01"
+    regions:
+      - { id: sow-title, type: Title, box: [60, 56, 480, 34], text: "STATEMENT OF WORK No. 2" }
+      - { id: sow-meta, type: Header, box: [60, 96, 480, 18], text: "Cold-chain services · under MSA-2026-014 · 1 June 2026" }
+      - { id: sow-1, type: Clause, section: "§1", box: [60, 136, 480, 50], text: "1. Scope. Temperature-controlled storage and transport at 2–8 °C for the Client’s EU sites." }
+      - { id: sow-3, type: Clause, section: "§3", box: [60, 196, 480, 50], text: "3. Liability. For cold-chain services only, the Supplier’s liability is capped at €400,000 per contract year." }
+      - id: sow-4
+        type: Table
+        section: "§4"
+        box: [60, 260, 480, 66]
+        text: "4. Rates."
+        rows:
+          - ["Service", "Unit", "Rate"]
+          - ["Cold-chain pallet", "pallet", "€95.00"]
+      - { id: sow-sig, type: Signature, box: [60, 690, 480, 86], text: "For the Supplier · For the Client" }
+      - { id: sow-foot, type: Footer, box: [60, 804, 480, 16], text: "SOW-2 · page 1" }
+    fields:
+      - { key: liability_cap, label: "Liability cap", value: "€400,000 / year", scope: "cold-chain services", region: sow-3, outcome: scope-coexist, note: "Different scope from the MSA cap: both stand." }
+      - { key: rate_coldchain, label: "Cold-chain pallet rate", value: "€95.00", region: sow-4, outcome: new }
+
+  - id: amend1
+    kind: "Amendment"
+    title: "Amendment No. 1 to MSA-2026-014"
+    ref: "AMD-1"
+    date: "2026-10-15"
+    effective: "2026-11-01"
+    regions:
+      - { id: amd-title, type: Title, box: [60, 56, 480, 34], text: "AMENDMENT No. 1" }
+      - { id: amd-meta, type: Header, box: [60, 96, 480, 18], text: "To MSA-2026-014 · signed 15 October 2026 · effective 1 November 2026" }
+      - { id: amd-1, type: Clause, section: "§1", box: [60, 136, 480, 50], text: "1. Clause 4.2 is replaced: invoices are payable within forty-five (45) days of receipt." }
+      - { id: amd-2, type: Clause, section: "§2", box: [60, 196, 480, 50], text: "2. In the rate table of Clause 5, the Express pallet rate becomes €71.50." }
+      - { id: amd-3, type: Clause, section: "§3", box: [60, 256, 480, 34], text: "3. Clause 7.1 (Liability) remains unchanged." }
+      - { id: amd-4, type: Clause, section: "§4", box: [60, 300, 480, 50], text: "4. New Clause 11. Client data is processed and stored in the European Union only." }
+      - { id: amd-sig, type: Signature, box: [60, 690, 480, 86], text: "For the Supplier · For the Client" }
+      - { id: amd-foot, type: Footer, box: [60, 804, 480, 16], text: "AMD-1 · page 1" }
+    fields:
+      - { key: payment_terms, label: "Payment terms", value: "45 days", region: amd-1, outcome: supersede, note: "Closes “30 days” on 2026-10-31; “45 days” is valid from 2026-11-01." }
+      - { key: rate_express, label: "Express pallet rate", value: "€71.50", region: amd-2, outcome: supersede, note: "Closes “€68.00” on 2026-10-31." }
+      - { key: liability_cap, label: "Liability cap", value: "unchanged", scope: "all services", region: amd-3, outcome: support, note: "Corroborates §7.1 of the MSA." }
+      - { key: data_residency, label: "Data residency", value: "EU only", region: amd-4, outcome: new }
+
+  - id: inv
+    kind: "Invoice"
+    title: "Invoice INV-2026-0117"
+    ref: "INV-2026-0117"
+    date: "2026-11-05"
+    regions:
+      - { id: inv-title, type: Title, box: [60, 56, 480, 34], text: "HALDEN FREIGHT SAS — INVOICE" }
+      - { id: inv-meta, type: Header, box: [60, 96, 480, 18], text: "INV-2026-0117 · 5 November 2026 · ref. MSA-2026-014" }
+      - { id: inv-bill, type: Paragraph, box: [60, 132, 480, 34], text: "Bill to: Orvelle Analytics SA, EU logistics desk." }
+      - id: inv-lines
+        type: Table
+        box: [60, 180, 480, 112]
+        text: "Lines."
+        rows:
+          - ["Item", "Qty", "Unit price", "Amount"]
+          - ["Express pallet", "12", "€68.00", "€816.00"]
+          - ["Standard pallet", "30", "€42.00", "€1,260.00"]
+          - ["Total", "", "", "€2,076.00"]
+      - { id: inv-terms, type: Paragraph, box: [60, 306, 480, 34], text: "Payment due within 30 days, by 5 December 2026." }
+      - { id: inv-foot, type: Footer, box: [60, 804, 480, 16], text: "INV-2026-0117 · page 1" }
+    fields:
+      - { key: rate_express, label: "Express pallet rate", value: "€68.00", region: inv-lines, outcome: retain-conflict, note: "Contract rate since 2026-11-01 is €71.50; the line is €42.00 below it. Both claims are kept and flagged." }
+      - { key: payment_terms, label: "Payment terms", value: "30 days", region: inv-terms, outcome: escalate, note: "Contradicts the 45 days in force since 2026-11-01; routed to a person before anything is paid." }
+      - { key: invoice_total, label: "Total", value: "€2,076.00", region: inv-lines, outcome: new }
+
+# An observation the pre-write gate should reject (Validate step).
+noisy_observation:
+  document: inv
+  region: inv-lines
+  key: rate_express
+  read: "€6.80"
+  why: "OCR dropped a digit. It contradicts both the table arithmetic (12 × €6.80 ≠ €816.00) and every stored rate, so the gate rejects it and the state is unchanged."
+
+# A deletion request (Forget step).
+deletion_request:
+  target: sow2
+  reason: "Erasure request: SOW-2 must be forgotten."
+  effects:
+    - { level: 1, text: "Delete the SOW-2 file." }
+    - { level: 2, text: "Remove its embeddings and graph nodes." }
+    - { level: 3, text: "Repair the liability schema: the cold-chain exception (€400,000) is removed; the MSA cap (€250,000) stands." }
+
+# Passages for the SynapseSearch demo, drawn from the documents above plus a
+# data-processing addendum. `valid_to` marks superseded text.
+passages:
+  - { id: p1, doc: msa, section: "§4.2", text: "Payment terms. Invoices are payable within thirty (30) days of receipt.", valid_from: "2026-03-02", valid_to: "2026-10-31", superseded_by: p7 }
+  - { id: p2, doc: msa, section: "§5", text: "Rates: standard pallet €42.00; express pallet €68.00; storage €3.10 per pallet-week.", valid_from: "2026-03-02", valid_to: "2026-10-31", superseded_by: p8 }
+  - { id: p3, doc: msa, section: "§7.1", text: "Liability. The Supplier’s aggregate liability is capped at €250,000 per contract year.", valid_from: "2026-03-02" }
+  - { id: p4, doc: msa, section: "§9", text: "Governing law. This Agreement is governed by French law; courts of Rennes.", valid_from: "2026-03-02" }
+  - { id: p5, doc: msa, section: "§2", text: "Term. Twenty-four (24) months from 2 March 2026.", valid_from: "2026-03-02" }
+  - { id: p6, doc: sow2, section: "§3", text: "For cold-chain services only, the Supplier’s liability is capped at €400,000 per contract year.", valid_from: "2026-06-01" }
+  - { id: p7, doc: amend1, section: "§1", text: "Clause 4.2 is replaced: invoices are payable within forty-five (45) days of receipt.", valid_from: "2026-11-01" }
+  - { id: p8, doc: amend1, section: "§2", text: "In the rate table of Clause 5, the express pallet rate becomes €71.50.", valid_from: "2026-11-01" }
+  - { id: p9, doc: amend1, section: "§4", text: "New Clause 11. Client data is processed and stored in the European Union only.", valid_from: "2026-11-01" }
+  - { id: p10, doc: sow2, section: "§1", text: "Scope. Temperature-controlled storage and transport at 2–8 °C for the Client’s EU sites.", valid_from: "2026-06-01" }
+  - { id: p11, doc: inv, section: "Lines", text: "Invoice INV-2026-0117: 12 express pallets at €68.00 and 30 standard pallets at €42.00; total €2,076.00.", valid_from: "2026-11-05" }
+  - { id: p12, doc: dpa, section: "§3", text: "Sub-processors. The Supplier may appoint sub-processors only with the Client’s prior written consent.", valid_from: "2026-03-02" }
+
+extra_documents:
+  - { id: dpa, title: "Data Processing Addendum", ref: "DPA-2026-014", date: "2026-03-02" }
+
+suggested_questions:
+  - "What are the payment terms?"
+  - "Quel est le délai de paiement ?"
+  - "What is the liability cap for cold-chain services?"
+  - "Where is client data stored?"
+  - "What does an express pallet cost?"
+  - "Who is Orvelle’s CEO?"
+
+# Bilingual expansions for the demo's semantic query expansion step.
+expansions:
+  "délai de paiement": ["payment terms", "payable within days"]
+  "paiement": ["payment", "payable"]
+  "facture": ["invoice"]
+  "responsabilité": ["liability"]
+  "plafond": ["cap", "capped"]
+  "données": ["data"]
+  "stockées": ["stored", "processed"]
+  "hébergées": ["stored", "processed"]
+  "tarif": ["rate", "price"]
+  "prix": ["rate", "price"]
+  "coût": ["rate", "price"]
+  "droit applicable": ["governing law"]
+  "durée": ["term", "months"]
+  "pay": ["payment", "payable"]
+  "due": ["payable"]
+  "cost": ["rate", "price"]
+  "price": ["rate"]
+  "limit": ["cap", "capped"]
+  "store": ["stored", "processed"]
+  "stored": ["processed", "residency"]
+  "host": ["stored", "processed"]
+  "law": ["governing law", "courts"]
+  "cold chain": ["cold-chain", "temperature-controlled"]
+  "chaîne du froid": ["cold-chain", "temperature-controlled"]
+  "palette": ["pallet"]
+  "express": ["express"]
+
+# The AgentForge decision-ledger demo (after "Fresh at Decision, Stale at Action").
+ledger:
+  decision:
+    title: "Ship the December campaign by express pallet with Halden Freight"
+    chosen: "Halden Freight, express"
+    alternatives: ["Halden Freight, standard", "Second carrier, express"]
+    evidence: "MSA §5: express pallet €68.00 (verified 2026-10-01)."
+    dossier: ["Halden Freight SAS", "Halden’s December express route runs through the port of Le Havre", "Orvelle Analytics SA"]
+    watch: ["Halden Freight express rate or capacity changes", "Disruption on the Le Havre route", "Orvelle December volume forecast changes"]
+    times:
+      - { key: t_w, label: "Evidence written", date: "2026-03-02" }
+      - { key: t_v, label: "Evidence verified", date: "2026-10-01" }
+      - { key: t_d, label: "Decision made", date: "2026-10-05" }
+      - { key: t_r, label: "Revision deadline", date: "2026-11-20" }
+      - { key: t_a, label: "Action", date: "2026-12-01" }
+      - { key: t_e, label: "Outcome observed", date: "2026-12-15" }
+  news:
+    - { id: n1, date: "2026-10-15", text: "Amendment No. 1: Halden Freight’s express pallet rate becomes €71.50 from 1 November.", names: true, dossier: true, watch: true, decisive: false, effect: "Cost rises by €3.50 per pallet; the decision can stand." }
+    - { id: n2, date: "2026-10-22", text: "Halden Marine announces a fleet maintenance stop in December.", names: true, dossier: false, watch: false, decisive: false, decoy: true, effect: "A different company with a similar name." }
+    - { id: n3, date: "2026-11-09", text: "Dock workers at the port of Le Havre call a strike from 25 November to 3 December.", names: false, dossier: true, watch: true, decisive: true, effect: "The December express route is blocked: switch to the second carrier before 20 November." }
+    - { id: n4, date: "2026-11-12", text: "A strike at the port of Le Havre is planned for 15–20 January 2027.", names: false, dossier: true, watch: true, decisive: false, after_activity: true, effect: "Starts after the activity ends: dropped by the time filter." }
+    - { id: n5, date: "2026-11-25", text: "Orvelle raises its December volume forecast by 10%.", names: true, dossier: true, watch: true, decisive: false, late: true, effect: "Arrives after the revision deadline: too late to change this decision." }

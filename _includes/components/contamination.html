@@ -1,0 +1,109 @@
+{%- comment -%}
+  Theorem III.4 and Corollary III.7: the contamination bound.
+  Static baseline: the equations, the variables, and one worked example
+  (p_e = 0.05, p_c = 0.1, δ = 0.05, computed to more digits than printed:
+  q = 0.005; P_cont(100) = 1 − 0.995^100 = 0.394230; k* = ln 0.95 / ln 0.995
+  = 10.233). contamination.js turns the worked example into a live calculator
+  with a chart, starting from the same values.
+{%- endcomment -%}
+{%- assign t = site.data.paper.theorem -%}
+{%- assign cj_head = t.conjecture | split: ":" | first -%}
+{%- assign cj_body = t.conjecture | remove_first: cj_head | remove_first: ":" | strip -%}
+<figure class="figure c-contamination" data-component="contamination" id="fig-contamination" aria-labelledby="fig-contamination-label">
+  <script type="application/json" data-for="contamination">{{ t | jsonify }}</script>
+  <div class="figure__head">
+    <span class="figure__label" id="fig-contamination-label"><b>{{ t.id }}</b> · Contamination bound</span>
+    <span class="c-contamination__badges">
+      <span class="badge badge--accent js-only">Interactive</span>
+      <span class="badge badge--muted">Illustrative values</span>
+    </span>
+  </div>
+
+  <div class="figure__body c-contamination__body">
+    <div class="c-contamination__theory">
+      <div class="c-contamination__eqs">
+        <div class="c-contamination__eqrow">
+          <p class="c-contamination__k">Contamination after <span class="math">k</span> updates</p>
+          <p class="eq">{% include math.html text=t.equation %}</p>
+        </div>
+        <div class="c-contamination__eqrow">
+          <p class="c-contamination__k">Expected Memory Harm</p>
+          <p class="eq">{% include math.html text=t.harm %}</p>
+        </div>
+        <div class="c-contamination__eqrow">
+          <p class="c-contamination__k">Safe horizon · {{ t.corollary.id }}</p>
+          <p class="eq">{% include math.html text=t.corollary.horizon %}</p>
+        </div>
+      </div>
+      <div class="c-contamination__vars">
+        <p class="c-contamination__k">Variables · assumes {{ t.assumption }}</p>
+        <dl class="kv c-contamination__kv">
+          {%- for v in t.variables %}
+          <dt><span class="math">{% include math.html text=v.symbol %}</span></dt><dd>{{ v.name }}</dd>
+          {%- endfor %}
+        </dl>
+        <p class="c-contamination__shorthand small">Below, <span class="math">q = p<sub>e</sub> · p<sub>c</sub></span> is the chance that a single update admits an erroneous observation, so <span class="math">P<sub>cont</sub>(k) = 1 − (1 − q)<sup>k</sup></span>.</p>
+      </div>
+    </div>
+
+    <div class="c-contamination__calc" data-calc>
+      <p class="c-contamination__k no-js-only">Worked example · illustrative values <span class="math">p<sub>e</sub> = 0.05</span>, <span class="math">p<sub>c</sub> = 0.1</span>, <span class="math">δ = 0.05</span></p>
+      <button type="button" class="btn btn--ghost btn--sm c-contamination__reset js-only" data-reset>{% include icon.html name="reset" %}Reset to the worked example</button>
+      <dl class="c-contamination__stats" data-stats>
+        <div class="c-contamination__stat">
+          <dt>Per-update contamination</dt>
+          <dd class="c-contamination__val" data-val="q">0.005</dd>
+          <dd class="c-contamination__how" data-how="q"><span class="math"><span class="c-contamination__nw">q = p<sub>e</sub> · p<sub>c</sub></span> <span class="c-contamination__nw">= 0.05 · 0.1</span></span></dd>
+        </div>
+        <div class="c-contamination__stat">
+          <dt>Contamination after <span data-k-label>100</span> updates</dt>
+          <dd class="c-contamination__val" data-val="p">39.42%</dd>
+          <dd class="c-contamination__how" data-how="p"><span class="math"><span class="c-contamination__nw">P<sub>cont</sub>(100)</span> <span class="c-contamination__nw">= 1 − (1 − 0.005)<sup>100</sup></span></span></dd>
+        </div>
+        <div class="c-contamination__stat">
+          <dt>Safe horizon for <span class="math" data-delta-label>δ = 0.05</span></dt>
+          <dd class="c-contamination__val" data-val="kstar"><span class="math">k*</span> = 10.23</dd>
+          <dd class="c-contamination__how" data-how="kstar"><span class="math"><span class="c-contamination__nw">ln(1 − 0.05)</span> <span class="c-contamination__nw">/ ln(1 − 0.005)</span></span>: the first 10 updates stay within δ.</dd>
+        </div>
+      </dl>
+
+      <details class="disclosure c-contamination__values" open data-values>
+        <summary><span>Values of <span class="math">P<sub>cont</sub>(k)</span></span></summary>
+        <div class="disclosure__body">
+          <div class="table-wrap" role="region" tabindex="0" aria-label="Contamination probability by number of updates">
+            <table class="table c-contamination__table">
+              <caption data-values-caption>Worked example: <span class="math">q = 0.005</span>. Illustrative values, not measurements.</caption>
+              <thead><tr><th scope="col">Updates <span class="math">k</span></th><th scope="col" class="num"><span class="math">P<sub>cont</sub>(k)</span></th></tr></thead>
+              <tbody>
+                <tr><th scope="row" class="num">1</th><td class="num">0.50%</td></tr>
+                <tr><th scope="row" class="num">10</th><td class="num">4.89%</td></tr>
+                <tr><th scope="row" class="num">100</th><td class="num">39.42%</td></tr>
+                <tr><th scope="row" class="num">1,000</th><td class="num">99.33%</td></tr>
+                <tr><th scope="row" class="num">10,000</th><td class="num">≈ 100%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="c-contamination__notes">
+      <section class="c-contamination__note" aria-labelledby="fig-contamination-cor">
+        <h3 class="c-contamination__note-title" id="fig-contamination-cor">{{ t.corollary.id }}</h3>
+        <ul class="c-contamination__points" data-points>
+          {%- for p in t.corollary.points %}
+          <li data-point="{{ forloop.index }}">{% include math.html text=p %}</li>
+          {%- endfor %}
+        </ul>
+      </section>
+      <section class="c-contamination__note" aria-labelledby="fig-contamination-conj">
+        <h3 class="c-contamination__note-title" id="fig-contamination-conj">{{ cj_head }}</h3>
+        <p class="c-contamination__conj">{{ cj_body }}</p>
+      </section>
+    </div>
+  </div>
+
+  <figcaption class="figure__caption">
+    <span class="js-only">Move the sliders or pick a gate. The chart plots <span class="math">P<sub>cont</sub>(k)</span> with faint curves for a gate ten times weaker and ten times stronger; the dashed line is <span class="math">δ</span> and the marker is the horizon <span class="math">k*</span>. </span>Equations from {{ t.id }} and {{ t.corollary.id }} of the paper; every number here is computed from illustrative inputs, not measured.
+  </figcaption>
+</figure>

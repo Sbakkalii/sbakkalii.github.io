@@ -1,0 +1,27 @@
+{%- comment -%}
+  One publication row. Usage: {% include pub-item.html pub=p %}
+  Optional: summary=true to show the one-line summary, tags=false to hide theme tags.
+{%- endcomment -%}
+{%- assign p = include.pub -%}
+{%- assign year = p.date | date: "%Y" -%}
+<li class="pub" data-year="{{ year }}" data-type="{{ p.pub_type }}" data-themes="{{ p.themes | join: ' ' }}"{% if p.first_author %} data-first="true"{% endif %}>
+  <div class="pub__venue"><strong>{{ p.venue_short | default: year }}</strong>{{ site.data.pubtypes[p.pub_type] | default: p.pub_type }}</div>
+  <div>
+    <h3 class="pub__title"><a href="{{ p.url | relative_url }}">{{ p.title }}</a></h3>
+    <p class="pub__authors">{{ p.authors | replace: "S. Bakkali", "<strong>S. Bakkali</strong>" }}</p>
+    {%- if include.summary %}<p class="pub__summary">{{ p.summary }}</p>{% endif %}
+    <div class="pub__meta">
+      <span class="pub__links">
+        {%- if p.explorer %}<a href="{{ p.explorer | relative_url }}">Interactive explorer</a>{% endif %}
+        {%- if p.paperurl %}<a href="{{ p.paperurl }}">PDF</a>{% endif %}
+        {%- if p.arxiv %}<a href="https://arxiv.org/abs/{{ p.arxiv }}">arXiv</a>{% endif %}
+        {%- if p.doi %}{% unless p.doi contains "10.48550" %}<a href="https://doi.org/{{ p.doi }}">DOI</a>{% endunless %}{% endif %}
+        {%- if p.hal %}<a href="https://hal.science/{{ p.hal }}">HAL</a>{% endif %}
+        {%- if p.url_ext %}<a href="{{ p.url_ext }}">Link</a>{% endif %}
+      </span>
+      {%- unless include.tags == false %}
+      {%- for t in p.themes %}{% assign theme = site.data.themes | where: "id", t | first %}<span class="tag">{{ theme.short | default: t }}</span>{% endfor %}
+      {%- endunless %}
+    </div>
+  </div>
+</li>

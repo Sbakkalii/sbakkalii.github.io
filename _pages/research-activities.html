@@ -1,0 +1,73 @@
+---
+layout: default
+title: "Research activities"
+permalink: /research-activities/
+description: "Grants, collaborations, supervision, academic service and research infrastructure of Souhail Bakkali."
+---
+{%- assign a = site.data.activities -%}
+<header class="page-head">
+  <div class="container page-head__inner">
+    <p class="eyebrow">Activities</p>
+    <h1>Grants, collaborations and service</h1>
+    <p class="lede">{{ a.grants_total }} in competitive funding as PI or Co-PI, collaborations across eight countries, PhD co-supervision, and service to the document-analysis community.</p>
+  </div>
+</header>
+
+<section class="section" id="grants" aria-labelledby="grants-h">
+  <div class="container stack stack-lg">
+    <header class="section-head section-head--row" style="margin-bottom: 0">
+      <h2 id="grants-h">Grants and funding</h2>
+      <p class="mono small muted">Total {{ a.grants_total }}</p>
+    </header>
+    <div class="table-wrap" role="region" aria-label="Grants (table)" tabindex="0">
+      <table class="table">
+        <thead><tr><th scope="col">Project</th><th scope="col">Role</th><th scope="col">Program</th><th scope="col">Period</th><th scope="col" class="num">Amount</th></tr></thead>
+        <tbody>
+          {%- for g in a.grants %}<tr><th scope="row">{{ g.name }}</th><td>{{ g.role }}</td><td>{{ g.program | default: "—" }}</td><td>{{ g.period | default: "—" }}</td><td class="num">{{ g.amount }}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" id="collaborations" aria-labelledby="collab-h">
+  <div class="container">
+    <header class="section-head"><h2 id="collab-h">Collaborations</h2></header>
+    <div class="grid grid-2">
+      <div class="card">
+        <p class="card__kicker">Academic</p>
+        <ul class="list-plain stack stack-sm">{% for c in a.collaborations.academic %}<li>{{ c.name }} <span class="muted small">· {{ c.country }}</span></li>{% endfor %}</ul>
+      </div>
+      <div class="card">
+        <p class="card__kicker">Industry</p>
+        <ul class="list-plain stack stack-sm">{% for c in a.collaborations.industry %}<li>{{ c.name }} <span class="muted small">· {{ c.country }}</span></li>{% endfor %}</ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="supervision" aria-labelledby="sup-h">
+  <div class="container grid grid-2">
+    <div class="stack">
+      <h2 id="sup-h" class="h3">Supervision and mentoring</h2>
+      <ul class="list-check">{% for s in a.supervision %}<li>{{ s }}</li>{% endfor %}</ul>
+    </div>
+    <div class="stack">
+      <h2 class="h3">Infrastructure and tooling</h2>
+      <ul class="list-check">{% for s in a.infrastructure %}<li>{{ s }}</li>{% endfor %}</ul>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" id="service" aria-labelledby="service-h">
+  <div class="container stack stack-lg">
+    <h2 id="service-h">Service and leadership</h2>
+    <div class="table-wrap" role="region" aria-label="Service roles (table)" tabindex="0">
+      <table class="table">
+        <thead><tr><th scope="col">Role</th><th scope="col">Where</th><th scope="col">When</th></tr></thead>
+        <tbody>{% for s in a.service %}<tr><th scope="row">{{ s.role }}</th><td>{{ s.what }}</td><td>{{ s.when | default: "—" }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <p><a class="link-arrow" href="{{ '/talks/' | relative_url }}">Talks and presentations</a></p>
+  </div>
+</section>

@@ -1,0 +1,230 @@
+---
+layout: default
+title: "Amnesia by Design, Memory by Necessity — interactive explorer"
+permalink: /research/persistent-state/
+description: "Interactive explorer of the 2026 survey by Souhail Bakkali and Ayoub Merimi: the statelessness bottleneck of Document AI, persistent evidence-grounded state, the contamination bound, the statefulness audit of ten benchmarks, and five counterfactual metrics."
+---
+{%- assign paper = site.data.paper -%}
+
+<header class="page-head">
+  <div class="container page-head__inner">
+    <p class="eyebrow"><span class="eyebrow__num">arXiv:{{ paper.arxiv }}</span> · {{ paper.category }} · {{ paper.date | date: "%-d %B %Y" }}</p>
+    <h1 style="max-width: 24ch">{{ paper.title }}</h1>
+    <p class="paper-head__authors">{% for a in paper.authors %}<span>{{ a.name }}</span>{% endfor %}</p>
+    <p class="lede">{{ paper.kind }}. Document AI reads, then forgets; this survey argues the fix is not more scale, context or retrieval, but persistent, provenance-linked state, and specifies how to build and measure it. Every figure below is interactive.</p>
+    <div class="cluster">
+      <a class="btn" href="{{ paper.arxiv_url }}">Read on arXiv {% include icon.html name="external" %}</a>
+      <a class="btn btn--secondary" href="{{ paper.pdf_url }}">{% include icon.html name="file" %}PDF</a>
+      <a class="btn btn--ghost" href="#cite">Cite</a>
+    </div>
+    <div class="paper-counts" role="list" aria-label="The paper in numbers">
+      {%- for c in paper.counts %}<div role="listitem"><b>{{ c.value }}</b><span>{{ c.label }}</span></div>{% endfor %}
+    </div>
+  </div>
+</header>
+
+<div class="container with-toc">
+  <nav class="toc" aria-label="On this page" data-toc>
+    <p class="toc__title">On this page</p>
+    <ol>
+      <li><a href="#bottleneck">The bottleneck</a></li>
+      <li><a href="#map">Capability map</a></li>
+      <li><a href="#lineage">Representation lineage</a></li>
+      <li><a href="#state">State &amp; lifecycle</a></li>
+      <li><a href="#reconcile">Reconciliation</a></li>
+      <li><a href="#contamination">Memory harm</a></li>
+      <li><a href="#substrates">Substrates</a></li>
+      <li><a href="#audit">Statefulness audit</a></li>
+      <li><a href="#harness">Longitudinal harness</a></li>
+      <li><a href="#forgetting">Verifiable forgetting</a></li>
+      <li><a href="#deployment">Deployment</a></li>
+      <li><a href="#agenda">Research agenda</a></li>
+      <li><a href="#limitations">Limitations</a></li>
+      <li><a href="#cite">Cite</a></li>
+    </ol>
+  </nav>
+
+  <div>
+    <section class="paper-section" id="bottleneck" aria-labelledby="bottleneck-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ I</span> Introduction</p>
+        <h2 id="bottleneck-h">The statelessness bottleneck</h2>
+        <p class="lede">Document systems are modeled as single-shot functions, <span class="math">ŷ = argmax P(y | D; θ)</span>: frozen parameters, no session index. Whatever one document taught is gone when the next one arrives.</p>
+      </header>
+      <div class="split split--top">
+        <ol class="steps">
+          {%- for s in paper.argument %}
+          <li><h3>{{ s.title }}</h3><p>{{ s.body }}</p></li>
+          {%- endfor %}
+        </ol>
+        <div class="stack stack-lg">
+          <figure class="figure">
+            <div class="figure__head"><span class="figure__label"><b>Document tuple</b> · Eq. 3</span></div>
+            <div class="figure__body stack">
+              <p class="eq">{{ paper.document_tuple.symbol }}</p>
+              <dl class="kv">
+                {%- for d in paper.document_tuple.parts %}<dt class="math">{{ d.key }}</dt><dd>{{ d.name }}</dd>{% endfor %}
+              </dl>
+            </div>
+          </figure>
+          <figure class="figure">
+            <div class="figure__head"><span class="figure__label"><b>Conjunctive target</b> {{ paper.target.symbol }} · Eq. 2</span></div>
+            <div class="figure__body">
+              <p class="small muted" style="margin-bottom: var(--sp-3)">All six properties are required jointly; no adjacent paradigm has them all.</p>
+              <ul class="list-check small">{% for t in paper.target.properties %}<li>{{ t }}</li>{% endfor %}</ul>
+            </div>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="paper-section" id="map" aria-labelledby="map-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ II</span> Capability evolution</p>
+        <h2 id="map-h">Where the field stands: an empty top row</h2>
+        <p class="lede">Fig. 2 places Document AI lineages by how much they persist. Cross-modal models stop at the page with no persistence; retrieval reaches an external store; text-only agent memory reaches episodic state. Nothing reaches semantic or governed state.</p>
+      </header>
+      {% include components/capability-map.html %}
+    </section>
+
+    <section class="paper-section" id="lineage" aria-labelledby="lineage-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ II-B</span> Representation lineage</p>
+        <h2 id="lineage-h">A decade of representations, no native state</h2>
+        <p class="lede">Tables I and II: thirteen representation models and four adjacent paradigms, against the properties the target needs.</p>
+      </header>
+      {% include components/lineage.html mode="paper" %}
+    </section>
+
+    <section class="paper-section" id="state" aria-labelledby="state-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ III-A–C</span> Formalization</p>
+        <h2 id="state-h">The state, and what happens to it</h2>
+        <p class="lede">Persistent state at session <span class="math">t</span> is a six-part tuple <span class="math">{% include math.html text=paper.state.symbol %}</span>. Algorithm 1 moves a document through observe, corroborate, validate, write, consolidate and reconcile, with forgetting on request. Step through it on a fictional contract.</p>
+      </header>
+      {% include components/lifecycle.html %}
+    </section>
+
+    <section class="paper-section" id="reconcile" aria-labelledby="reconcile-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ III-B</span> Temporal supersession</p>
+        <h2 id="reconcile-h">Five ways new evidence meets old</h2>
+        <p class="lede">The supersession operator <span class="math">{% include math.html text="𝒮_sup" %}</span> resolves each conflict with one of five outcomes. Read four documents in order and watch the outcomes accumulate.</p>
+      </header>
+      {% include components/reconcile.html %}
+    </section>
+
+    <section class="paper-section" id="contamination" aria-labelledby="contamination-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ III-D</span> Formal guarantees</p>
+        <h2 id="contamination-h">Remembering wrong things: the contamination bound</h2>
+        <p class="lede">A persistent system can carry one error into every future session. {{ paper.theorem.id }} bounds the probability that state is contaminated after <span class="math">k</span> updates; {{ paper.theorem.corollary.id }} says the gate sets the rate, never the asymptote.</p>
+      </header>
+      {% include components/contamination.html %}
+    </section>
+
+    <section class="paper-section" id="substrates" aria-labelledby="substrates-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ III-E</span> Substrate composition</p>
+        <h2 id="substrates-h">No single store does it all</h2>
+        <p class="lede">Table III rates six substrates on six capabilities. Combine them to see which capabilities a composition covers natively.</p>
+      </header>
+      {% include components/substrates.html %}
+    </section>
+
+    <section class="paper-section" id="audit" aria-labelledby="audit-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ IV-A</span> The statefulness audit</p>
+        <h2 id="audit-h">Ten benchmarks, eight criteria, one blind spot</h2>
+        <p class="lede">Table IV codes ten representative document benchmarks against eight statefulness criteria. {{ paper.audit.finding }}</p>
+      </header>
+      {% include components/audit.html %}
+    </section>
+
+    <section class="paper-section" id="harness" aria-labelledby="harness-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ IV-B–D</span> Longitudinal benchmark</p>
+        <h2 id="harness-h">Measuring memory with counterfactuals</h2>
+        <p class="lede">The decisive experiment: same base model, same future documents, different prior histories. Three arms and five metrics characterize the benefit, cost, risk and governability of state.</p>
+      </header>
+      {% include components/harness.html %}
+    </section>
+
+    <section class="paper-section" id="forgetting" aria-labelledby="forgetting-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ V-C</span> Governance</p>
+        <h2 id="forgetting-h">Forgetting, verifiably</h2>
+        <p class="lede">Deleting the file is level one of five. {{ paper.unlearning.note }}</p>
+      </header>
+      {% include components/unlearning.html %}
+    </section>
+
+    <section class="paper-section" id="deployment" aria-labelledby="deployment-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ V-B, V-D</span> Deployment</p>
+        <h2 id="deployment-h">Where it matters, and what it must survive</h2>
+        <p class="lede">{{ paper.provenance_chain.body }}</p>
+      </header>
+      <div class="grid grid-2">
+        <div class="card">
+          <p class="card__kicker">Domains</p>
+          <dl class="kv">
+            {%- for d in paper.enterprise.domains %}<dt>{{ d.name }}</dt><dd>{{ d.body }}</dd>{% endfor %}
+          </dl>
+        </div>
+        <div class="card">
+          <p class="card__kicker">Constraints</p>
+          <ul class="list-check small">{% for c in paper.enterprise.constraints %}<li>{{ c }}</li>{% endfor %}</ul>
+        </div>
+      </div>
+      <figure class="figure" style="margin-top: var(--sp-5)">
+        <div class="figure__head"><span class="figure__label"><b>Recursive provenance</b> · § V-B</span></div>
+        <div class="figure__body stack">
+          <p class="eq">{% include math.html text=paper.provenance_chain.equation %}</p>
+          <p class="small muted">Schemas <span class="math">σ</span> abstract over evidence <span class="math">e</span>, which points back to document <span class="math">D<sub>i</sub></span>, location <span class="math">ℓ<sub>i</sub></span> and version <span class="math">v<sub>i</sub></span>. Bitemporal state tracks {{ paper.bitemporal.times | join: ", " | downcase }}.</p>
+        </div>
+      </figure>
+    </section>
+
+    <section class="paper-section" id="agenda" aria-labelledby="agenda-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ V-E</span> Research agenda</p>
+        <h2 id="agenda-h">Six open problems</h2>
+        <p class="lede">An implementation-neutral agenda: each item is a concrete research question, not a product feature.</p>
+      </header>
+      <ol class="grid grid-2 list-plain">
+        {%- for a in paper.agenda %}
+        <li class="card">
+          <p class="card__kicker">Problem {{ forloop.index }}</p>
+          <h3 class="card__title" style="font-size: var(--fs-base)">{{ a.title }}</h3>
+          <p class="card__body">{{ a.body }}</p>
+        </li>
+        {%- endfor %}
+      </ol>
+    </section>
+
+    <section class="paper-section" id="limitations" aria-labelledby="limitations-h">
+      <header>
+        <p class="eyebrow"><span class="eyebrow__num">§ V-F</span> Limitations</p>
+        <h2 id="limitations-h">What the paper does not claim</h2>
+        <p class="lede">{{ paper.no_results_note }}</p>
+      </header>
+      <ul class="steps">
+        {%- for l in paper.limitations %}<li><p style="margin: 0; color: var(--ink-2); font-size: var(--fs-base)">{{ l }}</p></li>{% endfor %}
+      </ul>
+      <blockquote class="pullquote" style="margin-top: var(--sp-7)">
+        <p>“{{ paper.quotes.closing }}”</p>
+        <footer>§ VI, Conclusion</footer>
+      </blockquote>
+    </section>
+
+    <section class="paper-section" id="cite" aria-labelledby="cite-h">
+      <header class="cluster" style="justify-content: space-between">
+        <h2 id="cite-h">Cite</h2>
+        <button type="button" class="btn btn--sm btn--secondary js-only" data-copy="#paper-bibtex">{% include icon.html name="copy" %}<span data-copy-label>Copy BibTeX</span></button>
+      </header>
+      <pre id="paper-bibtex" class="bibtex" tabindex="0" aria-label="BibTeX entry"><code>{{ paper.bibtex | escape }}</code></pre>
+      <p class="source-note" style="margin-top: var(--sp-4)">Figures on this page are transcribed from <a href="{{ paper.html_url }}">the arXiv HTML version</a>. Interactive examples use fictional documents and are marked “Illustrative”.</p>
+    </section>
+  </div>
+</div>

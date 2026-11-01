@@ -1,0 +1,137 @@
+{%- comment -%}
+  The longitudinal harness (Fig. 4 and the text around it): the counterfactual
+  design, the five metrics, the success criterion and the eight mandatory
+  properties. harness.js adds a metric explorer with hypothetical inputs.
+  The arms, metrics, properties and criterion are read from paper.harness;
+  the one-line glosses of the properties are ours (labelled on screen).
+{%- endcomment -%}
+{%- assign h = site.data.paper.harness -%}
+{%- assign t = site.data.paper.theorem -%}
+<div class="c-harness" data-component="harness" id="fig-harness">
+  <script type="application/json" data-for="harness">{"harness":{{ h | jsonify }},"harm":{{ t.harm | jsonify }},"theorem":{{ t.id | jsonify }}}</script>
+
+  <figure class="figure c-harness__fig" aria-labelledby="fig-harness-label">
+    <div class="figure__head">
+      <span class="figure__label" id="fig-harness-label"><b>Counterfactual harness</b> · after Fig. 4</span>
+      <span class="c-harness__badges">
+        <span class="badge badge--accent js-only">Interactive</span>
+        <span class="badge badge--warn js-only">Hypothetical inputs</span>
+      </span>
+    </div>
+    <div class="figure__body c-harness__body" data-body>
+      <p class="c-harness__honesty js-only" role="note"><strong>Hypothetical inputs.</strong> The paper specifies this harness; it reports no measurements.</p>
+
+      <div class="c-harness__design" data-design>
+        <div class="c-harness__col c-harness__col--stream">
+          <div class="c-harness__node c-harness__stream" data-node="stream">
+            <p class="c-harness__kicker">Stream</p>
+            <ol class="c-harness__docs" aria-label="Documents seen before the test">
+              <li><span class="math">D<sub>1</sub></span></li><li><span class="math">D<sub>2</sub></span></li><li aria-hidden="true">…</li><li><span class="math">D<sub>k</sub></span></li>
+            </ol>
+            <p class="c-harness__desc" data-stream-note>One document per session, before the test.</p>
+          </div>
+        </div>
+        <div class="c-harness__col c-harness__col--arms">
+          <div class="c-harness__node c-harness__node--twin" data-node="clean">
+            <p class="c-harness__sym">{% include math.html text="S_k^clean" %}</p>
+            <p class="c-harness__name">Clean twin <span class="c-harness__for">for MH</span></p>
+            <p class="c-harness__desc">The warm state the same documents would give with no corrupted observations.</p>
+          </div>
+          <ol class="c-harness__arms" aria-label="Three arms">
+            {%- for arm in h.arms %}
+            <li class="c-harness__node c-harness__arm" data-node="{{ arm.id }}">
+              <p class="c-harness__sym">{% include math.html text=arm.symbol %}</p>
+              <p class="c-harness__name">{{ arm.name }}</p>
+              {%- capture arm_body -%}{% include math.html text=arm.body %}{%- endcapture %}
+              <p class="c-harness__desc">{{ arm_body | replace: "D_1", "D<sub>1</sub>" }}</p>
+            </li>
+            {%- endfor %}
+          </ol>
+        </div>
+        <div class="c-harness__col c-harness__col--eval">
+          <div class="c-harness__node c-harness__eval" data-node="eval">
+            <p class="c-harness__kicker">Every arm is tested on</p>
+            <p class="c-harness__sym c-harness__sym--lg">{% include math.html text="D_k+1" %}</p>
+            <p class="c-harness__desc">The same next document; quality <span class="math">Q</span> and cost <span class="math">C</span> are compared.</p>
+          </div>
+        </div>
+        <div class="c-harness__deletion">
+          <p class="c-harness__kicker">Deletion audit <span class="c-harness__for">for FF and CR</span></p>
+          <div class="c-harness__delrow">
+            <div class="c-harness__node" data-node="before">
+              <p class="c-harness__sym">{% include math.html text="S_t" %}</p>
+              <p class="c-harness__desc">State before the deletion request</p>
+            </div>
+            <p class="c-harness__forget" aria-hidden="true"><span>forget <span class="math">{% include math.html text="X_del" %}</span></span></p>
+            <div class="c-harness__node" data-node="after">
+              <p class="c-harness__sym">{% include math.html text="S′_t" %}</p>
+              <p class="c-harness__desc">State after forgetting <span class="math">{% include math.html text="X_del" %}</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="c-harness__success" data-success>
+        <p class="c-harness__kicker">Success criterion</p>
+        <p class="c-harness__criterion">{{ h.success }}</p>
+      </div>
+
+      <details class="disclosure c-harness__defs" open data-defs>
+        <summary><span>The five metrics</span></summary>
+        <div class="disclosure__body">
+          <div class="table-wrap" role="region" tabindex="0" aria-label="The five counterfactual metrics">
+            <table class="table c-harness__table">
+              <thead><tr><th scope="col">Metric</th><th scope="col">Definition</th><th scope="col">Measures</th><th scope="col">Target</th></tr></thead>
+              <tbody>
+                {%- for m in h.metrics %}
+                <tr><th scope="row"><span class="mono">{{ m.abbr }}</span> {{ m.name }}</th><td><span class="math c-harness__eqcell">{% include math.html text=m.equation %}</span></td><td>{{ m.measures }}</td><td>{{ m.good | capitalize }}</td></tr>
+                {%- endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="c-harness__protocol stack stack-sm">
+            <p class="no-js-only"><strong>Memory Harm protocol.</strong> {% include math.html text=h.memory_harm_protocol %}</p>
+            <p><strong>Cumulative cost.</strong> {% include math.html text=h.cumulative_ce %}</p>
+            <p><strong>Analysis.</strong> {{ h.statistics }}</p>
+          </div>
+        </div>
+      </details>
+    </div>
+    <figcaption class="figure__caption">
+      <span class="js-only">Pick a metric to see which arms it compares, then move the hypothetical inputs or try a scenario. </span>Adapted from Fig. 4 of the paper, with the retrieval-only arm described in its text. Arms, metrics and the criterion are the paper's; the paper reports no results for them.
+    </figcaption>
+  </figure>
+
+  <figure class="figure c-harness__props-fig" aria-labelledby="fig-harness-props-label">
+    <div class="figure__head">
+      <span class="figure__label" id="fig-harness-props-label"><b>Required design</b> · Eight mandatory properties</span>
+      <span class="c-harness__badges"><span class="badge badge--accent js-only">Interactive</span><span class="c-harness__props-count js-only" data-props-count></span></span>
+    </div>
+    <div class="figure__body">
+      <p class="c-harness__hint js-only">Untick what a benchmark lacks: the success criterion only holds under all eight.</p>
+      <ol class="c-harness__props" data-props>
+        {%- for p in h.properties %}
+        <li class="c-harness__prop" data-prop="{{ forloop.index0 }}">
+          <span class="c-harness__prop-num" aria-hidden="true">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+          <span class="c-harness__prop-text">
+            <span class="c-harness__prop-name">{{ p }}</span>
+            <span class="c-harness__prop-gloss">
+              {%- case p -%}
+              {%- when "Sequential presentation" -%}Documents arrive across sessions, and state persists between them.
+              {%- when "Cross-document dependency" -%}Some questions need evidence seen only in earlier sessions.
+              {%- when "Evolving content" -%}Controlled revisions, amendments and supersessions.
+              {%- when "Consolidation opportunities" -%}Repeated instances of a document family.
+              {%- when "Forgetting requirements" -%}Deletion requests, checked for an unrecoverable target and intact unrelated knowledge.
+              {%- when "Provenance queries" -%}Conclusions must be traced back to their source regions.
+              {%- when "Session boundaries" -%}Context is cleared, so only the persistent store survives.
+              {%- when "Abstention" -%}Unanswerable queries the system must decline rather than answer from stale or contaminated state.
+              {%- endcase -%}
+            </span>
+          </span>
+        </li>
+        {%- endfor %}
+      </ol>
+    </div>
+    <figcaption class="figure__caption">Property names from the paper; the one-line glosses are ours.</figcaption>
+  </figure>
+</div>

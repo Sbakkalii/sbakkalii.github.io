@@ -1,0 +1,71 @@
+{%- comment -%}
+  The stack: six capability layers, from reading the page to governing what
+  is remembered, each with its paper concept, product and research.
+  Static baseline: an ordered list of the layers with everything on them.
+  assets/js/components/stack.js replaces it with a pipeline of tabs (an
+  accordion below 760 px) and product chips that mark each product's layers.
+  Data: site.data.products (stack, products, statuses) and site.publications.
+{%- endcomment -%}
+{%- assign pd = site.data.products -%}
+{%- assign products_url = '/products/' | relative_url -%}
+
+{%- assign slugs = "" | split: "" -%}
+{%- for layer in pd.stack -%}{%- assign slugs = slugs | concat: layer.research -%}{%- endfor -%}
+{%- assign slugs = slugs | uniq -%}
+{%- assign pub_json = "" | split: "" -%}
+{%- for slug in slugs -%}
+  {%- assign rp = site.publications | where: "slug", slug | first -%}
+  {%- if rp -%}
+  {%- capture item -%}{{ slug | jsonify }}: {"title": {{ rp.title | jsonify }}, "venue": {{ rp.venue_short | jsonify }}, "url": {{ rp.url | relative_url | jsonify }}}{%- endcapture -%}
+  {%- assign pub_json = pub_json | push: item -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign prod_json = "" | split: "" -%}
+{%- for p in pd.products -%}
+  {%- capture item -%}{"id": {{ p.id | jsonify }}, "name": {{ p.name | jsonify }}, "status": {{ p.status | jsonify }}, "tagline": {{ p.tagline | jsonify }}, "layers": {{ p.layers | jsonify }}}{%- endcapture -%}
+  {%- assign prod_json = prod_json | push: item -%}
+{%- endfor -%}
+
+<figure class="figure c-stack" data-component="stack" id="stack-diagram" aria-labelledby="stack-diagram-label">
+  <div class="figure__head">
+    <span class="figure__label" id="stack-diagram-label"><b>The stack</b> · {{ pd.stack.size }} layers, {{ pd.products.size }} products</span>
+    <span class="badge badge--accent js-only">Interactive</span>
+  </div>
+  <div class="figure__body c-stack__body">
+    <ol class="c-stack__static">
+      {%- for layer in pd.stack %}
+      {%- assign prod = pd.products | where: "id", layer.product | first %}
+      {%- assign st = pd.statuses[prod.status] %}
+      <li class="c-stack__layer" data-layer="{{ layer.id }}">
+        <p class="c-stack__num" aria-hidden="true">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</p>
+        <h3 class="c-stack__name">{{ layer.name }} <span class="c-stack__verb">{{ layer.verb }}</span></h3>
+        <p class="c-stack__text">{{ layer.body }}</p>
+        <dl class="c-stack__facts">
+          <dt>Paper</dt>
+          <dd>{% include math.html text=layer.paper %}</dd>
+          <dt>Product</dt>
+          <dd><a class="c-stack__product" href="{{ products_url }}#{{ prod.id }}">{{ prod.name }}</a> <span class="badge badge--{{ st.tone }}">{{ st.label }}</span>
+            {%- for other in pd.products %}{% if other.id != layer.product and other.layers contains layer.id %}{% assign ost = pd.statuses[other.status] %}<span class="c-stack__also">Also in <a class="c-stack__product" href="{{ products_url }}#{{ other.id }}">{{ other.name }}</a> <span class="badge badge--{{ ost.tone }}">{{ ost.label }}</span></span>{% endif %}{% endfor -%}
+          </dd>
+          <dt>Research</dt>
+          <dd>
+            <ul class="c-stack__refs">
+              {%- for slug in layer.research %}{% assign rp = site.publications | where: "slug", slug | first %}{% if rp %}
+              <li><a href="{{ rp.url | relative_url }}">{{ rp.title }}</a> <span class="c-stack__venue">{{ rp.venue_short }}</span></li>
+              {%- endif %}{% endfor %}
+            </ul>
+          </dd>
+        </dl>
+      </li>
+      {%- endfor %}
+    </ol>
+    <script type="application/json" data-for="stack">{
+      "stack": {{ pd.stack | jsonify }},
+      "products": [{{ prod_json | join: ", " }}],
+      "statuses": {{ pd.statuses | jsonify }},
+      "pubs": { {{ pub_json | join: ", " }} },
+      "productsUrl": {{ products_url | jsonify }}
+    }</script>
+  </div>
+  <figcaption class="figure__caption">Each layer lists the concept it implements in the papers, the product it belongs to with that product’s current status, and the published work it builds on.<span class="js-only"> Pick a layer; a product chip marks the layers that product covers.</span></figcaption>
+</figure>

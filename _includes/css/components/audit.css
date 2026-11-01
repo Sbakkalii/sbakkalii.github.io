@@ -1,0 +1,208 @@
+/* audit: Table IV, the statefulness audit. Styles scoped under .c-audit.
+   The matrix marks (.mk) are the same family as substrates.css and
+   lineage.css: keep the three blocks in sync. */
+
+.c-audit {
+  --mk-size: 0.8125rem;
+  --mk-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M8 0a8 8 0 1 0 0 16A8 8 0 1 0 8 0Zm-2.73 7.03 1.72 1.71 3.82-4 1.38 1.32-5.18 5.4-3.08-3.09Z'/%3E%3C/svg%3E");
+  --cell-pad-x: var(--sp-2);
+  --edge: var(--sp-5);
+}
+.c-audit__badges { display: inline-flex; flex-wrap: wrap; gap: var(--sp-2); }
+
+/* --- Matrix marks: glyph + the paper's own mark ---------------------------- */
+.c-audit .mk { display: inline-flex; align-items: center; gap: 0.375rem; color: var(--ink); font-size: var(--fs-xs); font-weight: 500; line-height: 1.25; white-space: nowrap; vertical-align: middle; }
+.c-audit .mk__g { position: relative; flex: none; width: var(--mk-size); height: var(--mk-size); border: 1.5px solid currentColor; border-radius: 50%; }
+.c-audit .mk--full .mk__g { border: 0; background: currentColor; -webkit-mask: var(--mk-check) center / 100% 100% no-repeat; mask: var(--mk-check) center / 100% 100% no-repeat; }
+.c-audit .mk--partial .mk__g { background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+.c-audit .mk--implicit .mk__g { border-style: dotted; border-width: 2px; }
+.c-audit .mk--none { color: var(--control); }
+.c-audit .mk--none .mk__g { border-width: 1px; }
+.c-audit .mk--sym .mk__t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.c-audit .mk--qual { padding: 1px 6px; border: 1px dashed var(--control); border-radius: var(--radius-xs); background: var(--surface); color: var(--ink-2); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: 0.02em; }
+.c-audit .mk--qual .mk__g { display: none; }
+
+/* --- Table ----------------------------------------------------------------- */
+.c-audit__body { container: audit / inline-size; }
+.c-audit .c-audit__wrap {
+  position: relative;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  /* Scroll shadow at the right edge while columns remain hidden; the
+     "local" cover slides over it once the table is scrolled to its end. */
+  background:
+    linear-gradient(to left, var(--surface) 45%, transparent) right center / 2.5rem 100% no-repeat local,
+    linear-gradient(to left, var(--line-2), transparent) right center / 0.75rem 100% no-repeat scroll,
+    var(--surface);
+}
+.c-audit.is-enhanced .c-audit__wrap { border-top-width: 1px; }
+/* Separate borders: collapsed ones vanish under sticky cells in Chrome. */
+.c-audit__table { min-width: 47rem; border-collapse: separate; border-spacing: 0; }
+/* Whole-pixel row heights: fractional ones make Chrome drop the borders of
+   the sticky column once the table scrolls. */
+.c-audit__table th, .c-audit__table td { padding: 0.5625rem var(--cell-pad-x); line-height: 1.375rem; text-align: center; vertical-align: middle; }
+.c-audit__table tr > :first-child { padding-left: var(--edge); text-align: left; }
+.c-audit__table tr > :last-child { padding-right: var(--edge); }
+.c-audit__table thead th { padding-block: var(--sp-3); line-height: 1.5rem; vertical-align: bottom; }
+.c-audit__table thead abbr { text-decoration: none; cursor: help; }
+.c-audit__table tbody th[scope="row"] { white-space: nowrap; font-size: var(--fs-sm); }
+
+/* First column stays put while the criteria scroll under it. */
+.c-audit__table th[scope="row"], .c-audit__table .c-audit__corner {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+  box-shadow: inset -1px 0 0 var(--line);
+}
+.c-audit__table thead .c-audit__corner { z-index: 2; background: var(--surface-2); }
+
+/* Row and column hover, column focus. */
+.c-audit__table tbody tr:not(.c-audit__grouphead):hover > * { background: var(--surface-2); }
+.c-audit__table .is-hover { background: var(--surface-2); }
+.c-audit__table .is-focus,
+.c-audit__table tbody tr:not(.c-audit__grouphead):hover > .is-focus { background: var(--accent-soft); }
+.c-audit__table thead .is-focus { box-shadow: inset 0 2px 0 var(--accent); }
+.c-audit.is-enhanced .c-audit__table td { cursor: pointer; }
+.c-audit__table td, .c-audit__table th { transition: background-color var(--dur-1) var(--ease); }
+
+/* Criterion header buttons. */
+.c-audit__colbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  margin: -0.25rem -0.375rem;
+  padding: 0 0.375rem;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--control);
+  text-underline-offset: 0.35em;
+  white-space: nowrap;
+}
+.c-audit__colbtn:hover { background: var(--surface-3); color: var(--ink); }
+.c-audit__colbtn[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); text-decoration: none; }
+
+/* Row groups: adjacent benchmark and the proposed specification. */
+.c-audit__grouphead th {
+  padding: var(--sp-4) var(--edge) var(--sp-2);
+  border-bottom: 0;
+  background: var(--surface);
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  line-height: 1.25rem;
+  text-align: left;
+}
+.c-audit__grouphead th > span {
+  position: sticky;
+  left: var(--edge);
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-1) var(--sp-2);
+  /* Wrap within the visible part of the scroller, not the whole table. */
+  max-width: calc(100cqw - 2 * var(--edge));
+}
+.c-audit__grouphead b { color: var(--ink-2); font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: 500; letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-audit__group--adjacent > tr:first-child > *, .c-audit__group--proposed > tr:first-child > * { border-top: 1px solid var(--line); }
+
+/* The specification row wears the site's annotation box: dashed outline, label tab. */
+.c-audit__group--proposed .c-audit__grouphead th { padding-bottom: 0; }
+.c-audit__group--proposed .c-audit__grouphead b {
+  padding: 2px 6px 1px;
+  border-radius: var(--radius-xs) var(--radius-xs) 0 0;
+  background: var(--ink-2);
+  color: var(--surface);
+  font-size: 10px;
+}
+.c-audit__group--proposed tr:not(.c-audit__grouphead) > * {
+  border-top: 1.5px dashed var(--ink-2);
+  border-bottom: 1.5px dashed var(--ink-2);
+  background-image: repeating-linear-gradient(135deg, transparent 0 6px, var(--surface-3) 6px 7px);
+}
+.c-audit__table .c-audit__group--proposed tr:last-child > * { border-bottom: 1.5px dashed var(--ink-2); }
+.c-audit__group--proposed tr:not(.c-audit__grouphead) > th[scope="row"] { background-color: var(--surface); }
+
+/* Computed summary row. */
+.c-audit__group--summary > tr > * { padding-block: var(--sp-3); border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); background: var(--surface-2); vertical-align: top; }
+.c-audit__group--summary th[scope="row"] { background: var(--surface-2); }
+.c-audit__sumlabel { display: block; color: var(--ink); font-size: var(--fs-sm); font-weight: 600; line-height: 1.25rem; }
+.c-audit__sumsub { display: block; color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: 400; letter-spacing: var(--tracking-caps); text-transform: uppercase; line-height: 1rem; }
+.c-audit__sumval { display: block; color: var(--ink-3); font-size: var(--fs-2xs); line-height: 1rem; }
+.c-audit__sumval b { display: block; color: var(--ink); font-family: var(--font-serif); font-size: 1.375rem; font-weight: 600; line-height: 1.5rem; font-variant-numeric: lining-nums tabular-nums; }
+.c-audit__bar { display: flex; gap: 2px; width: 100%; max-width: 4.5rem; margin: var(--sp-2) auto 0; }
+.c-audit__bar i { flex: 1; height: 4px; border-radius: 1px; background: var(--line); }
+.c-audit__bar .is-full { background: var(--ink); }
+.c-audit__bar .is-partial, .c-audit__bar .is-implicit { background: var(--ink-3); }
+.c-audit__bar .is-qual { background: var(--control); }
+.c-audit__sumnote { display: block; margin-top: var(--sp-1); color: var(--ink-2); font-size: var(--fs-2xs); line-height: 1rem; }
+
+/* --- Controls, detail panel, finding --------------------------------------- */
+.c-audit__controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-3) var(--sp-5); padding: var(--sp-4) var(--edge); }
+.c-audit__hint { color: var(--ink-3); font-size: var(--fs-sm); }
+.c-audit__toggles { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+.c-audit__toggles-k { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-audit__toggle { min-height: 2.25rem; font-size: var(--fs-xs); }
+.c-audit__tick { position: relative; width: 0.875rem; height: 0.875rem; border: 1.5px solid currentColor; border-radius: 3px; }
+.c-audit__toggle[aria-pressed="true"] .c-audit__tick { background: currentColor; -webkit-mask: var(--mk-check) center / 100% 100% no-repeat; mask: var(--mk-check) center / 100% 100% no-repeat; border: 0; border-radius: 50%; }
+
+.c-audit__below { display: grid; gap: var(--sp-5); padding: var(--sp-5) var(--edge) var(--sp-6); }
+@container audit (min-width: 44rem) {
+  .c-audit__below { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--sp-6); align-items: start; }
+}
+
+.c-audit__panel { min-width: 0; }
+.c-audit__panel > * + * { margin-top: var(--sp-2); }
+.c-audit__phead { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); min-height: 2.125rem; }
+.c-audit__eyebrow { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-audit__clear { margin-right: calc(-1 * var(--sp-3)); }
+.c-audit__name { font-family: var(--font-serif); font-size: var(--fs-xl); font-weight: 600; letter-spacing: var(--tracking-tight); line-height: 1.2; }
+.c-audit__lead { color: var(--ink-2); font-size: var(--fs-md); line-height: 1.5; }
+.c-audit__lead b { color: var(--ink); font-weight: 600; }
+.c-audit__more, .c-audit__pnote { color: var(--ink-3); font-size: var(--fs-sm); }
+.c-audit__sub { padding-top: var(--sp-2); color: var(--ink-2); font-size: var(--fs-sm); font-weight: 500; }
+.c-audit__tally { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.c-audit__tally li { display: grid; grid-template-columns: 6.5rem 2rem minmax(0, 1fr); align-items: baseline; gap: var(--sp-2); padding: var(--sp-2) 0; border-bottom: 1px solid var(--line); font-size: var(--fs-sm); }
+.c-audit__tmark .mk { vertical-align: baseline; }
+.c-audit__tmark .mk--sym .mk__t { position: static; width: auto; height: auto; overflow: visible; clip-path: none; }
+.c-audit__tcount { color: var(--ink); font-family: var(--font-mono); font-size: var(--fs-sm); font-variant-numeric: tabular-nums; text-align: right; }
+.c-audit__tnames { color: var(--ink-2); }
+.c-audit__also { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-4); padding-top: var(--sp-2); color: var(--ink-2); font-size: var(--fs-sm); }
+.c-audit__also-k { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-audit__also-i { display: inline-flex; align-items: center; gap: var(--sp-1); white-space: nowrap; }
+
+.c-audit__finding {
+  margin: var(--sp-5) var(--edge);
+  padding: var(--sp-4) var(--sp-5);
+  border-left: 3px solid var(--ink);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.35;
+}
+.c-audit__below .c-audit__finding { margin: 0; }
+.c-audit__finding-k { display: block; margin-bottom: var(--sp-2); color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: 500; letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+
+/* --- Caption and legend --------------------------------------------------- */
+.c-audit__caption > * + * { margin-top: var(--sp-2); }
+.c-audit__legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: var(--sp-2) var(--sp-5); margin: 0 0 var(--sp-3); }
+.c-audit__legend > div { display: grid; grid-template-columns: 5.75rem minmax(0, 1fr); align-items: baseline; gap: var(--sp-2); }
+.c-audit__legend dt .mk { vertical-align: baseline; }
+.c-audit__legend dd { margin: 0; color: var(--ink-2); font-size: var(--fs-xs); line-height: 1.45; }
+.c-audit__caption p b { color: var(--ink-2); font-weight: 600; }
+
+@media (max-width: 640px) {
+  .c-audit { --edge: var(--sp-4); --cell-pad-x: 0.375rem; }
+  .c-audit__finding { font-size: var(--fs-md); }
+}

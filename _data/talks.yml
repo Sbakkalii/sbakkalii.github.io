@@ -1,0 +1,45 @@
+# Talks and presentations (previously at /talks/, partly in French).
+invited:
+  - title: "Pareto-efficient multimodal document understanding"
+    where: "LORIA, Nancy"
+    year: ""
+  - title: "Improving semantic multimodal document representation learning"
+    where: "L3i, La Rochelle Université"
+    year: "2022"
+  - title: "Multimodal document understanding"
+    where: "Computer Vision Center (CVC), Barcelona"
+    year: ""
+
+conference:
+  - title: "Oral presentation"
+    where: "ICDAR 2021 — 16th International Conference on Document Analysis and Recognition (ICDAR–IJDAR track), Lausanne"
+    year: "2021"
+  - title: "Oral presentation"
+    where: "ICIP 2020 — 27th IEEE International Conference on Image Processing (virtual)"
+    year: "2020"
+  - title: "Oral presentation"
+    where: "CVPR 2020 Workshops — IEEE/CVF Conference on Computer Vision and Pattern Recognition (virtual)"
+    year: "2020"
+
+symposia:
+  - title: "Multimodal Document Understanding for Cross-Modal Document Image Classification (oral)"
+    where: "SIFED 2022 — Symposium International Francophone sur l’Écrit et le Document"
+    url: "https://project.inria.fr/sifed2022/fr/"
+    year: "2022"
+  - title: "Second-year doctoral students’ colloquium"
+    where: "La Rochelle Université"
+    year: "2022"
+  - title: "Participant"
+    where: "INNOV & SIFED 2021"
+    year: "2021"
+  - title: "EU-CONEXUS summer school: Professional and Scientific Communication and Networking in Multidisciplinary Environments"
+    where: "University of Zadar, Croatia"
+    year: "2021"
+  - title: "Cross-Modal Document Image Classification (oral)"
+    where: "SIFED 2020"
+    year: "2020"
+
+defense:
+  title: "Multimodal Document Understanding with Unified Vision and Language Cross-Modal Learning — PhD defense"
+  where: "L3i, La Rochelle Université"
+  year: "2022"

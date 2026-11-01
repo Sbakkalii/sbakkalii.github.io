@@ -1,0 +1,177 @@
+# Document Intelligence products (SynaptYon SARL), and the research they build
+# on. Statuses match the SynaptYon site; none of these is generally available
+# yet, so the site never shows customers, benchmarks or prices for them. The
+# in-page demos are client-side illustrations on synthetic documents.
+
+statuses:
+  development: { label: "In development", tone: "accent" }
+  soon:        { label: "Coming soon", tone: "muted" }
+  research:    { label: "Published research", tone: "ok" }
+  spec:        { label: "Open specification", tone: "ok" }
+
+# The stack: one row per capability layer, left to right in the diagram.
+stack:
+  - id: read
+    name: "Read"
+    verb: "Perceive the page"
+    body: "Classify, extract and summarize visually rich documents from their text, layout and visual cues."
+    paper: "Acquire · document tuple (V, T, B, G, H, M)"
+    product: documind
+    research: [2025-globaldoc, 2023-vlcdoc, 2021-eaml, 2024-multimodal-adaptive-inference, 2025-docsum, 2025-wildkhmerst]
+  - id: validate
+    name: "Validate"
+    verb: "Gate before writing"
+    body: "Corroborate each observation against what is already known before it is allowed into memory."
+    paper: "Pre-write gate · Theorem III.4"
+    product: documind
+    research: [2026-amnesia-by-design]
+  - id: remember
+    name: "Remember"
+    verb: "Consolidate & reconcile"
+    body: "Write evidence with provenance, consolidate it into schemas, and close claims that newer documents supersede."
+    paper: "State S_t · consolidation · supersession"
+    product: documind
+    research: [2026-amnesia-by-design]
+  - id: answer
+    name: "Answer"
+    verb: "Cite, or abstain"
+    body: "Answer only from retrieved evidence, cite the span, box or cell, and abstain when the evidence is insufficient."
+    paper: "Answer from state with provenance"
+    product: synapsesearch
+    research: [2025-hybrid-rag, 2025-globaldoc]
+  - id: decide
+    name: "Decide"
+    verb: "Keep decisions valid"
+    body: "Record each decision with its timestamps and watch conditions, and route new information to it before the revision deadline."
+    paper: "Decision ledger (companion paper)"
+    product: agentforge
+    research: [2026-fresh-at-decision]
+  - id: govern
+    name: "Govern"
+    verb: "Authorise & forget"
+    body: "Enforce who may see what, and propagate deletions into every derived representation."
+    paper: "Authorization state A_t · five-level unlearning"
+    product: documind
+    research: [2026-amnesia-by-design]
+
+products:
+  - id: documind
+    name: "DocuMind"
+    status: development
+    tagline: "Document intelligence that reads — and remembers."
+    original: "An intelligent document-analysis platform: extraction, classification and automatic summarization for legal and finance teams."
+    pitch: >-
+      DocuMind keeps what it reads. Every extracted field is written to
+      persistent, evidence-grounded state together with its provenance
+      (document, page, region, version) and its validity interval. The next
+      contract, amendment or invoice is then read in context: superseded
+      clauses are closed, contradictions surface instead of being overwritten,
+      and a deletion reaches every representation derived from the source.
+    audience: "Legal and finance teams; document-heavy work such as contract review, financial audit, clinical records and literature synthesis."
+    layers: [read, validate, remember, govern]
+    state: [E, K, G, V, P, A]
+    capabilities:
+      - title: "Multimodal reading"
+        body: "Classification, extraction and summarization from text, layout and image together, including few-shot classification and content-based retrieval of document images."
+        research: [2025-globaldoc, 2023-vlcdoc, 2021-eaml, 2025-docsum]
+      - title: "Efficient inference"
+        body: "Multimodal early exits reduced latency by over 20% while fully retaining baseline accuracy in our ICDAR 2024 study."
+        research: [2024-multimodal-adaptive-inference]
+      - title: "Beyond Latin script"
+        body: "Scene text and handwriting in low-resource scripts: Khmer benchmarks and a bilingual handwritten prescription dataset."
+        research: [2024-khmerst, 2025-wildkhmerst, 2026-khmer-scene-text-spotting, 2026-bhcp-doc]
+      - title: "Persistent, provenance-linked state"
+        body: "Episodic evidence, consolidated schemas, a relation graph, a temporal validity index, a provenance ledger and access policy: the six components of the state tuple."
+        research: [2026-amnesia-by-design]
+      - title: "Reconciliation, not overwriting"
+        body: "New evidence supports, supersedes, coexists with, conflicts with, or escalates against what is stored, and the outcome is recorded."
+        research: [2026-amnesia-by-design]
+      - title: "Verifiable forgetting"
+        body: "Deletion goes past the raw file to embeddings, graph nodes and consolidated schemas, and is measured with Forgetting Fidelity and Coverage Retention."
+        research: [2026-amnesia-by-design]
+    demo: doc-inspector
+
+  - id: synapsesearch
+    name: "SynapseSearch"
+    status: soon
+    tagline: "Answers that cite the cell — or say they don't know."
+    original: "A semantic search engine for internal knowledge bases that understands context, not just keywords."
+    pitch: >-
+      SynapseSearch answers questions over a document collection only from
+      retrieved evidence. Queries are expanded and fused across phrasings and
+      languages, every answer cites the passage, page and region it relies on,
+      and when the evidence does not support an answer it abstains instead of
+      guessing. Because it reads from DocuMind's state, it answers from the
+      clause that is valid today and can show what it superseded.
+    audience: "Teams searching contracts, policies, technical and scientific documentation, in French and English."
+    layers: [answer]
+    state: [K, V, P]
+    capabilities:
+      - title: "Multilingual query expansion"
+        body: "Semantic query expansion with reciprocal rank fusion, for stability under rephrasing and terminology shifts."
+        research: [2025-hybrid-rag]
+      - title: "Strict grounding with abstention"
+        body: "The generator may only use retrieved evidence and must abstain when it is insufficient."
+        research: [2025-hybrid-rag]
+      - title: "Document-image retrieval"
+        body: "Content-based retrieval of document images with cross-modal representations."
+        research: [2025-globaldoc]
+      - title: "Time-aware answers"
+        body: "Retrieval respects validity intervals, so superseded clauses are shown as history, not as the answer."
+        research: [2026-amnesia-by-design]
+    demo: search-demo
+
+  - id: agentforge
+    name: "AgentForge"
+    status: soon
+    tagline: "Agents whose decisions stay right after they're made."
+    original: "A kit for building specialized AI agents with orchestration, memory and quality control built in."
+    pitch: >-
+      An agent's decision is made at one time and carried out later, in a
+      world that keeps changing. AgentForge records every decision in a
+      ledger with its timestamps, evidence, background dossier and watch
+      conditions, routes incoming information to the open decisions it
+      affects before their revision deadlines, and lets the agent keep or
+      switch. Memory is governed: agents inherit DocuMind's access policy
+      and forgetting.
+    audience: "Operations, procurement and compliance workflows where decisions depend on documents that change."
+    layers: [decide, govern]
+    state: [E, V, P, A]
+    capabilities:
+      - title: "Decision ledger"
+        body: "Six timestamps per decision: evidence written and verified, decision, revision deadline, action, outcome."
+        research: [2026-fresh-at-decision]
+      - title: "Routing to open decisions"
+        body: "Watch conditions written at decision time reach indirect dependencies. In controlled streams across five LLMs, models acted on decisive news once it arrived, switching in 90.6–100% of cases, so accuracy followed routing."
+        research: [2026-fresh-at-decision]
+      - title: "Governed memory"
+        body: "Authorization state and verifiable forgetting shared with DocuMind."
+        research: [2026-amnesia-by-design]
+    demo: ledger-demo
+
+# Published datasets, benchmarks and specifications.
+assets:
+  - name: "KhmerST"
+    kind: "Benchmark"
+    body: "Low-resource Khmer scene text detection and recognition."
+    pub: 2024-khmerst
+  - name: "WildKhmerST"
+    kind: "Dataset & benchmark"
+    body: "Khmer scene text detection and recognition in the wild."
+    pub: 2025-wildkhmerst
+  - name: "Khmer scene text spotting"
+    kind: "Benchmark"
+    body: "End-to-end spotting with cross-lingual transfer for complex scripts."
+    pub: 2026-khmer-scene-text-spotting
+  - name: "BHCP-DOC"
+    kind: "Dataset"
+    body: "Real-world bilingual handwritten clinical prescriptions, for detection and recognition."
+    pub: 2026-bhcp-doc
+  - name: "HSB-GDL"
+    kind: "Benchmark"
+    body: "Heterogeneous subgraphs for classification and query spotting."
+    pub: 2026-hsb-gdl
+  - name: "Longitudinal harness"
+    kind: "Specification"
+    body: "Eight required properties, three counterfactual arms and five metrics for evaluating persistent document state."
+    pub: 2026-amnesia-by-design

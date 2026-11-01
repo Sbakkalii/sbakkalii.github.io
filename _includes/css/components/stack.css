@@ -1,0 +1,307 @@
+/* stack: six layers as a pipeline of tabs (Read → … → Govern), an accordion
+   stepper below 760 px, and a static list of cards without JavaScript. */
+
+.c-stack { --stack-gap: 1.75rem; }
+
+/* --- Static baseline (also the no-JS view) -------------------------------- */
+.c-stack__static {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (max-width: 960px) { .c-stack__static { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .c-stack__static { grid-template-columns: minmax(0, 1fr); } }
+.c-stack__layer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-4) var(--sp-5) var(--sp-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+.c-stack__num { margin: 0; color: var(--accent); font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 500; }
+.c-stack__name { font-size: var(--fs-lg); }
+.c-stack__verb { display: block; margin-top: 2px; color: var(--ink-2); font-size: var(--fs-sm); font-weight: 500; }
+.c-stack__text { color: var(--ink-2); font-size: var(--fs-sm); }
+
+/* Facts list shared by the static cards and the interactive panels. */
+.c-stack__facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--sp-2) var(--sp-4);
+  margin: var(--sp-2) 0 0;
+  font-size: var(--fs-sm);
+}
+.c-stack__facts dt {
+  padding-top: 3px;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.c-stack__facts dd { min-width: 0; margin: 0; color: var(--ink); line-height: 1.5; }
+.c-stack__facts dd .badge { vertical-align: 1px; }
+.c-stack__product { display: inline-block; padding-block: var(--sp-1); font-weight: 600; }
+.c-stack__prod { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px var(--sp-2); }
+.c-stack__also { display: flex; flex-wrap: wrap; align-items: center; gap: 4px var(--sp-2); margin-top: var(--sp-2); color: var(--ink-3); font-size: var(--fs-xs); }
+.c-stack__paper sub { font-size: 0.72em; }
+.c-stack__paper .math { font-size: 1.05em; }
+
+.c-stack__refs { display: grid; gap: var(--sp-2); margin: 0; padding: 0; list-style: none; }
+.c-stack__refs a { color: var(--ink); text-decoration-color: var(--line-2); }
+.c-stack__refs a:hover { color: var(--accent); text-decoration-color: currentColor; }
+.c-stack__venue { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); white-space: nowrap; }
+
+/* --- Enhanced: product chips ------------------------------------------------- */
+.c-stack__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-5);
+}
+.c-stack__chips-label {
+  margin-right: var(--sp-2);
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.c-stack__chips .chip { min-height: 36px; }
+
+/* --- Enhanced, wide: the pipeline of tabs ------------------------------------ */
+.c-stack__track { position: relative; padding-top: var(--sp-4); }
+.c-stack__tabs {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--sp-7) var(--stack-gap);
+}
+@media (max-width: 1000px) { .c-stack__tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.c-stack__tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  min-height: 9.5rem;
+  margin: 0;
+  padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  transition: border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease), opacity var(--dur-2) var(--ease), background-color var(--dur-2) var(--ease);
+}
+.c-stack__tile:hover { border-color: var(--control); }
+.c-stack__tile-num { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: 500; letter-spacing: 0.04em; }
+.c-stack__tile-name {
+  margin-top: var(--sp-1);
+  font-family: var(--font-serif);
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  letter-spacing: var(--tracking-tight);
+  line-height: 1.1;
+}
+.c-stack__tile-verb { margin-top: var(--sp-1); color: var(--ink-2); font-size: var(--fs-xs); line-height: 1.4; }
+.c-stack__tile-product { margin-top: auto; padding-top: var(--sp-3); }
+.c-stack__tile-product .tag { transition: background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
+
+.c-stack__tile[aria-selected="true"] {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink), var(--shadow-1);
+}
+.c-stack__tile[aria-selected="true"] .c-stack__tile-num { color: var(--accent); }
+/* A notch under the selected tile points at its panel. */
+.c-stack__tile[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: calc(50% - 6px);
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  background: var(--surface);
+  transform: rotate(45deg);
+}
+
+/* Arrows in the gaps between tiles. */
+.c-stack__arrow {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: var(--stack-gap);
+  height: 10px;
+  margin-left: 1px;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+.c-stack__arrow::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  right: 6px;
+  height: 1.5px;
+  background: var(--ink-3);
+  transform: translateY(-50%);
+}
+.c-stack__arrow::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-top: 1.5px solid var(--ink-3);
+  border-right: 1.5px solid var(--ink-3);
+  transform: translateY(-50%) rotate(45deg);
+}
+@media (max-width: 1000px) { .c-stack__tile:nth-child(3n) .c-stack__arrow { display: none; } }
+
+/* Product highlight: dim the other layers, box each run of covered layers. */
+.c-stack.has-product .c-stack__tile:not(.is-in-product) { opacity: 0.4; }
+.c-stack__tile.is-in-product .c-stack__tile-product .tag,
+.c-stack__step.is-in-product .c-stack__step-product .tag { border-color: color-mix(in srgb, var(--accent) 45%, transparent); background: var(--accent-soft); color: var(--accent); }
+.c-stack__spans { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.c-stack__span {
+  position: absolute;
+  border: 1.5px dashed var(--accent);
+  border-radius: calc(var(--radius) + 6px);
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+.c-stack__span::before {
+  content: attr(data-label);
+  position: absolute;
+  top: 0;
+  left: 10px;
+  padding: 1px 7px;
+  border-radius: var(--radius-xs) var(--radius-xs) 0 0;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  transform: translateY(-100%);
+  white-space: nowrap;
+}
+
+/* --- Panels ------------------------------------------------------------------ */
+.c-stack__panels { margin-top: var(--sp-5); }
+.c-stack__panel {
+  padding: var(--sp-5) var(--sp-6) var(--sp-6);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+.c-stack__panel:focus-visible { outline-offset: 3px; }
+.c-stack__panel-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--sp-5) var(--sp-7); }
+@media (max-width: 1000px) { .c-stack__panel-grid { grid-template-columns: minmax(0, 1fr); } }
+.c-stack__kicker { margin: 0; color: var(--accent); font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: 500; letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-stack__panel-title { margin-top: var(--sp-2); font-family: var(--font-serif); font-size: var(--fs-xl); font-weight: 600; letter-spacing: var(--tracking-tight); line-height: 1.2; }
+.c-stack__panel-text { margin-top: var(--sp-2); color: var(--ink-2); font-size: var(--fs-base); line-height: 1.55; }
+.c-stack__panel .c-stack__facts { margin-top: var(--sp-4); }
+.c-stack__refs-title { margin: 0 0 var(--sp-2); color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.c-stack__refs--rich { gap: 0; }
+.c-stack__refs--rich li {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  gap: 2px var(--sp-4);
+  padding: var(--sp-2) 0;
+  border-top: 1px solid var(--line);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+}
+.c-stack__refs--rich li:first-child { border-top: 0; padding-top: 0; }
+.c-stack__refs--rich .c-stack__venue { padding-top: 2px; white-space: normal; }
+.c-stack__ref-short { font-weight: 600; }
+.c-stack__ref-rest { color: var(--ink-2); }
+.c-stack__panel-swap { transition: opacity var(--dur-2) var(--ease); }
+.c-stack__panel-swap.is-swapping { opacity: 0; transition: none; }
+
+/* --- Enhanced, narrow: accordion stepper ----------------------------------- */
+.c-stack__steps { margin: 0; padding: 0; list-style: none; }
+.c-stack__step { position: relative; }
+.c-stack__step::before {   /* the rail joining the step nodes */
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 15px;
+  width: 1.5px;
+  background: var(--line-2);
+}
+.c-stack__step:first-child::before { top: 26px; }
+.c-stack__step:last-child::before { bottom: auto; height: 26px; }
+.c-stack__step-head { margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; }
+.c-stack__step-btn {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--sp-3);
+  width: 100%;
+  min-height: 52px;
+  padding: var(--sp-2) 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  transition: opacity var(--dur-2) var(--ease);
+}
+.c-stack__step-node {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1.5px solid var(--line-2);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  transition: background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
+}
+.c-stack__step-label { display: grid; min-width: 0; }
+.c-stack__step-name { font-family: var(--font-serif); font-size: var(--fs-lg); font-weight: 600; line-height: 1.2; }
+.c-stack__step-verb { color: var(--ink-2); font-size: var(--fs-xs); line-height: 1.35; }
+.c-stack__step-product { display: inline-flex; align-items: center; gap: var(--sp-2); }
+.c-stack__step-product::after {   /* chevron */
+  content: "";
+  width: 7px;
+  height: 7px;
+  margin: 0 6px 3px 2px;
+  border-right: 1.5px solid var(--ink-3);
+  border-bottom: 1.5px solid var(--ink-3);
+  transform: rotate(45deg);
+  transition: transform var(--dur-2) var(--ease);
+}
+.c-stack__step-btn[aria-expanded="true"] .c-stack__step-product::after { margin-bottom: -3px; transform: rotate(225deg); }
+.c-stack__step-btn[aria-expanded="true"] .c-stack__step-node { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.c-stack__step-btn:focus-visible { outline-offset: 0; }
+.c-stack.has-product .c-stack__step:not(.is-in-product) .c-stack__step-btn { opacity: 0.45; }
+.c-stack__step.is-in-product .c-stack__step-node { border-color: var(--accent); color: var(--accent); }
+.c-stack__step.is-in-product .c-stack__step-btn[aria-expanded="true"] .c-stack__step-node { background: var(--accent); color: var(--on-accent); }
+.c-stack__step-panel { padding: var(--sp-1) 0 var(--sp-5) calc(2rem + var(--sp-3)); }
+.c-stack__step-panel .c-stack__panel-text { margin-top: 0; font-size: var(--fs-sm); }
+.c-stack__step-panel .c-stack__facts { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+.c-stack__step-panel .c-stack__facts dd + dt { margin-top: var(--sp-2); }
+.c-stack__step-panel .c-stack__refs-title { margin-top: var(--sp-4); }
+.c-stack__step-panel .c-stack__refs--rich li { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.c-stack__step-panel .c-stack__panel-grid { gap: 0; }

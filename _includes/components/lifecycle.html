@@ -1,0 +1,75 @@
+{%- comment -%}
+  State lifecycle: Eq. 4 (the state tuple), Fig. 3 (lifecycle operations) and
+  Algorithm 1 (the per-session state transition).
+  Static baseline: the six components as a definition list and Algorithm 1 as
+  an ordered list with what each step reads or writes.
+  assets/js/components/lifecycle.js turns it into a stepper over illustrative
+  registers filled from the fictional documents in _data/demo.yml.
+{%- endcomment -%}
+{%- assign paper = site.data.paper -%}
+{%- assign demo = site.data.demo -%}
+<figure class="figure c-lifecycle" data-component="lifecycle" id="fig-lifecycle">
+  <div class="figure__head">
+    <span class="figure__label"><b>State lifecycle</b> · Eq. 4 · Fig. 3 · Algorithm 1</span>
+    <span class="c-lifecycle__badges js-only">
+      <span class="badge badge--accent">Interactive</span>
+      <span class="badge badge--warn">Illustrative</span>
+    </span>
+  </div>
+  <div class="figure__body c-lifecycle__body">
+    <div class="c-lifecycle__static" data-lifecycle-static>
+      <p class="eq c-lifecycle__eq">{% include math.html text=paper.state.symbol %}</p>
+      <dl class="c-lifecycle__defs" aria-label="The six components of the state">
+        {%- for c in paper.state.components %}
+        <div class="c-lifecycle__def" data-st="{{ c.key }}">
+          <dt><span class="c-lifecycle__def-sym math">{% include math.html text=c.symbol %}</span> <span class="c-lifecycle__def-name">{{ c.name }}</span></dt>
+          <dd>{{ c.role }}</dd>
+        </div>
+        {%- endfor %}
+      </dl>
+      <p class="c-lifecycle__inv-static"><strong>Invariant.</strong> {{ paper.state.invariant }}</p>
+
+      <h3 class="c-lifecycle__alg-title">Algorithm 1 · State transition, one session</h3>
+      <ol class="c-lifecycle__alg">
+        {%- for s in paper.algorithm %}
+        {%- assign op_id = s.id -%}
+        {%- if s.id == "observe" -%}{%- assign op_id = "acquire" -%}{%- endif -%}
+        {%- assign op = paper.lifecycle | where: "id", op_id | first -%}
+        {%- assign reads = "" | split: "" -%}
+        {%- assign writes = "" | split: "" -%}
+        {%- for pair in s.touches -%}
+          {%- if pair[1] == "w" -%}{%- assign writes = writes | push: pair[0] -%}{%- else -%}{%- assign reads = reads | push: pair[0] -%}{%- endif -%}
+        {%- endfor %}
+        <li class="c-lifecycle__alg-step">
+          <p class="c-lifecycle__alg-head"><span class="c-lifecycle__alg-name">{{ s.name }}</span>{% if op %} <span class="tag">Fig. 3 · {{ op.name }}</span>{% endif %}</p>
+          <p class="c-lifecycle__alg-body">{% include math.html text=s.body %}</p>
+          <p class="c-lifecycle__alg-io">
+            <span>Reads: {% if reads.size == 0 %}—{% else %}{% for c in paper.state.components %}{% if reads contains c.key %}<span class="sym-chip" data-st="{{ c.key }}">{% include math.html text=c.symbol %}</span> {% endif %}{% endfor %}{% endif %}</span>
+            <span>Writes: {% if writes.size == 0 %}—{% else %}{% for c in paper.state.components %}{% if writes contains c.key %}<span class="sym-chip" data-st="{{ c.key }}">{% include math.html text=c.symbol %}</span> {% endif %}{% endfor %}{% endif %}</span>
+          </p>
+          {%- if s.branch %}
+          <p class="c-lifecycle__alg-branch">{% include math.html text=s.branch %}</p>
+          {%- endif %}
+        </li>
+        {%- endfor %}
+      </ol>
+    </div>
+    <script type="application/json" data-for="lifecycle">{
+      "state": {{ paper.state | jsonify }},
+      "algorithm": {{ paper.algorithm | jsonify }},
+      "lifecycle": {{ paper.lifecycle | jsonify }},
+      "demo": {
+        "disclaimer": {{ demo.disclaimer | jsonify }},
+        "parties": {{ demo.parties | jsonify }},
+        "documents": {{ demo.documents | jsonify }},
+        "noisy_observation": {{ demo.noisy_observation | jsonify }},
+        "deletion_request": {{ demo.deletion_request | jsonify }}
+      }
+    }</script>
+  </div>
+  <figcaption class="figure__caption">
+    The six components are Eq. 4 of the paper; the steps, their order and the components each one reads or writes follow Algorithm 1 and the lifecycle of Fig. 3.
+    <span class="js-only">Register contents are our illustration on fictional documents: a dashed outline means the step reads a component, a tint means it writes it.</span>
+    {{ demo.disclaimer }}
+  </figcaption>
+</figure>

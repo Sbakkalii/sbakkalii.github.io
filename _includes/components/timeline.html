@@ -1,0 +1,101 @@
+{%- comment -%}
+  Research trajectory. Static baseline: publications grouped by year, oldest
+  first, with the career milestones of the CV in date order. JS adds theme
+  chips and, from 760 px, a swimlane timeline (x = year, one lane per theme)
+  with the list one click away.
+  Data: site.publications, site.data.themes, site.data.pubtypes, and the
+  milestones below.
+{%- endcomment -%}
+{%- assign tl_pubs = site.publications | sort: "date" -%}
+{%- assign tl_themes = site.data.themes -%}
+
+{%- comment -%}
+  Career milestones, "YYYY-MM|short label|detail". Taken from _pages/cv.md
+  (Academic Appointments and Research Experience) because no data file holds
+  them yet; a `milestones` list in _data/profile.yml (date, label, detail)
+  replaces these lines.
+{%- endcomment -%}
+{%- if site.data.profile.milestones -%}
+  {%- assign tl_ms = "" | split: "" -%}
+  {%- for m in site.data.profile.milestones -%}{%- capture it -%}{{ m.date }}|{{ m.label }}|{{ m.detail }}{%- endcapture -%}{%- assign tl_ms = tl_ms | push: it -%}{%- endfor -%}
+{%- else -%}
+  {%- capture tl_ms_text -%}
+2019-12|PhD researcher, L3i|PhD Researcher and Lecturer, L3i-Lab, La Rochelle Université;
+2022-12|PhD|Ph.D. in Computer Science and Applications, La Rochelle Université, with the European Doctorate Label;
+2023-01|Postdoc, L3i|Postdoctoral Researcher and Lecturer, L3i-Lab, La Rochelle Université;
+2023-09|Associate Professor, L3i|Associate Professor (Maître de Conférences), L3i-Lab, La Rochelle Université;
+2025-09|IRISA, Université de Rennes|Enseignant-Chercheur Contractuel, IRISA-Lab, ESIR, Université de Rennes (SHADOC team)
+  {%- endcapture -%}
+  {%- assign tl_ms = tl_ms_text | strip_newlines | split: ";" -%}
+{%- endif -%}
+
+{%- comment -%} One sorted stream of entries, "date|kind|index", so milestones fall between publications. {%- endcomment -%}
+{%- assign tl_entries = "" | split: "" -%}
+{%- for p in tl_pubs -%}{%- capture e -%}{{ p.date | date: "%Y-%m-%d" }}|p|{{ forloop.index0 }}{%- endcapture -%}{%- assign tl_entries = tl_entries | push: e -%}{%- endfor -%}
+{%- for m in tl_ms -%}{%- assign mp = m | strip | split: "|" -%}{%- capture e -%}{{ mp[0] }}-00|m|{{ forloop.index0 }}{%- endcapture -%}{%- assign tl_entries = tl_entries | push: e -%}{%- endfor -%}
+{%- assign tl_entries = tl_entries | sort -%}
+{%- assign tl_years = tl_pubs | group_by_exp: "p", "p.date | date: '%Y'" -%}
+
+<figure class="figure c-timeline" data-component="timeline" id="trajectory-timeline" aria-labelledby="trajectory-timeline-label">
+  <div class="figure__head">
+    <span class="figure__label" id="trajectory-timeline-label"><b>Research trajectory</b> · {{ tl_pubs.size }} publications, {{ tl_years.first.name }}–{{ tl_years.last.name }}</span>
+    <span class="badge badge--accent js-only">Interactive</span>
+  </div>
+  <div class="figure__body c-timeline__body">
+    <div class="c-timeline__list">
+      {%- assign tl_cur = "" -%}
+      {%- for e in tl_entries -%}
+        {%- assign ep = e | split: "|" -%}
+        {%- assign y = ep[0] | slice: 0, 4 -%}
+        {%- if y != tl_cur -%}
+          {%- unless tl_cur == "" %}
+        </ol>
+      </section>
+          {%- endunless -%}
+          {%- assign yg = tl_years | where: "name", y | first %}
+      <section class="c-timeline__year" data-year="{{ y }}" aria-labelledby="tl-year-{{ y }}">
+        <h3 class="c-timeline__year-head" id="tl-year-{{ y }}">{{ y }} <span class="c-timeline__year-count">{{ yg.size | default: 0 }} publication{% if yg.size != 1 %}s{% endif %}</span></h3>
+        <ol class="c-timeline__items">
+          {%- assign tl_cur = y -%}
+        {%- endif -%}
+        {%- assign idx = ep[2] | plus: 0 -%}
+        {%- if ep[1] == "m" -%}
+          {%- assign mp = tl_ms[idx] | strip | split: "|" -%}
+          {%- capture mdate -%}{{ mp[0] }}-01{%- endcapture %}
+          <li class="c-timeline__milestone"><span class="c-timeline__ms-line"><time class="c-timeline__ms-date" datetime="{{ mp[0] }}">{{ mdate | date: "%b %Y" }}</time> <span class="c-timeline__ms-label">{{ mp[1] }}</span></span> <span class="c-timeline__ms-detail">{{ mp[2] }}</span></li>
+        {%- else -%}
+          {%- assign p = tl_pubs[idx] %}
+          <li class="c-timeline__item{% if p.featured %} is-featured{% endif %}" data-slug="{{ p.slug }}" data-themes="{{ p.themes | join: ' ' }}">
+            <span class="c-timeline__glyph" aria-hidden="true"></span>
+            <span class="c-timeline__item-main">{% if p.featured %}<span class="visually-hidden">Featured: </span>{% endif %}<a href="{{ p.url | relative_url }}">{{ p.title }}</a> <span class="c-timeline__venue">{{ p.venue_short }}</span></span>
+            <span class="c-timeline__tags">{%- for t in p.themes %}{% assign th = tl_themes | where: "id", t | first %}<span class="tag">{{ th.short | default: t }}</span>{% endfor -%}</span>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+      {%- unless tl_cur == "" %}
+        </ol>
+      </section>
+      {%- endunless %}
+    </div>
+    {%- assign tl_json = "" | split: "" -%}
+    {%- for p in tl_pubs -%}
+      {%- capture it -%}{"slug": {{ p.slug | jsonify }}, "date": {{ p.date | date: "%Y-%m-%d" | jsonify }}, "title": {{ p.title | jsonify }}, "venue": {{ p.venue_short | jsonify }}, "type": {{ p.pub_type | jsonify }}, "themes": {{ p.themes | jsonify }}, "authors": {{ p.authors | jsonify }}, "url": {{ p.url | relative_url | jsonify }}, "explorer": {% if p.explorer %}{{ p.explorer | relative_url | jsonify }}{% else %}null{% endif %}, "featured": {% if p.featured %}true{% else %}false{% endif %}, "first": {% if p.first_author %}true{% else %}false{% endif %}}{%- endcapture -%}
+      {%- assign tl_json = tl_json | push: it -%}
+    {%- endfor -%}
+    {%- assign tl_ms_json = "" | split: "" -%}
+    {%- for m in tl_ms -%}
+      {%- assign mp = m | strip | split: "|" -%}
+      {%- capture it -%}{"date": {{ mp[0] | jsonify }}, "label": {{ mp[1] | jsonify }}, "detail": {{ mp[2] | jsonify }}}{%- endcapture -%}
+      {%- assign tl_ms_json = tl_ms_json | push: it -%}
+    {%- endfor %}
+    <script type="application/json" data-for="timeline">{
+      "pubs": [{{ tl_json | join: ", " }}],
+      "themes": {{ tl_themes | jsonify }},
+      "pubtypes": {{ site.data.pubtypes | jsonify }},
+      "milestones": [{{ tl_ms_json | join: ", " }}],
+      "selected": {{ site.data.paper.publication_url | relative_url | jsonify }},
+      "author": {{ site.data.profile.given_name | slice: 0 | append: ". " | append: site.data.profile.family_name | jsonify }}
+    }</script>
+  </div>
+  <figcaption class="figure__caption">Every publication, by year, from the publication list; career milestones from the <a href="{{ '/cv/' | relative_url }}">CV</a>.<span class="js-only c-timeline__caption-js"> In the timeline each publication is a dot in the lane of each of its themes (filled: featured work); dashed rules mark the milestones.</span></figcaption>
+</figure>

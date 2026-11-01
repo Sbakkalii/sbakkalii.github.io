@@ -1,0 +1,106 @@
+---
+layout: default
+title: "Research"
+permalink: /research/
+description: "Research program of Souhail Bakkali: cross-modal document understanding, grounded retrieval and QA, low-resource scene text, and persistent evidence-grounded document state."
+---
+{%- assign paper = site.data.paper -%}
+{%- assign pubs = site.publications | sort: "date" | reverse -%}
+{%- assign companion = site.publications | where: "slug", "2026-fresh-at-decision" | first -%}
+{%- assign mtrace = site.publications | where: "slug", "2025-hybrid-rag" | first -%}
+
+<header class="page-head">
+  <div class="container page-head__inner">
+    <p class="eyebrow">Research</p>
+    <h1>Teaching machines to read documents — and to remember them.</h1>
+    <p class="lede">Documents carry meaning in their text, their layout and their images at once, and they change over time. My work goes from learning joint vision-language representations of a page, to answering questions only from evidence, to the state a system should keep across documents and sessions.</p>
+  </div>
+</header>
+
+<section class="section" aria-labelledby="agenda-title">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow"><span class="eyebrow__num">§ 01</span> Current agenda</p>
+      <h2 id="agenda-title">Persistent, evidence-grounded document state.</h2>
+    </header>
+    <div class="grid grid-3">
+      <a class="card card--link" href="{{ '/research/persistent-state/' | relative_url }}" style="grid-column: span 2">
+        <p class="card__kicker">Survey · arXiv:{{ paper.arxiv }} · {{ paper.date | date: "%B %Y" }}</p>
+        <h3 class="h2" style="font-size: var(--fs-xl)">{{ paper.title }}</h3>
+        <p class="card__body">{{ paper.argument[0].body }} {{ paper.argument[3].body }}</p>
+        <div class="cluster card__foot">
+          {%- for c in paper.counts %}<span class="tag">{{ c.value }} {{ c.label }}</span>{% endfor %}
+        </div>
+        <span class="link-arrow">Open the interactive explorer</span>
+      </a>
+      <div class="stack">
+        <a class="card card--link" href="{{ companion.url | relative_url }}">
+          <p class="card__kicker">Companion · {{ companion.venue_short }}</p>
+          <h3 class="card__title" style="font-size: var(--fs-base)">{{ companion.title }}</h3>
+          <p class="card__body">Decisions made by LLMs are carried out later; a decision ledger keeps them valid.</p>
+        </a>
+        <a class="card card--link" href="{{ mtrace.url | relative_url }}">
+          <p class="card__kicker">Grounding · {{ mtrace.venue_short }}</p>
+          <h3 class="card__title" style="font-size: var(--fs-base)">{{ mtrace.title }}</h3>
+          <p class="card__body">Multilingual RAG that cites its evidence and abstains when it has none.</p>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" aria-labelledby="themes-title">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow"><span class="eyebrow__num">§ 02</span> Themes</p>
+      <h2 id="themes-title">Seven threads, {{ site.publications.size }} publications.</h2>
+      <p class="lede">Each publication carries one or more themes. Follow a thread, or <a href="{{ '/publications/' | relative_url }}">filter the full list</a>.</p>
+    </header>
+    <div class="stack stack-lg">
+      {%- for theme in site.data.themes %}
+      {%- assign tp = pubs | where_exp: "p", "p.themes contains theme.id" %}
+      <details class="disclosure" id="theme-{{ theme.id }}"{% if forloop.first %} open{% endif %}>
+        <summary>
+          <span class="cluster" style="--cluster: var(--sp-3)"><span>{{ theme.label }}</span><span class="tag">{{ tp.size }}</span></span>
+        </summary>
+        <div class="disclosure__body stack">
+          <p class="muted">{{ theme.description }}</p>
+          <ol class="pubs">
+            {%- for p in tp %}{% include pub-item.html pub=p tags=false %}{% endfor %}
+          </ol>
+        </div>
+      </details>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="lineage-title">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow"><span class="eyebrow__num">§ 03</span> Lineage</p>
+      <h2 id="lineage-title">Where my models sit among document representations.</h2>
+      <p class="lede">Table I of the survey traces representation learning for documents from BERT to instruction-tuned layout models. EAML, VLCDoC and GlobalDoc are mine. Every row shares one empty column: native state.</p>
+    </header>
+    {% include components/lineage.html %}
+  </div>
+</section>
+
+<section class="section section--alt" aria-labelledby="people-title">
+  <div class="container split split--top">
+    <div class="stack">
+      <p class="eyebrow"><span class="eyebrow__num">§ 04</span> People &amp; places</p>
+      <h2 id="people-title">Done with others.</h2>
+      <p class="lede">I co-supervise PhD students on low-resource scene-text recognition and explainable multimodal document understanding, and work with groups across Europe and Asia.</p>
+      <p><a class="link-arrow" href="{{ '/research-activities/' | relative_url }}">Grants, collaborations and service</a></p>
+    </div>
+    <div class="card">
+      <p class="card__kicker">Collaborations</p>
+      <ul class="list-plain stack stack-sm small">
+        {%- for c in site.data.activities.collaborations.academic %}<li>{{ c.name }} <span class="muted">· {{ c.country }}</span></li>{% endfor %}
+        {%- for c in site.data.activities.collaborations.industry %}<li>{{ c.name }} <span class="muted">· {{ c.country }}, industry</span></li>{% endfor %}
+      </ul>
+      <p class="small muted" style="margin-top: var(--sp-4)">Earlier work: <a href="{{ '/scientific-research/' | relative_url }}">PhD research statement (2019–2022)</a>.</p>
+    </div>
+  </div>
+</section>

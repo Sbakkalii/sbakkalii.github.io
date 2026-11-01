@@ -1,0 +1,204 @@
+/* ==========================================================================
+   Design tokens. Every colour, size and duration used on the site comes from
+   here; components never hard-code values. Light is the default; dark applies
+   when the visitor's system asks for it (unless they chose light) or when
+   they pick it with the theme toggle.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces: a warm paper white, so documents and annotations read as such. */
+  --bg: #f7f5f0;
+  --bg-2: #efebe3;
+  --surface: #ffffff;
+  --surface-2: #faf8f4;
+  --surface-3: #f2efe8;
+
+  /* Ink */
+  --ink: #15171b;
+  --ink-2: #3a3e46;
+  --ink-3: #5c616b;
+  --line: #dcd6ca;
+  --line-2: #c6bfb0;
+  --control: #857e70;   /* borders of form controls: >= 3:1 on every surface */
+
+  /* Accent: link and focus colour. */
+  --accent: #1f45c7;
+  --accent-2: #1835a0;
+  --accent-soft: #e5ebfb;
+  --on-accent: #ffffff;
+
+  /* Primary button is ink on paper, for an editorial rather than SaaS feel. */
+  --btn-bg: #15171b;
+  --btn-ink: #f7f5f0;
+  --btn-bg-hover: #2c3038;
+
+  /* Highlighter for evidence spans. */
+  --mark: #ffe58a;
+  --mark-ink: #3d3000;
+
+  /* Status */
+  --ok: #17734a;
+  --ok-soft: #e2f3ea;
+  --warn: #8f5600;
+  --warn-soft: #fbefd9;
+  --bad: #b02a22;
+  --bad-soft: #fbe5e3;
+
+  /* The six components of the paper's state tuple S_t, used only in
+     diagrams that show them, always next to their symbol. */
+  --st-E: #2c63d6;   /* episodic evidence buffer */
+  --st-K: #7244cf;   /* consolidated semantic store */
+  --st-G: #0a7368;   /* associative relation graph */
+  --st-V: #995600;   /* temporal validity index */
+  --st-P: #b8325f;   /* provenance ledger */
+  --st-A: #4f5966;   /* authorization & policy */
+
+  /* Type */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans Math", "Segoe UI Symbol", "Noto Sans Symbols 2", sans-serif;
+  --font-serif: "Source Serif 4", "Source Serif Pro", Georgia, Cambria, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  --fs-2xs: 0.6875rem;  /* 11px: tags, figure labels */
+  --fs-xs: 0.75rem;     /* 12px */
+  --fs-sm: 0.875rem;    /* 14px */
+  --fs-base: 1rem;      /* 16px */
+  --fs-md: 1.0625rem;   /* 17px: long-form prose */
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: clamp(1.625rem, 1.3rem + 1.3vw, 2.25rem);
+  --fs-3xl: clamp(2rem, 1.5rem + 2.1vw, 3rem);
+  --fs-display: clamp(2.375rem, 1.6rem + 3.4vw, 4.25rem);
+
+  --lh-tight: 1.1;
+  --lh-snug: 1.3;
+  --lh-body: 1.6;
+  --tracking-tight: -0.015em;
+  --tracking-caps: 0.08em;
+
+  /* Space (4px base) */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
+  --sp-9: 6rem;
+  --section-y: clamp(3.5rem, 2.4rem + 4.2vw, 6.5rem);
+
+  /* Layout */
+  --container: 1180px;
+  --container-wide: 1320px;
+  --measure: 68ch;
+  --gutter: clamp(1rem, 0.55rem + 1.8vw, 2rem);
+  --header-h: 64px;
+
+  /* Shape and depth */
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --shadow-1: 0 1px 2px rgba(21, 23, 27, 0.05), 0 1px 1px rgba(21, 23, 27, 0.03);
+  --shadow-2: 0 10px 30px rgba(21, 23, 27, 0.08), 0 2px 8px rgba(21, 23, 27, 0.05);
+  --shadow-3: 0 24px 60px rgba(21, 23, 27, 0.16), 0 6px 18px rgba(21, 23, 27, 0.08);
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+  --dur-3: 420ms;
+  --dur-4: 700ms;
+
+  /* Layout-annotation motif (dashed boxes with a label tab). */
+  --bbox-dash: 5px 4px;
+  --dot-grid: radial-gradient(circle at 1px 1px, rgba(21, 23, 27, 0.11) 1px, transparent 1.4px);
+}
+
+/* Dark palette, applied by system preference... */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f1115;
+    --bg-2: #14171c;
+    --surface: #171a20;
+    --surface-2: #1b1f26;
+    --surface-3: #21262e;
+    --ink: #ecebe6;
+    --ink-2: #c4c7cd;
+    --ink-3: #9ba0a9;
+    --line: #2b3039;
+    --line-2: #3b414c;
+    --control: #6b7381;
+    --accent: #8eabff;
+    --accent-2: #b1c5ff;
+    --accent-soft: #1c2645;
+    --on-accent: #0b1020;
+    --btn-bg: #ecebe6;
+    --btn-ink: #0f1115;
+    --btn-bg-hover: #d4d3ce;
+    --mark: #5c4a00;
+    --mark-ink: #fff1b8;
+    --ok: #5cc995;
+    --ok-soft: #13291f;
+    --warn: #e7ad52;
+    --warn-soft: #2e2311;
+    --bad: #ff8a80;
+    --bad-soft: #351a18;
+    --st-E: #79a2ff;
+    --st-K: #ad90ff;
+    --st-G: #3fc7b8;
+    --st-V: #e6a54c;
+    --st-P: #ff80aa;
+    --st-A: #a4afbc;
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.35);
+    --shadow-3: 0 24px 60px rgba(0, 0, 0, 0.6), 0 6px 18px rgba(0, 0, 0, 0.4);
+    --dot-grid: radial-gradient(circle at 1px 1px, rgba(236, 235, 230, 0.09) 1px, transparent 1.4px);
+  }
+}
+
+/* ...or explicitly by the theme toggle. Keep in sync with the block above. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1115;
+  --bg-2: #14171c;
+  --surface: #171a20;
+  --surface-2: #1b1f26;
+  --surface-3: #21262e;
+  --ink: #ecebe6;
+  --ink-2: #c4c7cd;
+  --ink-3: #9ba0a9;
+  --line: #2b3039;
+  --line-2: #3b414c;
+  --control: #6b7381;
+  --accent: #8eabff;
+  --accent-2: #b1c5ff;
+  --accent-soft: #1c2645;
+  --on-accent: #0b1020;
+  --btn-bg: #ecebe6;
+  --btn-ink: #0f1115;
+  --btn-bg-hover: #d4d3ce;
+  --mark: #5c4a00;
+  --mark-ink: #fff1b8;
+  --ok: #5cc995;
+  --ok-soft: #13291f;
+  --warn: #e7ad52;
+  --warn-soft: #2e2311;
+  --bad: #ff8a80;
+  --bad-soft: #351a18;
+  --st-E: #79a2ff;
+  --st-K: #ad90ff;
+  --st-G: #3fc7b8;
+  --st-V: #e6a54c;
+  --st-P: #ff80aa;
+  --st-A: #a4afbc;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-3: 0 24px 60px rgba(0, 0, 0, 0.6), 0 6px 18px rgba(0, 0, 0, 0.4);
+  --dot-grid: radial-gradient(circle at 1px 1px, rgba(236, 235, 230, 0.09) 1px, transparent 1.4px);
+}
