@@ -55,7 +55,7 @@ layout: default
           </dd>
         </dl>
 
-        {%- comment -%} A product uses this publication when one of its capabilities cites it, or when a stack layer the product owns or covers does. {%- endcomment -%}
+        {%- comment -%} A product uses this publication when one of its capabilities cites it, or when a stack layer the product owns or covers does. Memory-layer products link to their section on /products/, the rest of the chain to its company page. {%- endcomment -%}
         {%- capture used_in -%}
           {%- for prod in products -%}
             {%- assign hit = false -%}
@@ -63,7 +63,7 @@ layout: default
             {%- for layer in site.data.products.stack -%}
               {%- if layer.product == prod.id or prod.layers contains layer.id -%}{%- if layer.research contains p.slug -%}{%- assign hit = true -%}{%- endif -%}{%- endif -%}
             {%- endfor -%}
-            {%- if hit %}<li><a href="{{ '/products/' | relative_url }}#{{ prod.id }}">{{ prod.name }}</a></li>{% endif -%}
+            {%- if hit %}{% capture href %}{% include product-url.html prod=prod %}{% endcapture %}<li><a href="{{ href | strip }}">{{ prod.name }}</a> <span class="muted small">{{ prod.role }}</span></li>{% endif -%}
           {%- endfor -%}
         {%- endcapture -%}
         {%- if used_in != "" %}

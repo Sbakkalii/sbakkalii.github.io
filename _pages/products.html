@@ -2,12 +2,15 @@
 layout: default
 title: "Products"
 permalink: /products/
-description: "Six SynaptYon products, one per part of the persistent-state architecture in Amnesia by Design, Memory By Necessity: Mnemos, Argus, Chronos, Ariadne, Lethe and Anamnesis. None is generally available yet; each has a demo that runs in your browser on fictional documents."
+description: "SynaptYon, co-founded by Souhail Bakkali, builds the whole Document Intelligence chain, from ingestion to downstream applications, for business, financial, historical and healthcare documents: seventeen products in five stages. None is generally available yet. The memory layer, specified in Amnesia by Design, Memory By Necessity, is shown here in research detail with demos that run in your browser on fictional documents."
 ---
 {%- comment -%}
   Everything below renders from _data/products.yml (shared with the SynaptYon
-  site), _data/paper.yml and the publications collection. Section numbers
-  follow the order of the products in the data file.
+  site), _data/paper.yml and the publications collection.
+  §01 and §02 are the company view: every product, linked to its page on the
+  company site. §03 is the research view, and only for the products that
+  carry `spec` (the memory layer of the paper); those are the only products
+  with a section, and an anchor, on this page.
 {%- endcomment -%}
 {%- assign profile = site.data.profile -%}
 {%- assign data = site.data.products -%}
@@ -15,47 +18,125 @@ description: "Six SynaptYon products, one per part of the persistent-state archi
 {%- assign survey = site.publications | where: "slug", "2026-amnesia-by-design" | first -%}
 {%- assign explorer = '/research/persistent-state/' | relative_url -%}
 {%- assign preview = profile.company.preview_url -%}
+{%- assign company_products = preview | append: 'products/' -%}
 {%- assign n_products = data.products | size -%}
+{%- assign n_stages = data.chain | size -%}
+{%- assign memory = data.products | where_exp: "p", "p.spec" -%}
+{%- assign words = "zero,one,two,three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,fifteen,sixteen,seventeen,eighteen,nineteen,twenty" | split: "," -%}
+{%- assign n_families = data.solutions | size -%}
 
 <header class="page-head">
   <div class="container page-head__inner">
     <p class="eyebrow">Products · {{ profile.company.name }}</p>
-    <h1>One paper, six products.</h1>
-    <p class="lede">{{ profile.company.name }}, which I co-founded, is building six Document Intelligence products, one for each part of the persistent-state architecture specified in <a href="{{ survey.url | relative_url }}">{{ paper.short_title }}</a>. None is generally available yet. For each: the problem, how it works, the sections of the paper it implements, and a demo that runs in your browser on fictional documents.</p>
+    <h1>Document Intelligence, from the first page to the last answer.</h1>
+    <p class="lede">{{ profile.company.name }}, which I co-founded, builds the whole chain, from ingestion to downstream applications, for business, financial, historical and healthcare documents: {{ words[n_products] | default: n_products }} products in {{ words[n_stages] | default: n_stages }} stages. None is generally available yet. The memory layer comes from <a href="{{ survey.url | relative_url }}">{{ paper.short_title }}</a>, and below it is shown in research detail, with demos that run in your browser on fictional documents.</p>
     <div class="cluster">
-      <a class="btn" href="{{ data.paper.url }}">Read the paper on arXiv {% include icon.html name="external" %}</a>
-      <a class="btn btn--secondary" href="{{ explorer }}">Interactive explorer</a>
+      {%- if preview != blank %}
+      <a class="btn" href="{{ company_products }}">{{ profile.company.name }} products {% include icon.html name="external" %}</a>
+      {%- endif %}
+      <a class="btn btn--secondary" href="{{ data.paper.url }}">Read the paper on arXiv</a>
     </div>
-    <nav class="cluster" aria-label="Products on this page">
-      {%- for prod in data.products %}{% assign st = data.statuses[prod.status] %}
-      <a class="chip" href="#{{ prod.id }}">{{ prod.name }} <span class="badge badge--{{ st.tone }}">{{ st.label }}</span></a>
-      {%- endfor %}
+    <nav class="cluster" aria-label="Sections of this page">
+      <a class="chip" href="#chain">The chain</a>
+      <a class="chip" href="#built-for">Built for</a>
+      <a class="chip" href="#memory">Memory layer</a>
       <a class="chip" href="#prototypes">Research prototypes</a>
       <a class="chip" href="#research">Research behind it</a>
       <a class="chip" href="#assets">Datasets &amp; benchmarks</a>
+      <a class="chip" href="#pilot">Pilots</a>
     </nav>
   </div>
 </header>
 
-<section class="section section--alt" id="stack" aria-labelledby="stack-h">
+<section class="section" id="chain" aria-labelledby="chain-h">
   <div class="container">
     <header class="section-head">
-      <p class="eyebrow"><span class="eyebrow__num">§ 01</span> The stack</p>
-      <h2 id="stack-h">Seven layers, six products.</h2>
-      <p class="lede">Read a document, gate what it says, consolidate it, reconcile it with what came before, keep the trail back to its source, forget it on request, and measure whether any of it helped. Each layer names the part of the paper it implements, the product that owns it, and the work it builds on.</p>
+      <p class="eyebrow"><span class="eyebrow__num">§ 01</span> The chain</p>
+      <h2 id="chain-h">{{ words[n_stages] | default: n_stages | capitalize }} stages, {{ words[n_products] | default: n_products }} products.</h2>
+      <p class="lede">Documents come in, are understood, are put to work, are remembered with their provenance, and the whole chain is measured on your own documents. Every product belongs to one stage and links to its page on the {{ profile.company.name }} site.</p>
+    </header>
+    <ol class="stage-list">
+      {%- for stage in data.chain %}
+      {%- assign has_research = false %}
+      {%- for pid in stage.products %}{% assign sp = data.products | where: "id", pid | first %}{% if sp.spec %}{% assign has_research = true %}{% endif %}{% endfor %}
+      <li class="stage" id="chain-{{ stage.id }}">
+        <div class="stage__head">
+          <p class="stage__num" aria-hidden="true">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</p>
+          <h3 class="stage__name" id="chain-{{ stage.id }}-h">{{ stage.name }}</h3>
+          <p class="stage__verb">{{ stage.verb }}</p>
+          {%- if has_research %}
+          <p><a class="link-arrow stage__more" href="#memory">Research view<span class="visually-hidden">: {{ stage.name }}</span></a></p>
+          {%- endif %}
+        </div>
+        <ul class="stage__items">
+          {%- for pid in stage.products %}
+          {%- assign prod = data.products | where: "id", pid | first %}
+          {%- if prod %}
+          {%- assign st = data.statuses[prod.status] %}
+          {%- capture href %}{% include product-url.html prod=prod mode="company" %}{% endcapture %}
+          <li>
+            <a class="stage-item" href="{{ href | strip }}">
+              <span class="stage-item__name">{{ prod.name }}</span>
+              <span class="stage-item__role">{{ prod.role }}</span>
+              <span class="stage-item__tagline">{{ prod.tagline }}</span>
+              <span class="stage-item__status"><span class="badge badge--{{ st.tone }}">{{ st.label }}</span></span>
+            </a>
+          </li>
+          {%- endif %}
+          {%- endfor %}
+        </ul>
+      </li>
+      {%- endfor %}
+    </ol>
+  </div>
+</section>
+
+<section class="section section--alt" id="built-for" aria-labelledby="built-for-h">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow"><span class="eyebrow__num">§ 02</span> Built for</p>
+      <h2 id="built-for-h">One chain, {{ words[n_families] | default: n_families }} document families.</h2>
+      <p class="lede">Each family draws on part of the chain. These are the documents the products are designed for, not a list of customers.</p>
+    </header>
+    <ul class="grid grid-3 list-plain">
+      {%- for sol in data.solutions %}
+      <li class="card solution" id="for-{{ sol.id }}">
+        <p class="card__kicker">{{ sol.kicker }}</p>
+        <h3 class="card__title">{{ sol.name }}</h3>
+        <p class="card__body">{{ sol.examples }}</p>
+        <div class="card__foot stack stack-sm">
+          <p class="product__label" id="for-{{ sol.id }}-uses">Products used</p>
+          <ul class="product__chips" aria-labelledby="for-{{ sol.id }}-uses">
+            {%- for pid in sol.products %}{% assign sp = data.products | where: "id", pid | first %}{% if sp %}
+            {%- capture href %}{% include product-url.html prod=sp mode="company" %}{% endcapture %}
+            <li><a class="chip" href="{{ href | strip }}" title="{{ sp.role | escape }}">{{ sp.name }}</a></li>
+            {%- endif %}{% endfor %}
+          </ul>
+        </div>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="memory" aria-labelledby="memory-h">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow"><span class="eyebrow__num">§ 03</span> The research view</p>
+      <h2 id="memory-h">The memory layer, from the paper.</h2>
+      <p class="lede">The Remember and Measure stages are where the chain keeps what it reads. Their {{ words[memory.size] | default: memory.size }} products implement the persistent-state architecture specified in <a href="{{ survey.url | relative_url }}">{{ paper.short_title }}</a>: read a document, gate what it says, consolidate it, reconcile it with what came before, keep the trail back to its source, forget it on request, and measure whether any of it helped. Each layer names the part of the paper it implements, the product that owns it, and the work it builds on.</p>
     </header>
     {% include components/stack.html %}
   </div>
 </section>
 
-{%- for prod in data.products %}
+{%- for prod in memory %}
 {%- assign st = data.statuses[prod.status] %}
-{%- assign num = forloop.index | plus: 1 %}
 <section class="section product" id="{{ prod.id }}" aria-labelledby="{{ prod.id }}-h">
   <div class="container">
     <div class="product__head">
       <div class="stack">
-        <p class="eyebrow"><span class="eyebrow__num">§ {% if num < 10 %}0{% endif %}{{ num }}</span> {% for l in prod.layers %}{% assign layer = data.stack | where: "id", l | first %}{{ layer.name }}{% unless forloop.last %} · {% endunless %}{% endfor %}</p>
+        <p class="eyebrow"><span class="eyebrow__num">§ 03.{{ forloop.index }}</span> {% for l in prod.layers %}{% assign layer = data.stack | where: "id", l | first %}{{ layer.name }}{% unless forloop.last %} · {% endunless %}{% endfor %}</p>
         <div class="product__name">
           <h2 id="{{ prod.id }}-h">{{ prod.name }}</h2>
           <span class="badge badge--{{ st.tone }}">{{ st.label }}</span>
@@ -68,10 +149,12 @@ description: "Six SynaptYon products, one per part of the persistent-state archi
       </div>
       <div class="stack">
         <p class="product__pitch">{{ prod.pitch }}</p>
+        {%- if prod.problem %}
         <div class="product__problem">
           <h3 class="product__label">The problem</h3>
           <p>{{ prod.problem }}</p>
         </div>
+        {%- endif %}
         {%- if prod.audience %}
         <p class="product__was"><strong>For:</strong> {{ prod.audience }}</p>
         {%- endif %}
@@ -92,7 +175,8 @@ description: "Six SynaptYon products, one per part of the persistent-state archi
     </div>
     {%- endif %}
 
-    {%- if prod.demo %}
+    {%- comment -%} The pipeline demo belongs to the SynaptYon site only. {%- endcomment -%}
+    {%- if prod.demo and prod.demo != "pipeline" %}
     {% include components/{{ prod.demo }}.html %}
     {%- endif %}
 
@@ -136,7 +220,8 @@ description: "Six SynaptYon products, one per part of the persistent-state archi
         <h3 class="product__label">Works with</h3>
         <ul class="product__chips">
           {%- for wid in prod.works_with %}{% assign w = data.products | where: "id", wid | first %}{% if w %}
-          <li><a class="chip" href="#{{ w.id }}">{{ w.name }}</a></li>
+          {%- capture href %}{% include product-url.html prod=w %}{% endcapture %}
+          <li><a class="chip" href="{{ href | strip }}">{{ w.name }}</a></li>
           {%- endif %}{% endfor %}
         </ul>
         {%- endif %}
@@ -155,11 +240,10 @@ description: "Six SynaptYon products, one per part of the persistent-state archi
 {%- assign fresh = site.publications | where: "slug", "2026-fresh-at-decision" | first %}
 {%- assign fresh_r = data.research | where: "pub", "2026-fresh-at-decision" | first %}
 {%- assign fresh_p = data.products | where: "id", fresh_r.feeds | first %}
-{%- assign n_after = n_products | plus: 2 %}
 <section class="section section--alt" id="prototypes" aria-labelledby="prototypes-h">
   <div class="container">
     <header class="section-head">
-      <p class="eyebrow"><span class="eyebrow__num">§ {% if n_after < 10 %}0{% endif %}{{ n_after }}</span> Research prototypes</p>
+      <p class="eyebrow"><span class="eyebrow__num">§ 04</span> Research prototypes</p>
       <h2 id="prototypes-h">Two papers you can try in the browser.</h2>
       <p class="lede">These demos are not products. Each illustrates the ideas of one published paper on fictional documents, entirely in your browser, and its ideas feed one of the products above.</p>
     </header>
@@ -173,7 +257,7 @@ description: "Six SynaptYon products, one per part of the persistent-state archi
           </div>
           <div class="stack stack-sm">
             <p class="prototype__body">{{ mtrace_r.body }}</p>
-            {%- if mtrace_p %}<p class="product__was"><strong>Used in:</strong> <a href="#{{ mtrace_p.id }}">{{ mtrace_p.name }}</a></p>{% endif %}
+            {%- if mtrace_p %}{% capture href %}{% include product-url.html prod=mtrace_p %}{% endcapture %}<p class="product__was"><strong>Used in:</strong> <a href="{{ href | strip }}">{{ mtrace_p.name }}</a></p>{% endif %}
           </div>
         </header>
         {% include components/search-demo.html id="mtrace-demo" %}
@@ -188,7 +272,7 @@ description: "Six SynaptYon products, one per part of the persistent-state archi
           </div>
           <div class="stack stack-sm">
             <p class="prototype__body">{{ fresh_r.body }}</p>
-            {%- if fresh_p %}<p class="product__was"><strong>Used in:</strong> <a href="#{{ fresh_p.id }}">{{ fresh_p.name }}</a></p>{% endif %}
+            {%- if fresh_p %}{% capture href %}{% include product-url.html prod=fresh_p %}{% endcapture %}<p class="product__was"><strong>Used in:</strong> <a href="{{ href | strip }}">{{ fresh_p.name }}</a></p>{% endif %}
           </div>
         </header>
         {% include components/ledger-demo.html id="fresh-ledger-demo" %}
@@ -197,11 +281,10 @@ description: "Six SynaptYon products, one per part of the persistent-state archi
   </div>
 </section>
 
-{%- assign n_after = n_after | plus: 1 %}
 <section class="section" id="research" aria-labelledby="research-h">
   <div class="container">
     <header class="section-head">
-      <p class="eyebrow"><span class="eyebrow__num">§ {% if n_after < 10 %}0{% endif %}{{ n_after }}</span> The research behind it</p>
+      <p class="eyebrow"><span class="eyebrow__num">§ 05</span> The research behind it</p>
       <h2 id="research-h">Earlier work, and what it taught us.</h2>
       <p class="lede">Beyond the survey itself, these publications shaped the products: what each one is, the lesson we took from it, and where that lesson is used.</p>
     </header>
@@ -215,7 +298,8 @@ description: "Six SynaptYon products, one per part of the persistent-state archi
         <p class="card__body">{{ r.body }}</p>
         <p class="research-card__lesson"><strong>What it taught us:</strong> {{ r.lesson }}</p>
         {%- if fed %}
-        <p class="card__foot research-card__used">Used in: <a href="#{{ fed.id }}">{{ fed.name }}</a></p>
+        {%- capture href %}{% include product-url.html prod=fed %}{% endcapture %}
+        <p class="card__foot research-card__used">Used in: <a href="{{ href | strip }}">{{ fed.name }}</a></p>
         {%- endif %}
       </li>
       {%- endfor %}
@@ -223,11 +307,10 @@ description: "Six SynaptYon products, one per part of the persistent-state archi
   </div>
 </section>
 
-{%- assign n_after = n_after | plus: 1 %}
 <section class="section section--alt" id="assets" aria-labelledby="assets-h">
   <div class="container">
     <header class="section-head">
-      <p class="eyebrow"><span class="eyebrow__num">§ {% if n_after < 10 %}0{% endif %}{{ n_after }}</span> Open research</p>
+      <p class="eyebrow"><span class="eyebrow__num">§ 06</span> Open research</p>
       <h2 id="assets-h">Datasets, benchmarks and specifications.</h2>
       <p class="lede">Published with collaborators; each links to its paper.</p>
     </header>
@@ -243,20 +326,19 @@ description: "Six SynaptYon products, one per part of the persistent-state archi
   </div>
 </section>
 
-{%- assign n_after = n_after | plus: 1 %}
 <section class="section" id="pilot" aria-labelledby="pilot-h">
   <div class="container split">
     <div class="stack">
-      <p class="eyebrow"><span class="eyebrow__num">§ {% if n_after < 10 %}0{% endif %}{{ n_after }}</span> Pilots</p>
+      <p class="eyebrow"><span class="eyebrow__num">§ 07</span> Pilots</p>
       <h2 id="pilot-h">Shape the products with your documents.</h2>
-      <p class="lede">The fastest way to know whether persistent document state helps your team is a pilot on a stream of your own documents, measured with the counterfactual metrics from the survey: does warm state beat retrieval alone, at what cost, and with what risk.</p>
+      <p class="lede">The fastest way to know whether the chain helps your team is a pilot on your own documents. For the memory layer, we would measure it with the counterfactual metrics from the survey: does warm state beat retrieval alone, at what cost, and with what risk.</p>
     </div>
     <div class="card contact-card">
       <p class="card__kicker">{{ profile.company.name }}</p>
-      <h3>Contact {{ profile.given_name }}</h3>
-      <p class="card__body">Tell me about the documents, the decisions they drive, and how often they change.</p>
+      <h3>Tell us about your documents</h3>
+      <p class="card__body">What they are, the decisions they drive, and how often they change. Write to <a href="mailto:{{ profile.company.email }}">{{ profile.company.email }}</a>.</p>
       <div class="cluster card__foot">
-        <a class="btn" href="mailto:{{ profile.email }}?subject=SynaptYon%20%E2%80%94%20product%20pilot">{% include icon.html name="mail" %}Email about a pilot</a>
+        <a class="btn" href="mailto:{{ profile.company.email }}?subject=SynaptYon%20%E2%80%94%20product%20pilot">{% include icon.html name="mail" %}Email about a pilot</a>
         <a class="btn btn--ghost" href="#anamnesis">How we would measure it</a>
       </div>
     </div>

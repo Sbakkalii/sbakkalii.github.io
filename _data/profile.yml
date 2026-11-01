@@ -71,11 +71,14 @@ links:
     url: "https://www.researchgate.net/profile/Souhail-Bakkali"
 
 # synaptyon.com did not resolve (no DNS record) when this was written, so the
-# site links product enquiries to the email above. Set `url` once it is live.
+# site links product enquiries to the company email below. Set `url` once it
+# is live.
 company:
   name: "SynaptYon SARL"
   role: "Co-founder · research & technology"
   url:
+  # The company mailbox until a domain exists; used for every product or pilot enquiry.
+  email: "sbakkali.sirajai@gmail.com"
   # Noindex preview of the company site; /products/ links to <preview_url>products/<id>/.
   preview_url: "https://sbakkalii.github.io/synaptyon/"
   tagline: "Applied AI studio: research, products, consulting"

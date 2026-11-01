@@ -133,34 +133,48 @@ redirect_from:
     <header class="section-head">
       <p class="eyebrow"><span class="eyebrow__num">§ 02</span> From papers to products</p>
       <h2 id="stack-title">One stack, from the first read to proof that memory helps.</h2>
-      <p class="lede">Each layer implements a part of the 2026 survey, builds on published work, and maps to one of the products I am building with SynaptYon. Pick a layer to see the research behind it.</p>
+      <p class="lede">The memory layer of the SynaptYon chain, as the 2026 survey specifies it. Each layer implements a part of the paper, builds on published work, and maps to one of the memory products. Pick a layer to see the research behind it.</p>
     </header>
     {% include components/stack.html %}
   </div>
 </section>
 
+{%- assign pd = site.data.products %}
+{%- assign preview = profile.company.preview_url %}
+{%- assign words = "zero,one,two,three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,fifteen,sixteen,seventeen,eighteen,nineteen,twenty" | split: "," %}
 <section class="section" id="products" aria-labelledby="products-title">
   <div class="container">
     <header class="section-head section-head--row">
       <div class="stack">
         <p class="eyebrow"><span class="eyebrow__num">§ 03</span> Products</p>
-        <h2 id="products-title">Six products, one per part of the architecture.</h2>
+        <h2 id="products-title">The whole chain, from ingestion to answers.</h2>
+        <p class="lede">{{ profile.company.name }}, which I co-founded, builds Document Intelligence for business, financial, historical and healthcare documents: {{ words[pd.products.size] | default: pd.products.size }} products in {{ words[pd.chain.size] | default: pd.chain.size }} stages. None is generally available yet.</p>
       </div>
-      <a class="link-arrow" href="{{ '/products/' | relative_url }}">All products and live demos</a>
+      <div class="cluster">
+        <a class="link-arrow" href="{{ '/products/' | relative_url }}">All products and live demos</a>
+        {%- if preview != blank %}
+        <a class="link-arrow" href="{{ preview }}products/">{{ profile.company.name }} site</a>
+        {%- endif %}
+      </div>
     </header>
-    <div class="grid grid-3">
-      {%- for prod in site.data.products.products %}
-      {%- assign st = site.data.products.statuses[prod.status] %}
-      <a class="card card--link product-card" href="{{ '/products/' | relative_url }}#{{ prod.id }}">
-        <div class="product-card__head">
-          <span class="product-card__name">{{ prod.name }}</span>
-          <span class="badge badge--{{ st.tone }}">{{ st.label }}</span>
-        </div>
-        <p class="product-card__role">{{ prod.role }}</p>
-        <p class="product-card__tagline">{{ prod.tagline }}</p>
-      </a>
+    <ol class="chain-strip">
+      {%- for stage in pd.chain %}
+      {%- assign has_research = false %}
+      {%- for pid in stage.products %}{% assign sp = pd.products | where: "id", pid | first %}{% if sp.spec %}{% assign has_research = true %}{% endif %}{% endfor %}
+      <li class="chain-strip__stage{% if has_research %} chain-strip__stage--memory{% endif %}">
+        <p class="chain-strip__num" aria-hidden="true">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</p>
+        <h3 class="chain-strip__name"><a href="{{ '/products/' | relative_url }}#chain-{{ stage.id }}">{{ stage.name }}</a></h3>
+        <p class="chain-strip__verb">{{ stage.verb }}</p>
+        <ul class="chain-strip__products">
+          {%- for pid in stage.products %}{% assign sp = pd.products | where: "id", pid | first %}{% if sp %}
+          {%- capture href %}{% include product-url.html prod=sp mode="company" %}{% endcapture %}
+          <li><a href="{{ href | strip }}" title="{{ sp.role | escape }}">{{ sp.name }}</a></li>
+          {%- endif %}{% endfor %}
+        </ul>
+      </li>
       {%- endfor %}
-    </div>
+    </ol>
+    <p class="chain-strip__note">Remember and Measure are the memory layer specified in my 2026 survey; the <a href="{{ '/products/' | relative_url }}#memory">products page</a> shows them in research detail, with demos.</p>
   </div>
 </section>
 
@@ -211,9 +225,9 @@ redirect_from:
       <div class="card contact-card">
         <p class="card__kicker">{{ profile.company.name }}</p>
         <h3>Document Intelligence for your documents</h3>
-        <p class="card__body">If your team handles contracts, invoices, records or reports that change over time, I would like to hear about it. None of the products is generally available yet; early pilots shape them.</p>
+        <p class="card__body">If your team handles business, financial, historical or healthcare documents, from invoices and contracts to registers and clinical reports, we would like to hear about it. None of the products is generally available yet; early pilots shape them. Write to <a href="mailto:{{ profile.company.email }}">{{ profile.company.email }}</a>.</p>
         <div class="cluster card__foot">
-          <a class="btn" href="mailto:{{ profile.email }}?subject=SynaptYon%20%E2%80%94%20product%20pilot">{% include icon.html name="mail" %}Discuss a pilot</a>
+          <a class="btn" href="mailto:{{ profile.company.email }}?subject=SynaptYon%20%E2%80%94%20product%20pilot">{% include icon.html name="mail" %}Discuss a pilot</a>
           <a class="btn btn--ghost" href="{{ '/products/' | relative_url }}">Products</a>
         </div>
       </div>

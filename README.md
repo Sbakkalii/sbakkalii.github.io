@@ -7,8 +7,10 @@ gem).
 
 The site is organized around the 2026 survey *Amnesia by Design, Memory By
 Necessity: Persistent State for Document Intelligence* (arXiv:2609.32041) and
-the six SynaptYon products that implement it, one per part of its
-architecture (Mnemos, Argus, Chronos, Ariadne, Lethe, Anamnesis).
+the SynaptYon products: seventeen across the Document Intelligence chain,
+linked to the company site, of which the six memory-layer products that
+implement the paper (Mnemos, Argus, Chronos, Ariadne, Lethe, Anamnesis) get
+a research section on /products/.
 
 ## Where things live
 

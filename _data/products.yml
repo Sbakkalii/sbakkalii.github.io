@@ -1,13 +1,15 @@
-# SynaptYon products, one per part of the persistent-state architecture in
+# SynaptYon products: the whole Document Intelligence chain, from ingestion
+# to downstream applications, plus the persistent-memory layer specified in
 # "Amnesia by Design, Memory By Necessity" (Bakkali & Merimi,
 # arXiv:2609.32041). The same file drives the SynaptYon site
 # (github.com/Sbakkalii/synaptyon, _data/products.yml); keep the two copies
 # identical.
 #
-# The paper is a specification, not a validated implementation, so nothing
-# here claims customers, benchmarks or prices. `spec` cites the section of the
-# paper each product implements. Product names are working names and still
-# need a trademark check.
+# Nothing here is generally available, so the file claims no customers,
+# benchmarks or prices. Research results are quoted only from the papers
+# they come from. `spec` cites the section of the paper a memory product
+# implements. Product names are working names and still need a trademark
+# check.
 
 statuses:
   development: { label: "In development", tone: "accent" }
@@ -21,8 +23,90 @@ paper:
   url: "https://arxiv.org/abs/2609.32041"
   pdf: "https://arxiv.org/pdf/2609.32041"
 
-# The capability stack, left to right: the lifecycle of Fig. 3 plus
-# evaluation, each layer owned by one product.
+# The chain, in five stages. Every product belongs to exactly one stage.
+chain:
+  - id: ingest
+    name: "Ingest"
+    verb: "Capture, read and structure every page"
+    products: [agora, grammata, morphe]
+  - id: understand
+    name: "Understand"
+    verb: "Classify, extract and verify"
+    products: [taxis, kleis, onoma, pistis]
+  - id: apply
+    name: "Apply"
+    verb: "Answer, search, summarise and translate"
+    products: [sibyl, heuresis, epitome, hermeneus]
+  - id: remember
+    name: "Remember"
+    verb: "Keep what was read, with provenance"
+    products: [mnemos, argus, chronos, ariadne, lethe]
+  - id: measure
+    name: "Measure"
+    verb: "Prove it works on your documents"
+    products: [anamnesis]
+
+# Document families the chain is built for, with the products each one uses.
+solutions:
+  - id: business
+    name: "Business documents"
+    kicker: "Business // Operations"
+    examples: "Invoices, purchase orders, delivery notes, contracts, forms, correspondence"
+    points:
+      - "Classify and split mixed batches the moment they arrive."
+      - "Extract every field with the box it came from."
+      - "Catch the amendment that changes last quarter's terms."
+    products: [agora, taxis, kleis, chronos, ariadne]
+  - id: financial
+    name: "Financial documents"
+    kicker: "Finance // Audit"
+    examples: "Bank statements, annual reports and filings, receipts, audit evidence, tax forms"
+    points:
+      - "Read tables cell by cell, footnotes included."
+      - "Trace a consolidated figure back to the receipts behind it."
+      - "Keep a preliminary statement and its audited version apart."
+    products: [morphe, kleis, pistis, ariadne, chronos]
+  - id: historical
+    name: "Historical documents"
+    kicker: "Archives // Heritage"
+    examples: "Manuscripts, civil and parish registers, printed heritage, low-resource scripts"
+    points:
+      - "Handwritten and printed text, including scripts most OCR skips."
+      - "Layouts that were never designed for machines."
+      - "Names, places and dates linked across thousands of pages."
+      - "Search a whole collection by meaning, not only by keyword."
+    products: [grammata, morphe, onoma, heuresis, hermeneus]
+  - id: healthcare
+    name: "Healthcare documents"
+    kicker: "Health // Clinical"
+    examples: "Prescriptions, lab reports, discharge letters, referrals"
+    points:
+      - "Handwritten prescriptions, in more than one language."
+      - "A new report read against the patient's history."
+      - "Translation that keeps the medical terminology right."
+      - "Disposal that reaches every record derived from the source."
+    products: [grammata, kleis, chronos, hermeneus, lethe]
+  - id: identity
+    name: "Identity & onboarding"
+    kicker: "KYC // Onboarding"
+    examples: "Identity cards, passports, proof of address, onboarding forms"
+    points:
+      - "Reject unusable captures before anyone reviews them."
+      - "Locate the photo and the fields on camera-captured documents."
+      - "Delete onboarding data when retention ends, and prove it."
+    products: [agora, pistis, kleis, lethe]
+  - id: legal
+    name: "Legal & compliance"
+    kicker: "Legal // Compliance"
+    examples: "Contracts and amendments, policies, regulatory filings, case files"
+    points:
+      - "Know which clause is in force on any date."
+      - "Answers that quote the clause, not a paraphrase."
+      - "Matters, clients and teams kept strictly apart."
+    products: [chronos, sibyl, ariadne, mnemos]
+
+# The research view of the memory layer (the founder's site): the lifecycle
+# of Fig. 3 plus evaluation, each layer owned by one product.
 stack:
   - id: acquire
     name: "Acquire"
@@ -75,9 +159,321 @@ stack:
     research: [2026-amnesia-by-design]
 
 products:
+  # ------------------------------------------------------------- Ingest
+  - id: agora
+    name: "Agora"
+    role: "Ingestion & capture"
+    layer: ingest
+    status: soon
+    tagline: "Every document, one front door."
+    pitch: >-
+      Agora takes documents in from wherever they arrive (uploads, scanners,
+      phone photos, mailboxes and archive batches), checks that each capture
+      is usable, splits multi-document files and removes duplicates before
+      anything downstream spends compute on them.
+    audience: "Operations, back-office and archive teams receiving documents at volume."
+    inputs: ["PDF, TIFF, JPEG and PNG", "Phone photos and camera captures", "Email attachments", "Archive batches"]
+    outputs: ["Normalised page images", "Capture quality score per page", "Document boundaries in mixed files", "Duplicate flags"]
+    doc_types: [business, financial, historical, healthcare, identity, legal]
+    capabilities:
+      - title: "Usable capture, or a retake"
+        body: "Image-quality checks flag blur, glare and poor framing on camera captures before review."
+        research: [2025-idtrust, 2019-face-detection-icdarw]
+      - title: "Split and deduplicate"
+        body: "Mixed scans are cut into documents, and a file already seen is recognised instead of processed twice."
+        research: [2025-globaldoc]
+      - title: "Compute where it is needed"
+        body: "Easy pages leave the pipeline early; hard pages get the full models."
+        research: [2024-multimodal-adaptive-inference]
+    demo: pipeline
+    demo_stage: ingest
+    works_with: [grammata, taxis, pistis]
+
+  - id: grammata
+    name: "Grammata"
+    role: "OCR & handwriting recognition"
+    layer: ingest
+    status: soon
+    tagline: "Print, handwriting, and the scripts others skip."
+    pitch: >-
+      Grammata reads printed and handwritten text, line by line, with a
+      confidence for every word. It is built for the hard cases: handwriting,
+      degraded historical pages and low-resource scripts, where generic OCR
+      quietly fails.
+    audience: "Archives, healthcare and any team whose documents are handwritten, old or not in Latin script."
+    inputs: ["Page images from Agora", "Printed, handwritten or mixed pages"]
+    outputs: ["Text lines with boxes", "Word-level confidence", "Reading order", "Language and script"]
+    doc_types: [historical, healthcare, business, identity]
+    capabilities:
+      - title: "Handwriting"
+        body: "Handwritten text detection and recognition, down to bilingual handwritten clinical prescriptions."
+        research: [2026-bhcp-doc]
+      - title: "Low-resource scripts"
+        body: "Khmer benchmarks for detection, recognition and end-to-end spotting, and cross-lingual transfer to complex scripts."
+        research: [2025-wildkhmerst, 2024-khmerst, 2026-khmer-scene-text-spotting, 2025-cross-lingual-khmer]
+      - title: "Fonts and typefaces matter"
+        body: "Measured across 19 Khmer typefaces: OCR accuracy depends on the font, so models are chosen per collection."
+        research: [2025-khmer-font-types, 2024-khmer-text-recognition-sota]
+    demo: pipeline
+    demo_stage: read
+    works_with: [agora, morphe, onoma]
+
+  - id: morphe
+    name: "Morphe"
+    role: "Layout & table structure"
+    layer: ingest
+    status: soon
+    tagline: "Regions, reading order, every table cell."
+    pitch: >-
+      Morphe turns a page into structure: titles, paragraphs, tables,
+      figures, stamps and signatures, in reading order, with tables rebuilt
+      row by row and form fields paired with their labels. Downstream
+      products read structure, not a flat string.
+    audience: "Finance, audit and archive teams whose meaning lives in tables, forms and page layout."
+    inputs: ["Page images", "Text lines from Grammata"]
+    outputs: ["Typed regions with boxes", "Reading order", "Table cells by row and column", "Label–value pairs", "Section tree"]
+    doc_types: [financial, business, historical, legal]
+    capabilities:
+      - title: "Structure as a graph"
+        body: "Rows, columns, figure–caption links and form–field pairs are kept as relations, not flattened into text."
+        research: [2026-hsb-gdl, 2025-gnn-gbdt-fusion]
+      - title: "Text, layout and image together"
+        body: "Cross-modal representations that rely less on OCR positions alone."
+        research: [2025-globaldoc, 2022-thesis]
+    demo: pipeline
+    demo_stage: layout
+    works_with: [grammata, kleis, taxis]
+
+  # --------------------------------------------------------- Understand
+  - id: taxis
+    name: "Taxis"
+    role: "Classification & routing"
+    layer: understand
+    status: soon
+    tagline: "Know what it is before you read it."
+    pitch: >-
+      Taxis recognises the document type from its text, layout and image
+      together, and routes it to the right workflow: invoice to accounts
+      payable, amendment to legal, register page to the right series. New
+      types are learned from a handful of examples.
+    audience: "Mailrooms, shared services and archives sorting thousands of documents a day."
+    inputs: ["Pages from Agora", "Text and layout from Grammata and Morphe"]
+    outputs: ["Document type with confidence", "Routing decision", "Low-confidence queue for review"]
+    doc_types: [business, financial, historical, healthcare, identity, legal]
+    capabilities:
+      - title: "Multimodal classification"
+        body: "Image and text learned together: ensemble self-attention, vision-language contrastive pre-training and cross-modal fusion."
+        research: [2021-eaml, 2023-vlcdoc, 2020-cross-modal-deep-networks, 2020-visual-textual-fusion]
+      - title: "New types from few examples"
+        body: "Few-shot document image classification for document types that have no training set yet."
+        research: [2025-globaldoc, 2023-transferdoc]
+      - title: "Fast on easy pages"
+        body: "Multimodal early exits cut latency by over 20% while fully retaining baseline accuracy, in our ICDAR 2024 study."
+        research: [2024-multimodal-adaptive-inference]
+    demo: pipeline
+    demo_stage: classify
+    works_with: [agora, kleis, mnemos]
+
+  - id: kleis
+    name: "Kleis"
+    role: "Key information extraction"
+    layer: understand
+    status: soon
+    tagline: "The fields you need, with the box they came from."
+    pitch: >-
+      Kleis pulls the fields a workflow needs (supplier, totals, dates,
+      account numbers, dosages, parties) into typed, normalised values. Every
+      value carries a confidence and the exact region it was read from, so a
+      reviewer checks the source in one click.
+    audience: "Accounts payable, onboarding, claims and clinical administration."
+    inputs: ["Structured pages from Morphe", "Document type from Taxis"]
+    outputs: ["Typed fields (dates, amounts, identifiers)", "Normalised values", "Confidence per field", "Source box per field"]
+    doc_types: [business, financial, healthcare, identity]
+    capabilities:
+      - title: "Typed and normalised"
+        body: "Dates, amounts, currencies and identifiers come out in one format, whatever the layout they came from."
+        research: [2022-thesis]
+      - title: "Every value cites its box"
+        body: "Provenance from field to region and version, so extraction can be audited."
+        research: [2026-amnesia-by-design]
+      - title: "Templates learned, not configured"
+        body: "Recurring supplier and form layouts become schemas in memory, so the next one is read against them."
+        research: [2026-amnesia-by-design]
+    demo: pipeline
+    demo_stage: extract
+    works_with: [morphe, onoma, ariadne, mnemos]
+
+  - id: onoma
+    name: "Onoma"
+    role: "Named entities & linking"
+    layer: understand
+    status: soon
+    tagline: "Who, what, where and when, across documents."
+    pitch: >-
+      Onoma finds people, organisations, places, dates, amounts and domain
+      entities such as drugs or contract parties, and links each mention to
+      the same entity across every document it appears in, building a graph
+      your other systems can query.
+    audience: "Archives, legal, compliance and research teams connecting information across collections."
+    inputs: ["Text and structure from Grammata and Morphe"]
+    outputs: ["Entity spans with types", "Entity IDs linked across documents", "Relations between entities"]
+    doc_types: [historical, legal, healthcare, financial]
+    capabilities:
+      - title: "Entities in context"
+        body: "Entity extraction tuned per domain; our MTRACE study ablates its effect on downstream retrieval."
+        research: [2025-hybrid-rag]
+      - title: "A graph, not a list"
+        body: "Mentions are linked into a relation graph that persists across sessions and can be rendered back into text."
+        research: [2026-amnesia-by-design, 2026-kg-to-text-llm-study]
+    demo: pipeline
+    demo_stage: entities
+    works_with: [kleis, heuresis, mnemos]
+
+  - id: pistis
+    name: "Pistis"
+    role: "Document trust & consistency"
+    layer: understand
+    status: soon
+    tagline: "Is this document what it claims to be?"
+    pitch: >-
+      Pistis checks capture quality, the presence of the elements a document
+      type requires (photo, signature, stamp), and internal consistency: do
+      the line items add up to the total, does the closing balance follow
+      from the transactions. Failures go to review with the reason attached.
+    audience: "Onboarding, finance and claims teams who must trust a document before acting on it."
+    inputs: ["Pages, structure and fields from earlier stages"]
+    outputs: ["Quality verdict", "Required-element checks", "Arithmetic and cross-field consistency checks", "Reasons for review"]
+    doc_types: [identity, financial, business, healthcare]
+    capabilities:
+      - title: "Identity document quality"
+        body: "Deep quality detection for identity document images, with bandpass filtering."
+        research: [2025-idtrust]
+      - title: "Faces on camera-captured IDs"
+        body: "Face detection evaluated on camera-captured identity documents under complex backgrounds, lighting and defocus."
+        research: [2019-face-detection-icdarw]
+      - title: "Numbers that add up"
+        body: "Totals, balances and cross-field rules checked on the extracted values, each check pointing to its boxes."
+        research: [2026-amnesia-by-design]
+    demo: pipeline
+    demo_stage: verify
+    works_with: [agora, kleis, argus]
+
+  # -------------------------------------------------------------- Apply
+  - id: sibyl
+    name: "Sibyl"
+    role: "Question answering & DocVQA"
+    layer: apply
+    status: soon
+    tagline: "Ask the document. Get the cell."
+    pitch: >-
+      Sibyl answers questions about a page, a file or a whole collection,
+      including questions about tables and layout. Every answer cites the
+      span, box or cell it relies on, and when the documents do not support
+      an answer, Sibyl says so instead of guessing.
+    audience: "Analysts, auditors, lawyers and case handlers who need answers they can check."
+    inputs: ["A question in French or English", "Documents, or the state kept by Mnemos"]
+    outputs: ["Answer", "Cited span, box or cell", "Explicit abstention when unsupported"]
+    doc_types: [legal, financial, business, healthcare, historical]
+    capabilities:
+      - title: "Grounded, or silent"
+        body: "Generation may use only retrieved evidence and must abstain when it is insufficient."
+        research: [2025-hybrid-rag]
+      - title: "Questions about the page"
+        body: "Visual question answering over layout, tables and figures, answered with the region highlighted."
+        research: [2022-thesis]
+      - title: "Answers for a date"
+        body: "Reading from Chronos, Sibyl answers with the clause valid today, or on the day you ask about."
+        research: [2026-amnesia-by-design]
+    demo: pipeline
+    demo_stage: ask
+    works_with: [heuresis, ariadne, chronos]
+
+  - id: heuresis
+    name: "Heuresis"
+    role: "Search & retrieval"
+    layer: apply
+    status: soon
+    tagline: "Find it by meaning, by language or by look."
+    pitch: >-
+      Heuresis searches collections by meaning rather than exact words,
+      across phrasings and languages, and finds pages by what they look like:
+      the same form, the same stamp, the same layout. Results come with the
+      passage and page that matched.
+    audience: "Archives, legal discovery and knowledge teams searching large document collections."
+    inputs: ["Queries in natural language", "Example pages for visual search"]
+    outputs: ["Ranked passages and pages", "Matched region", "Query expansions used"]
+    doc_types: [historical, legal, business, financial]
+    capabilities:
+      - title: "Robust to rephrasing"
+        body: "Semantic query expansion with reciprocal rank fusion, evaluated on French and English."
+        research: [2025-hybrid-rag]
+      - title: "Search by image"
+        body: "Content-based document image retrieval with cross-modal representations."
+        research: [2025-globaldoc]
+      - title: "Query spotting"
+        body: "Locating a query structure inside larger graphs, benchmarked on heterogeneous subgraphs."
+        research: [2026-hsb-gdl]
+    demo: search-demo
+    works_with: [sibyl, onoma, mnemos]
+
+  - id: epitome
+    name: "Epitome"
+    role: "Summarisation"
+    layer: apply
+    status: soon
+    tagline: "The page that replaces the file."
+    pitch: >-
+      Epitome writes short, faithful summaries of long and administrative
+      documents, robust to OCR errors and domain vocabulary, and links each
+      sentence back to the passages it summarises.
+    audience: "Case handlers, managers and reviewers who need the gist before the detail."
+    inputs: ["Documents or document sets", "Optional focus question"]
+    outputs: ["Summary", "Source passages per sentence"]
+    doc_types: [business, legal, healthcare, historical]
+    capabilities:
+      - title: "Domain-adapted summaries"
+        body: "Pre-training on OCR-transcribed administrative text and fine-tuning with question–answer pairs, for terminology, OCR noise and scarce labels."
+        research: [2025-docsum]
+      - title: "Summaries that cite"
+        body: "Each sentence points to its sources, so a summary can be checked rather than trusted."
+        research: [2026-amnesia-by-design]
+    demo: pipeline
+    demo_stage: summarise
+    works_with: [sibyl, ariadne]
+
+  - id: hermeneus
+    name: "Hermeneus"
+    role: "Domain translation"
+    layer: apply
+    status: soon
+    tagline: "Translation that keeps the terminology right."
+    pitch: >-
+      Hermeneus translates documents with the vocabulary of their domain,
+      retrieving in-domain terminology as it goes, with compact models that
+      can run close to the data.
+    audience: "Healthcare, research and cross-border teams working between French and English."
+    inputs: ["Text and structure from earlier stages", "Terminology databases"]
+    outputs: ["Translated text aligned to the source regions", "Terms used, with their source"]
+    doc_types: [healthcare, historical, legal]
+    capabilities:
+      - title: "Terminology-aware"
+        body: "Knowledge distillation combined with retrieval of in-domain terminology, for few-shot French-to-English biomedical translation."
+        research: [2026-terminology-aware-rakd-nmt]
+      - title: "Small enough to deploy"
+        body: "Distillation and quantisation for compact biomedical translation models, with lower training cost and footprint."
+        research: [2026-model-compression-nmt-biomed, 2025-confidence-based-kd]
+    demo: pipeline
+    demo_stage: translate
+    works_with: [grammata, epitome]
+
+  # ----------------------------------------------------------- Remember
   - id: mnemos
     name: "Mnemos"
-    role: "Persistent document state"
+    role: "Document memory"
+    layer: remember
+    inputs: ["Validated fields, entities and structure from every stage"]
+    outputs: ["Persistent, queryable document state", "Schemas learned from recurring families", "Answers conditioned on everything read before"]
+    doc_types: [business, financial, legal, healthcare, historical]
     status: development
     lead: true
     tagline: "Documents, remembered."
@@ -124,11 +520,15 @@ products:
       - { ref: "§III-E", what: "Substrate composition, Table III" }
     metrics: [eg, ce]
     demo: lifecycle
-    works_with: [argus, chronos, ariadne, lethe]
+    works_with: [kleis, argus, chronos, ariadne, lethe]
 
   - id: argus
     name: "Argus"
-    role: "Pre-write validation gate"
+    role: "Validation gate"
+    layer: remember
+    inputs: ["Candidate fields and entities, with confidence"]
+    outputs: ["Admitted evidence", "Rejected writes, with the reason", "Measured false-accept rate"]
+    doc_types: [business, financial, healthcare, identity]
     status: soon
     tagline: "Nothing enters memory unverified."
     pitch: >-
@@ -174,7 +574,11 @@ products:
 
   - id: chronos
     name: "Chronos"
-    role: "Bitemporal reconciliation"
+    role: "Versions & amendments"
+    layer: remember
+    inputs: ["New claims from incoming documents"]
+    outputs: ["Validity interval for every claim", "Reconciliation outcome", "Full version history"]
+    doc_types: [legal, business, financial, healthcare]
     status: soon
     tagline: "Knows which clause is in force today."
     pitch: >-
@@ -220,7 +624,11 @@ products:
 
   - id: ariadne
     name: "Ariadne"
-    role: "Recursive provenance"
+    role: "Provenance & citations"
+    layer: remember
+    inputs: ["Every write, consolidation and repair"]
+    outputs: ["Citation from any answer to document, region and version", "Audit trail through schemas"]
+    doc_types: [financial, legal, business, healthcare]
     status: soon
     tagline: "Every answer, traced to the bounding box."
     pitch: >-
@@ -263,7 +671,11 @@ products:
 
   - id: lethe
     name: "Lethe"
-    role: "Verifiable forgetting"
+    role: "Verifiable deletion"
+    layer: remember
+    inputs: ["Deletion and retention requests"]
+    outputs: ["Deletion across every store", "Repaired schemas", "Audit certificate"]
+    doc_types: [identity, healthcare, financial, legal]
     status: soon
     tagline: "Forget on request, and prove it."
     pitch: >-
@@ -309,7 +721,11 @@ products:
 
   - id: anamnesis
     name: "Anamnesis"
-    role: "Longitudinal benchmark harness"
+    role: "Evaluation harness"
+    layer: measure
+    inputs: ["Your document stream", "Your system, or ours"]
+    outputs: ["Five metrics, reported together", "Statefulness audit"]
+    doc_types: [business, financial, legal, healthcare, historical]
     status: spec
     tagline: "Prove that your system remembers."
     pitch: >-

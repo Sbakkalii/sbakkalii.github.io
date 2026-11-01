@@ -7,8 +7,11 @@
   assets/js/components/stack.js replaces it with a pipeline of tabs (an
   accordion below 760 px) and product chips that mark each product's layers.
   Data: site.data.products (stack, products, statuses) and site.publications.
+  Only the memory-layer products (those with `layers`) take part; the rest of
+  the chain is not in the stack.
 {%- endcomment -%}
 {%- assign pd = site.data.products -%}
+{%- assign stack_products = pd.products | where_exp: "p", "p.layers" -%}
 {%- assign products_url = '/products/' | relative_url -%}
 
 {%- assign slugs = "" | split: "" -%}
@@ -23,14 +26,14 @@
   {%- endif -%}
 {%- endfor -%}
 {%- assign prod_json = "" | split: "" -%}
-{%- for p in pd.products -%}
+{%- for p in stack_products -%}
   {%- capture item -%}{"id": {{ p.id | jsonify }}, "name": {{ p.name | jsonify }}, "status": {{ p.status | jsonify }}, "tagline": {{ p.tagline | jsonify }}, "layers": {{ p.layers | jsonify }}}{%- endcapture -%}
   {%- assign prod_json = prod_json | push: item -%}
 {%- endfor -%}
 
 <figure class="figure c-stack" data-component="stack" id="stack-diagram" aria-labelledby="stack-diagram-label" style="--stack-n: {{ pd.stack.size }}">
   <div class="figure__head">
-    <span class="figure__label" id="stack-diagram-label"><b>The stack</b> · {{ pd.stack.size }} layers, {{ pd.products.size }} products</span>
+    <span class="figure__label" id="stack-diagram-label"><b>The stack</b> · {{ pd.stack.size }} layers, {{ stack_products.size }} products</span>
     <span class="badge badge--accent js-only">Interactive</span>
   </div>
   <div class="figure__body c-stack__body">
@@ -47,7 +50,7 @@
           <dd>{% include math.html text=layer.paper %}</dd>
           <dt>Product</dt>
           <dd><a class="c-stack__product" href="{{ products_url }}#{{ prod.id }}">{{ prod.name }}</a> <span class="badge badge--{{ st.tone }}">{{ st.label }}</span>
-            {%- for other in pd.products %}{% if other.id != layer.product and other.layers contains layer.id %}{% assign ost = pd.statuses[other.status] %}<span class="c-stack__also">Also in <a class="c-stack__product" href="{{ products_url }}#{{ other.id }}">{{ other.name }}</a> <span class="badge badge--{{ ost.tone }}">{{ ost.label }}</span></span>{% endif %}{% endfor -%}
+            {%- for other in stack_products %}{% if other.id != layer.product and other.layers contains layer.id %}{% assign ost = pd.statuses[other.status] %}<span class="c-stack__also">Also in <a class="c-stack__product" href="{{ products_url }}#{{ other.id }}">{{ other.name }}</a> <span class="badge badge--{{ ost.tone }}">{{ ost.label }}</span></span>{% endif %}{% endfor -%}
           </dd>
           <dt>Research</dt>
           <dd>

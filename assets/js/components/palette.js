@@ -2,6 +2,7 @@
 // trigger. site.js imports this module on first use and calls
 // open({ query, indexUrl }). The index (/assets/search.json) is an array of
 // {type, title, url, text, year?}; it is fetched once and kept in memory.
+// A url is site-relative, or absolute for pages on another site.
 //
 // Pattern: a modal <dialog> holding an ARIA 1.2 combobox (the input) that
 // controls a grouped listbox; focus stays in the input and the active option
@@ -416,7 +417,8 @@ function go(view, el, { newTab = false } = {}) {
     return;
   }
   const target = new URL(href, location.href);
-  const samePage = target.pathname === location.pathname && target.search === location.search;
+  // Absolute URLs (company product pages) can share a path with this site.
+  const samePage = target.origin === location.origin && target.pathname === location.pathname && target.search === location.search;
   view.navigating = true;
   closePalette(view);
   if (samePage && target.hash) {

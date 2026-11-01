@@ -14,11 +14,13 @@ layout: null
     "text": {{ p.description | default: p.lede | default: "" | strip_html | jsonify }}
   },
   {%- endfor -%}
+  {%- comment -%} Memory-layer products link to their section on /products/; the rest of the chain links to its absolute company page. {%- endcomment -%}
   {%- for prod in site.data.products.products -%}
+  {%- capture purl -%}{% include product-url.html prod=prod %}{%- endcapture -%}
   {
     "type": "Product",
     "title": {{ prod.name | append: " · " | append: prod.role | jsonify }},
-    "url": {{ '/products/' | append: '#' | append: prod.id | relative_url | jsonify }},
+    "url": {{ purl | strip | jsonify }},
     "text": {{ prod.tagline | append: " " | append: prod.pitch | strip | jsonify }}
   },
   {%- endfor -%}

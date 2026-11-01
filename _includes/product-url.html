@@ -1,0 +1,16 @@
+{%- comment -%}
+  Where a product links to. Memory-layer products (the ones with `spec` in
+  _data/products.yml) have a research section on /products/, so by default
+  they link there; every other product links to its page on the company
+  site. Pass mode="company" to always get the company page.
+  Capture the include and strip the result before using it as an href.
+{%- endcomment -%}
+{%- assign _pu_prod = include.prod -%}
+{%- assign _pu_preview = site.data.profile.company.preview_url -%}
+{%- if _pu_prod.spec and include.mode != "company" -%}
+{{ '/products/' | relative_url }}#{{ _pu_prod.id }}
+{%- elsif _pu_preview != blank -%}
+{{ _pu_preview }}products/{{ _pu_prod.id }}/
+{%- else -%}
+{{ '/products/' | relative_url }}#chain
+{%- endif -%}
