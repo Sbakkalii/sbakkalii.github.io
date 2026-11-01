@@ -610,7 +610,7 @@ products:
         body: "Estimate the false-accept rate by injecting controlled corruption into a parallel stream, then read off the safe horizon."
     capabilities:
       - title: "A bound you can plan with"
-        body: "From the observation error rate and the gate's false-accept rate, the paper derives how many sessions the state can absorb before contamination exceeds a tolerated level δ."
+        body: "From the observation error rate and the gate's false-accept rate, we compute how many sessions the memory can absorb before contamination exceeds a tolerated level δ."
         research: [2026-amnesia-by-design]
       - title: "Rate, not asymptote"
         body: "A perfect gate gives zero contamination; any imperfect gate only slows it, so the bound tells you when to re-verify, not that you never have to."
@@ -661,7 +661,7 @@ products:
         body: "Ask what holds today, or what held on the day a decision was taken, and get the clause that was valid then."
     capabilities:
       - title: "Five outcomes"
-        body: "Supersede and scope-coexist are defined in the paper; support, retain conflict and escalate for review are named there, and our product reading of them is labelled as such."
+        body: "Every conflict is resolved as support, supersede, coexist, keep both, or send to a person, and the outcome is recorded."
         research: [2026-amnesia-by-design]
       - title: "History kept for audit"
         body: "Superseded claims stay queryable with their closed validity interval, so the system can show what changed and when."
@@ -764,7 +764,7 @@ products:
         body: "Coverage Retention checks that knowledge which should survive the deletion still does."
         research: [2026-amnesia-by-design]
       - title: "Honest about the open part"
-        body: "The paper states schema-repair sufficiency as a conjecture with conditions that do not generally hold; Mnemos reports which levels a deletion reached."
+        body: "Each deletion reports exactly which levels it reached, from removing the file to certifying that nothing can be recovered."
         research: [2026-amnesia-by-design]
     spec:
       - { ref: "§III-D", what: "Forgetting Fidelity and Coverage Retention, Eq. (13)–(14)" }
@@ -808,7 +808,7 @@ products:
         body: "A mixed-effects fit with a log-exposure term, family-level random effects and AR(1) residuals, or a paired bootstrap for small samples."
     capabilities:
       - title: "Statefulness audit"
-        body: "Code any benchmark, or your own evaluation suite, against the eight criteria of the paper's audit."
+        body: "Code any benchmark, or your own evaluation suite, against eight criteria for carrying knowledge across documents."
         research: [2026-amnesia-by-design]
       - title: "Consolidation, not just access"
         body: "The retrieval-only arm separates what consolidated state adds from what an index already gives."
