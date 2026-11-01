@@ -132,8 +132,8 @@ redirect_from:
   <div class="container">
     <header class="section-head">
       <p class="eyebrow"><span class="eyebrow__num">§ 02</span> From papers to products</p>
-      <h2 id="stack-title">One stack, from the page to the decision.</h2>
-      <p class="lede">Each layer comes from published work and maps to one of the products I am building with SynaptYon. Pick a layer to see the research behind it.</p>
+      <h2 id="stack-title">One stack, from the first read to proof that memory helps.</h2>
+      <p class="lede">Each layer implements a part of the 2026 survey, builds on published work, and maps to one of the products I am building with SynaptYon. Pick a layer to see the research behind it.</p>
     </header>
     {% include components/stack.html %}
   </div>
@@ -144,7 +144,7 @@ redirect_from:
     <header class="section-head section-head--row">
       <div class="stack">
         <p class="eyebrow"><span class="eyebrow__num">§ 03</span> Products</p>
-        <h2 id="products-title">Three products, built on the research.</h2>
+        <h2 id="products-title">Six products, one per part of the architecture.</h2>
       </div>
       <a class="link-arrow" href="{{ '/products/' | relative_url }}">All products and live demos</a>
     </header>
@@ -156,11 +156,8 @@ redirect_from:
           <span class="product-card__name">{{ prod.name }}</span>
           <span class="badge badge--{{ st.tone }}">{{ st.label }}</span>
         </div>
+        <p class="product-card__role">{{ prod.role }}</p>
         <p class="product-card__tagline">{{ prod.tagline }}</p>
-        <p class="card__body">{{ prod.audience }}</p>
-        <div class="product-card__layers card__foot">
-          {%- for l in prod.layers %}{% assign layer = site.data.products.stack | where: "id", l | first %}<span class="tag">{{ layer.name }}</span>{% endfor %}
-        </div>
       </a>
       {%- endfor %}
     </div>
@@ -214,7 +211,7 @@ redirect_from:
       <div class="card contact-card">
         <p class="card__kicker">{{ profile.company.name }}</p>
         <h3>Document Intelligence for your documents</h3>
-        <p class="card__body">If your team handles contracts, invoices, records or reports that change over time, I would like to hear about it. The products are in development; early pilots shape them.</p>
+        <p class="card__body">If your team handles contracts, invoices, records or reports that change over time, I would like to hear about it. None of the products is generally available yet; early pilots shape them.</p>
         <div class="cluster card__foot">
           <a class="btn" href="mailto:{{ profile.email }}?subject=SynaptYon%20%E2%80%94%20product%20pilot">{% include icon.html name="mail" %}Discuss a pilot</a>
           <a class="btn btn--ghost" href="{{ '/products/' | relative_url }}">Products</a>

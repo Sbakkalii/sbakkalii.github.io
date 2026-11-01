@@ -1,5 +1,7 @@
 {%- comment -%}
-  AgentForge decision-ledger demo (products page, #agentforge).
+  Decision-ledger research prototype of "Fresh at Decision, Stale at Action"
+  (publication 2026-fresh-at-decision), shown in the "Research prototypes"
+  section of the products page. An illustration of the paper, not a product.
 
   Static baseline: the ledger entry (decision, dossier, watch conditions, the
   six timestamps) and the news stream with its routing signals and notes,
@@ -27,7 +29,7 @@
 {%- assign d_total = d_fresh | plus: d_act -%}
 <figure class="figure c-ledger-demo" data-component="ledger-demo" id="{{ uid }}" aria-labelledby="{{ uid }}-label">
   <div class="figure__head">
-    <span class="figure__label" id="{{ uid }}-label">AgentForge · <b>Decision ledger</b></span>
+    <span class="figure__label" id="{{ uid }}-label">Research prototype · <b>Decision ledger</b>{% if paper %} · {{ paper.title | split: "," | first }}{% endif %}</span>
     <span class="cluster c-ledger-demo__badges">
       <span class="badge badge--accent js-only">Interactive</span>
       <span class="badge badge--muted">Illustrative</span>

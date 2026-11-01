@@ -1,8 +1,8 @@
-# Synthetic documents for the in-browser demos (hero, DocuMind, the paper
-# explorer, SynapseSearch, AgentForge). Every party, number and date is
-# fictional. Page coordinates are in a 600 × 848 (A4) box: [x, y, w, h].
+# Synthetic documents for the in-browser demos (hero, the product demos, the
+# paper explorer, and the MTRACE and Fresh at Decision research prototypes).
+# Every party, number and date is fictional. Page coordinates are in a 600 × 848 (A4) box: [x, y, w, h].
 
-disclaimer: "Fictional documents. The demo runs entirely in your browser; it illustrates the ideas, it is not the product."
+disclaimer: "Fictional documents. The demo runs entirely in your browser; it illustrates the ideas and is not production software."
 
 parties:
   supplier: "Halden Freight SAS"
@@ -133,7 +133,7 @@ deletion_request:
     - { level: 2, text: "Remove its embeddings and graph nodes." }
     - { level: 3, text: "Repair the liability schema: the cold-chain exception (€400,000) is removed; the MSA cap (€250,000) stands." }
 
-# Passages for the SynapseSearch demo, drawn from the documents above plus a
+# Passages for the MTRACE research prototype (search-demo), drawn from the documents above plus a
 # data-processing addendum. `valid_to` marks superseded text.
 passages:
   - { id: p1, doc: msa, section: "§4.2", text: "Payment terms. Invoices are payable within thirty (30) days of receipt.", valid_from: "2026-03-02", valid_to: "2026-10-31", superseded_by: p7 }
@@ -189,7 +189,7 @@ expansions:
   "palette": ["pallet"]
   "express": ["express"]
 
-# The AgentForge decision-ledger demo (after "Fresh at Decision, Stale at Action").
+# The decision-ledger research prototype (ledger-demo, after "Fresh at Decision, Stale at Action").
 ledger:
   decision:
     title: "Ship the December campaign by express pallet with Halden Freight"

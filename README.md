@@ -7,7 +7,8 @@ gem).
 
 The site is organized around the 2026 survey *Amnesia by Design, Memory By
 Necessity: Persistent State for Document Intelligence* (arXiv:2609.32041) and
-the three SynaptYon products that build on it.
+the six SynaptYon products that implement it, one per part of its
+architecture (Mnemos, Argus, Chronos, Ariadne, Lethe, Anamnesis).
 
 ## Where things live
 
@@ -40,7 +41,10 @@ themselves.
 **Update citation metrics.** Edit `metrics` in `_data/profile.yml`, including
 `as_of`.
 
-**Change a product's status or copy.** `_data/products.yml`.
+**Change a product's status or copy.** `_data/products.yml`. The SynaptYon
+site keeps an identical copy, so change both. Each product's `demo` names an
+include in `_includes/components/`, and its `metrics` are ids from
+`harness.metrics` in `_data/paper.yml`.
 
 ## Interactive components
 

@@ -17,7 +17,7 @@ layout: null
   {%- for prod in site.data.products.products -%}
   {
     "type": "Product",
-    "title": {{ prod.name | jsonify }},
+    "title": {{ prod.name | append: " · " | append: prod.role | jsonify }},
     "url": {{ '/products/' | append: '#' | append: prod.id | relative_url | jsonify }},
     "text": {{ prod.tagline | append: " " | append: prod.pitch | strip | jsonify }}
   },

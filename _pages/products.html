@@ -2,31 +2,47 @@
 layout: default
 title: "Products"
 permalink: /products/
-description: "DocuMind, SynapseSearch and AgentForge: Document Intelligence products from SynaptYon, built on published research in document understanding, grounded retrieval and persistent document state. Try each in your browser."
+description: "Six SynaptYon products, one per part of the persistent-state architecture in Amnesia by Design, Memory By Necessity: Mnemos, Argus, Chronos, Ariadne, Lethe and Anamnesis. None is generally available yet; each has a demo that runs in your browser on fictional documents."
 ---
+{%- comment -%}
+  Everything below renders from _data/products.yml (shared with the SynaptYon
+  site), _data/paper.yml and the publications collection. Section numbers
+  follow the order of the products in the data file.
+{%- endcomment -%}
 {%- assign profile = site.data.profile -%}
 {%- assign data = site.data.products -%}
+{%- assign paper = site.data.paper -%}
+{%- assign survey = site.publications | where: "slug", "2026-amnesia-by-design" | first -%}
+{%- assign explorer = '/research/persistent-state/' | relative_url -%}
+{%- assign preview = profile.company.preview_url -%}
+{%- assign n_products = data.products | size -%}
 
 <header class="page-head">
   <div class="container page-head__inner">
     <p class="eyebrow">Products · {{ profile.company.name }}</p>
-    <h1>From papers to products.</h1>
-    <p class="lede">{{ profile.company.name }}, which I co-founded, turns this research into three Document Intelligence products. None is generally available yet. For each: what it does, the published work it rests on, and a demo that runs in your browser on fictional documents.</p>
+    <h1>One paper, six products.</h1>
+    <p class="lede">{{ profile.company.name }}, which I co-founded, is building six Document Intelligence products, one for each part of the persistent-state architecture specified in <a href="{{ survey.url | relative_url }}">{{ paper.short_title }}</a>. None is generally available yet. For each: the problem, how it works, the sections of the paper it implements, and a demo that runs in your browser on fictional documents.</p>
     <div class="cluster">
+      <a class="btn" href="{{ data.paper.url }}">Read the paper on arXiv {% include icon.html name="external" %}</a>
+      <a class="btn btn--secondary" href="{{ explorer }}">Interactive explorer</a>
+    </div>
+    <nav class="cluster" aria-label="Products on this page">
       {%- for prod in data.products %}{% assign st = data.statuses[prod.status] %}
       <a class="chip" href="#{{ prod.id }}">{{ prod.name }} <span class="badge badge--{{ st.tone }}">{{ st.label }}</span></a>
       {%- endfor %}
+      <a class="chip" href="#prototypes">Research prototypes</a>
+      <a class="chip" href="#research">Research behind it</a>
       <a class="chip" href="#assets">Datasets &amp; benchmarks</a>
-    </div>
+    </nav>
   </div>
 </header>
 
-<section class="section section--alt" aria-labelledby="stack-h">
+<section class="section section--alt" id="stack" aria-labelledby="stack-h">
   <div class="container">
     <header class="section-head">
       <p class="eyebrow"><span class="eyebrow__num">§ 01</span> The stack</p>
-      <h2 id="stack-h">Six layers, three products.</h2>
-      <p class="lede">Read and validate the page, remember what it says, answer from it, keep decisions valid, and govern all of it. Each layer cites the work it comes from.</p>
+      <h2 id="stack-h">Seven layers, six products.</h2>
+      <p class="lede">Read a document, gate what it says, consolidate it, reconcile it with what came before, keep the trail back to its source, forget it on request, and measure whether any of it helped. Each layer names the part of the paper it implements, the product that owns it, and the work it builds on.</p>
     </header>
     {% include components/stack.html %}
   </div>
@@ -34,25 +50,51 @@ description: "DocuMind, SynapseSearch and AgentForge: Document Intelligence prod
 
 {%- for prod in data.products %}
 {%- assign st = data.statuses[prod.status] %}
+{%- assign num = forloop.index | plus: 1 %}
 <section class="section product" id="{{ prod.id }}" aria-labelledby="{{ prod.id }}-h">
   <div class="container">
     <div class="product__head">
       <div class="stack">
-        <p class="eyebrow"><span class="eyebrow__num">§ 0{{ forloop.index | plus: 1 }}</span> {% for l in prod.layers %}{% assign layer = data.stack | where: "id", l | first %}{{ layer.name }}{% unless forloop.last %} · {% endunless %}{% endfor %}</p>
+        <p class="eyebrow"><span class="eyebrow__num">§ {% if num < 10 %}0{% endif %}{{ num }}</span> {% for l in prod.layers %}{% assign layer = data.stack | where: "id", l | first %}{{ layer.name }}{% unless forloop.last %} · {% endunless %}{% endfor %}</p>
         <div class="product__name">
           <h2 id="{{ prod.id }}-h">{{ prod.name }}</h2>
           <span class="badge badge--{{ st.tone }}">{{ st.label }}</span>
         </div>
+        <p class="product__role">{{ prod.role }}</p>
         <p class="product__tagline">{{ prod.tagline }}</p>
+        {%- if prod.equation %}
+        <p class="eq product__eq">{% include math.html text=prod.equation %}</p>
+        {%- endif %}
       </div>
       <div class="stack">
         <p class="product__pitch">{{ prod.pitch }}</p>
+        <div class="product__problem">
+          <h3 class="product__label">The problem</h3>
+          <p>{{ prod.problem }}</p>
+        </div>
+        {%- if prod.audience %}
         <p class="product__was"><strong>For:</strong> {{ prod.audience }}</p>
-        <p class="product__was"><strong>Started as:</strong> “{{ prod.original }}”</p>
+        {%- endif %}
       </div>
     </div>
 
+    {%- if prod.how.size > 0 %}
+    <div class="product__how">
+      <h3 class="product__label">How it works</h3>
+      <ol class="how">
+        {%- for step in prod.how %}
+        <li class="how__step">
+          <h4 class="how__title">{{ step.title }}</h4>
+          <p class="how__body">{{ step.body }}</p>
+        </li>
+        {%- endfor %}
+      </ol>
+    </div>
+    {%- endif %}
+
+    {%- if prod.demo %}
     {% include components/{{ prod.demo }}.html %}
+    {%- endif %}
 
     <ul class="caps">
       {%- for cap in prod.capabilities %}
@@ -65,14 +107,127 @@ description: "DocuMind, SynapseSearch and AgentForge: Document Intelligence prod
       </li>
       {%- endfor %}
     </ul>
+
+    <div class="product__foot">
+      {%- if prod.spec.size > 0 %}
+      <div class="product__meta">
+        <h3 class="product__label">Implements</h3>
+        <ul class="product__specs">
+          {%- for sp in prod.spec %}
+          <li><a class="product__ref" href="{{ data.paper.url }}">{{ sp.ref }}</a> <span>{% include math.html text=sp.what %}</span></li>
+          {%- endfor %}
+        </ul>
+        <p class="product__note">Sections of arXiv:{{ data.paper.arxiv }}, a specification rather than a validated implementation.</p>
+      </div>
+      {%- endif %}
+      {%- if prod.metrics.size > 0 %}
+      <div class="product__meta">
+        <h3 class="product__label">Harness metrics</h3>
+        <ul class="product__chips">
+          {%- for mid in prod.metrics %}{% assign m = paper.harness.metrics | where: "id", mid | first %}{% if m %}
+          <li><a class="chip" href="{{ explorer }}#harness" title="{{ m.measures | escape }}"><span class="chip__count">{{ m.abbr }}</span> {{ m.name }}</a></li>
+          {%- endif %}{% endfor %}
+        </ul>
+        <p class="product__note">Counterfactual metrics from the paper’s harness that apply to {{ prod.name }}. The paper specifies them; it reports no measurements.</p>
+      </div>
+      {%- endif %}
+      <div class="product__meta">
+        {%- if prod.works_with.size > 0 %}
+        <h3 class="product__label">Works with</h3>
+        <ul class="product__chips">
+          {%- for wid in prod.works_with %}{% assign w = data.products | where: "id", wid | first %}{% if w %}
+          <li><a class="chip" href="#{{ w.id }}">{{ w.name }}</a></li>
+          {%- endif %}{% endfor %}
+        </ul>
+        {%- endif %}
+        {%- if preview != blank %}
+        <p><a class="link-arrow" href="{{ preview }}products/{{ prod.id }}/">Full product page<span class="visually-hidden">: {{ prod.name }}</span></a></p>
+        {%- endif %}
+      </div>
+    </div>
   </div>
 </section>
 {%- endfor %}
 
+{%- assign mtrace = site.publications | where: "slug", "2025-hybrid-rag" | first %}
+{%- assign mtrace_r = data.research | where: "pub", "2025-hybrid-rag" | first %}
+{%- assign mtrace_p = data.products | where: "id", mtrace_r.feeds | first %}
+{%- assign fresh = site.publications | where: "slug", "2026-fresh-at-decision" | first %}
+{%- assign fresh_r = data.research | where: "pub", "2026-fresh-at-decision" | first %}
+{%- assign fresh_p = data.products | where: "id", fresh_r.feeds | first %}
+{%- assign n_after = n_products | plus: 2 %}
+<section class="section section--alt" id="prototypes" aria-labelledby="prototypes-h">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow"><span class="eyebrow__num">§ {% if n_after < 10 %}0{% endif %}{{ n_after }}</span> Research prototypes</p>
+      <h2 id="prototypes-h">Two papers you can try in the browser.</h2>
+      <p class="lede">These demos are not products. Each illustrates the ideas of one published paper on fictional documents, entirely in your browser, and its ideas feed one of the products above.</p>
+    </header>
+    <div class="stack stack-lg">
+      <article class="prototype" id="prototype-mtrace" aria-labelledby="prototype-mtrace-h">
+        <header class="prototype__head">
+          <div class="stack stack-sm">
+            <p class="card__kicker">Research prototype · {{ mtrace.venue_short }}</p>
+            <h3 class="prototype__title" id="prototype-mtrace-h"><a href="{{ mtrace.url | relative_url }}">{{ mtrace.title }}</a></h3>
+            <p class="prototype__authors">{{ mtrace.authors }}</p>
+          </div>
+          <div class="stack stack-sm">
+            <p class="prototype__body">{{ mtrace_r.body }}</p>
+            {%- if mtrace_p %}<p class="product__was"><strong>Used in:</strong> <a href="#{{ mtrace_p.id }}">{{ mtrace_p.name }}</a></p>{% endif %}
+          </div>
+        </header>
+        {% include components/search-demo.html id="mtrace-demo" %}
+      </article>
+
+      <article class="prototype" id="prototype-fresh" aria-labelledby="prototype-fresh-h">
+        <header class="prototype__head">
+          <div class="stack stack-sm">
+            <p class="card__kicker">Research prototype · {{ fresh.venue_short }}</p>
+            <h3 class="prototype__title" id="prototype-fresh-h"><a href="{{ fresh.url | relative_url }}">{{ fresh.title }}</a></h3>
+            <p class="prototype__authors">{{ fresh.authors }}</p>
+          </div>
+          <div class="stack stack-sm">
+            <p class="prototype__body">{{ fresh_r.body }}</p>
+            {%- if fresh_p %}<p class="product__was"><strong>Used in:</strong> <a href="#{{ fresh_p.id }}">{{ fresh_p.name }}</a></p>{% endif %}
+          </div>
+        </header>
+        {% include components/ledger-demo.html id="fresh-ledger-demo" %}
+      </article>
+    </div>
+  </div>
+</section>
+
+{%- assign n_after = n_after | plus: 1 %}
+<section class="section" id="research" aria-labelledby="research-h">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow"><span class="eyebrow__num">§ {% if n_after < 10 %}0{% endif %}{{ n_after }}</span> The research behind it</p>
+      <h2 id="research-h">Earlier work, and what it taught us.</h2>
+      <p class="lede">Beyond the survey itself, these publications shaped the products: what each one is, the lesson we took from it, and where that lesson is used.</p>
+    </header>
+    <ul class="grid grid-3 list-plain">
+      {%- for r in data.research %}
+      {%- assign rp = site.publications | where: "slug", r.pub | first %}
+      {%- assign fed = data.products | where: "id", r.feeds | first %}
+      <li class="card research-card">
+        <p class="card__kicker">{{ r.venue }}</p>
+        <h3 class="card__title">{% if rp %}<a href="{{ rp.url | relative_url }}" title="{{ rp.title | escape }}">{{ r.name }}</a>{% else %}{{ r.name }}{% endif %}</h3>
+        <p class="card__body">{{ r.body }}</p>
+        <p class="research-card__lesson"><strong>What it taught us:</strong> {{ r.lesson }}</p>
+        {%- if fed %}
+        <p class="card__foot research-card__used">Used in: <a href="#{{ fed.id }}">{{ fed.name }}</a></p>
+        {%- endif %}
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+</section>
+
+{%- assign n_after = n_after | plus: 1 %}
 <section class="section section--alt" id="assets" aria-labelledby="assets-h">
   <div class="container">
     <header class="section-head">
-      <p class="eyebrow"><span class="eyebrow__num">§ 05</span> Open research</p>
+      <p class="eyebrow"><span class="eyebrow__num">§ {% if n_after < 10 %}0{% endif %}{{ n_after }}</span> Open research</p>
       <h2 id="assets-h">Datasets, benchmarks and specifications.</h2>
       <p class="lede">Published with collaborators; each links to its paper.</p>
     </header>
@@ -88,10 +243,11 @@ description: "DocuMind, SynapseSearch and AgentForge: Document Intelligence prod
   </div>
 </section>
 
-<section class="section" aria-labelledby="pilot-h">
+{%- assign n_after = n_after | plus: 1 %}
+<section class="section" id="pilot" aria-labelledby="pilot-h">
   <div class="container split">
     <div class="stack">
-      <p class="eyebrow"><span class="eyebrow__num">§ 06</span> Pilots</p>
+      <p class="eyebrow"><span class="eyebrow__num">§ {% if n_after < 10 %}0{% endif %}{{ n_after }}</span> Pilots</p>
       <h2 id="pilot-h">Shape the products with your documents.</h2>
       <p class="lede">The fastest way to know whether persistent document state helps your team is a pilot on a stream of your own documents, measured with the counterfactual metrics from the survey: does warm state beat retrieval alone, at what cost, and with what risk.</p>
     </div>
@@ -101,7 +257,7 @@ description: "DocuMind, SynapseSearch and AgentForge: Document Intelligence prod
       <p class="card__body">Tell me about the documents, the decisions they drive, and how often they change.</p>
       <div class="cluster card__foot">
         <a class="btn" href="mailto:{{ profile.email }}?subject=SynaptYon%20%E2%80%94%20product%20pilot">{% include icon.html name="mail" %}Email about a pilot</a>
-        <a class="btn btn--ghost" href="{{ '/research/persistent-state/' | relative_url }}#harness">How we would measure it</a>
+        <a class="btn btn--ghost" href="#anamnesis">How we would measure it</a>
       </div>
     </div>
   </div>

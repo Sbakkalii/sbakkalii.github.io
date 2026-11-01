@@ -1,4 +1,4 @@
-/* search-demo: SynapseSearch grounded-answer demo. Scoped under .c-search-demo. */
+/* search-demo: grounded-answer research prototype of MTRACE. Scoped under .c-search-demo. */
 
 .c-search-demo__badges { --cluster: var(--sp-2); }
 .c-search-demo__body { display: grid; gap: var(--sp-5); container-type: inline-size; }

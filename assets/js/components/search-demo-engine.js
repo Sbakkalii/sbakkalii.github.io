@@ -1,4 +1,4 @@
-// Retrieval for the SynapseSearch demo, after the MTRACE pipeline: semantic
+// Retrieval for the search demo (a research prototype of MTRACE): semantic
 // query expansion, BM25 for every phrasing, reciprocal rank fusion, a
 // temporal validity filter, and a strict grounding check that abstains when
 // no passage in force supports an answer. Pure functions over the fictional

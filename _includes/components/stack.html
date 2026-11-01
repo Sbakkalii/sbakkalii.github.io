@@ -1,6 +1,8 @@
 {%- comment -%}
-  The stack: six capability layers, from reading the page to governing what
-  is remembered, each with its paper concept, product and research.
+  The stack: the capability layers of _data/products.yml (seven: the state
+  lifecycle of the paper plus evaluation), from acquiring a document to
+  measuring what memory adds, each with its paper concept, product and research.
+  The tile grid takes its column count from the data (--stack-n).
   Static baseline: an ordered list of the layers with everything on them.
   assets/js/components/stack.js replaces it with a pipeline of tabs (an
   accordion below 760 px) and product chips that mark each product's layers.
@@ -26,7 +28,7 @@
   {%- assign prod_json = prod_json | push: item -%}
 {%- endfor -%}
 
-<figure class="figure c-stack" data-component="stack" id="stack-diagram" aria-labelledby="stack-diagram-label">
+<figure class="figure c-stack" data-component="stack" id="stack-diagram" aria-labelledby="stack-diagram-label" style="--stack-n: {{ pd.stack.size }}">
   <div class="figure__head">
     <span class="figure__label" id="stack-diagram-label"><b>The stack</b> · {{ pd.stack.size }} layers, {{ pd.products.size }} products</span>
     <span class="badge badge--accent js-only">Interactive</span>

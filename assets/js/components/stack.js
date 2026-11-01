@@ -1,4 +1,6 @@
-// The stack: six layers from reading the page to governing what is kept.
+// The stack: the capability layers from _data/products.yml (seven today),
+// from acquiring a document to measuring what memory adds. Nothing here
+// assumes a number of layers or products, or their ids.
 // From 760 px it is a pipeline of tiles that follows the ARIA tabs pattern
 // (tiles are tabs, the detail panel is the tabpanel); below that it is an
 // accordion stepper. Product chips mark the layers a product covers, with a

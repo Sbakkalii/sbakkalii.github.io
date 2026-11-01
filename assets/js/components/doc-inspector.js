@@ -1,4 +1,4 @@
-// DocuMind document inspector (products page, #documind).
+// Ariadne document inspector (products page, #ariadne).
 //
 // The four fictional documents of _data/demo.yml are tabs. Each page is drawn
 // from its layout regions in the demo's page coordinate box; selecting a

@@ -1,5 +1,6 @@
 {%- comment -%}
-  DocuMind document inspector (products page, #documind).
+  Ariadne document inspector (products page, #ariadne): recursive provenance
+  from every field back to its document, region and version.
   Static baseline: every field extracted from the four fictional documents in
   _data/demo.yml, with its provenance and what it did to memory. The script
   (assets/js/components/doc-inspector.js) adds the page view, the region
@@ -10,7 +11,7 @@
 {%- assign paper = site.data.paper -%}
 <figure class="figure c-doc-inspector" data-component="doc-inspector" id="doc-inspector">
   <div class="figure__head">
-    <span class="figure__label"><b>DocuMind</b> · Document inspector</span>
+    <span class="figure__label"><b>Ariadne</b> · Document inspector</span>
     <span class="c-doc-inspector__badges"><span class="badge badge--accent js-only">Interactive</span> <span class="badge badge--muted">Illustrative</span></span>
   </div>
   <script type="application/json" data-for="doc-inspector">{"page": {{ demo.page | jsonify }}, "documents": {{ demo.documents | jsonify }}, "noisy": {{ demo.noisy_observation | jsonify }}, "deletion": {{ demo.deletion_request | jsonify }}, "outcomes": {{ paper.reconciliation | jsonify }}, "levels": {{ paper.unlearning.levels | jsonify }}, "unlearning_note": {{ paper.unlearning.note | jsonify }}, "lifecycle": {{ paper.lifecycle | jsonify }}}</script>

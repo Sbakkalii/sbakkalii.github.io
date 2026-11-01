@@ -1,153 +1,395 @@
-# Document Intelligence products (SynaptYon SARL), and the research they build
-# on. Statuses match the SynaptYon site; none of these is generally available
-# yet, so the site never shows customers, benchmarks or prices for them. The
-# in-page demos are client-side illustrations on synthetic documents.
+# SynaptYon products, one per part of the persistent-state architecture in
+# "Amnesia by Design, Memory By Necessity" (Bakkali & Merimi,
+# arXiv:2609.32041). The same file drives the SynaptYon site
+# (github.com/Sbakkalii/synaptyon, _data/products.yml); keep the two copies
+# identical.
+#
+# The paper is a specification, not a validated implementation, so nothing
+# here claims customers, benchmarks or prices. `spec` cites the section of the
+# paper each product implements. Product names are working names and still
+# need a trademark check.
 
 statuses:
   development: { label: "In development", tone: "accent" }
   soon:        { label: "Coming soon", tone: "muted" }
+  spec:        { label: "Specification published", tone: "ok" }
   research:    { label: "Published research", tone: "ok" }
-  spec:        { label: "Open specification", tone: "ok" }
 
-# The stack: one row per capability layer, left to right in the diagram.
+paper:
+  title: "Amnesia by Design, Memory By Necessity: Persistent State for Document Intelligence"
+  arxiv: "2609.32041"
+  url: "https://arxiv.org/abs/2609.32041"
+  pdf: "https://arxiv.org/pdf/2609.32041"
+
+# The capability stack, left to right: the lifecycle of Fig. 3 plus
+# evaluation, each layer owned by one product.
 stack:
-  - id: read
-    name: "Read"
-    verb: "Perceive the page"
-    body: "Classify, extract and summarize visually rich documents from their text, layout and visual cues."
-    paper: "Acquire · document tuple (V, T, B, G, H, M)"
-    product: documind
-    research: [2025-globaldoc, 2023-vlcdoc, 2021-eaml, 2024-multimodal-adaptive-inference, 2025-docsum, 2025-wildkhmerst]
+  - id: acquire
+    name: "Acquire"
+    verb: "Read the whole document"
+    body: "Extract the multimodal observation: text, layout coordinates, table structure and visual elements, for questions not yet asked."
+    paper: "Observe · D_t = (V, T, B, G, H, M)"
+    product: mnemos
+    research: [2025-globaldoc, 2023-vlcdoc, 2021-eaml, 2024-multimodal-adaptive-inference, 2025-wildkhmerst, 2026-bhcp-doc]
   - id: validate
     name: "Validate"
     verb: "Gate before writing"
-    body: "Corroborate each observation against what is already known before it is allowed into memory."
+    body: "Corroborate each observation against the provenance ledger and reject it when confidence is below threshold, leaving state unchanged."
     paper: "Pre-write gate · Theorem III.4"
-    product: documind
+    product: argus
     research: [2026-amnesia-by-design]
-  - id: remember
-    name: "Remember"
-    verb: "Consolidate & reconcile"
-    body: "Write evidence with provenance, consolidate it into schemas, and close claims that newer documents supersede."
-    paper: "State S_t · consolidation · supersession"
-    product: documind
+  - id: consolidate
+    name: "Consolidate"
+    verb: "Write and abstract"
+    body: "Append admitted evidence with its timestamp and provenance, then abstract recurring families into reusable schemas."
+    paper: "E_t, K_t, Γ_t · max J(α) − λR(α)"
+    product: mnemos
     research: [2026-amnesia-by-design]
-  - id: answer
-    name: "Answer"
-    verb: "Cite, or abstain"
-    body: "Answer only from retrieved evidence, cite the span, box or cell, and abstain when the evidence is insufficient."
-    paper: "Answer from state with provenance"
-    product: synapsesearch
-    research: [2025-hybrid-rag, 2025-globaldoc]
-  - id: decide
-    name: "Decide"
-    verb: "Keep decisions valid"
-    body: "Record each decision with its timestamps and watch conditions, and route new information to it before the revision deadline."
-    paper: "Decision ledger (companion paper)"
-    product: agentforge
-    research: [2026-fresh-at-decision]
-  - id: govern
-    name: "Govern"
-    verb: "Authorise & forget"
-    body: "Enforce who may see what, and propagate deletions into every derived representation."
-    paper: "Authorization state A_t · five-level unlearning"
-    product: documind
+  - id: reconcile
+    name: "Reconcile"
+    verb: "Know what is in force"
+    body: "Resolve conflicts with one of five outcomes and close superseded claims at their effective time, keeping history for audit."
+    paper: "Temporal supersession · 𝒱_t"
+    product: chronos
+    research: [2026-amnesia-by-design, 2026-fresh-at-decision]
+  - id: trace
+    name: "Trace"
+    verb: "Cite the box"
+    body: "Keep the chain from every conclusion back to document, region and version, through consolidation, supersession and repair."
+    paper: "Provenance invariant · P_t"
+    product: ariadne
+    research: [2026-amnesia-by-design, 2025-hybrid-rag]
+  - id: forget
+    name: "Forget"
+    verb: "Erase, and prove it"
+    body: "Remove a target across every store, repair the schemas that depended on it, and certify what can no longer be recovered."
+    paper: "Five-level unlearning · Algorithm 2"
+    product: lethe
+    research: [2026-amnesia-by-design]
+  - id: measure
+    name: "Measure"
+    verb: "Show that memory helps"
+    body: "Compare warm, retrieval-only and cold arms on the same future documents and report benefit, cost, risk and governability together."
+    paper: "Longitudinal harness · five metrics"
+    product: anamnesis
     research: [2026-amnesia-by-design]
 
 products:
-  - id: documind
-    name: "DocuMind"
+  - id: mnemos
+    name: "Mnemos"
+    role: "Persistent document state"
     status: development
-    tagline: "Document intelligence that reads — and remembers."
-    original: "An intelligent document-analysis platform: extraction, classification and automatic summarization for legal and finance teams."
+    lead: true
+    tagline: "Documents, remembered."
     pitch: >-
-      DocuMind keeps what it reads. Every extracted field is written to
-      persistent, evidence-grounded state together with its provenance
-      (document, page, region, version) and its validity interval. The next
-      contract, amendment or invoice is then read in context: superseded
-      clauses are closed, contradictions surface instead of being overwritten,
-      and a deletion reaches every representation derived from the source.
-    audience: "Legal and finance teams; document-heavy work such as contract review, financial audit, clinical records and literature synthesis."
-    layers: [read, validate, remember, govern]
+      Mnemos keeps what your Document AI reads. Every validated observation
+      is written into six linked stores (evidence, schemas, relations,
+      validity, provenance and policy), so the next contract, invoice or
+      report is read against everything that came before it.
+    problem: >-
+      Today's systems can parse a 200-page filing and ground an answer to a
+      single table cell, then reset. The system that reads the
+      ten-thousandth invoice is, computationally, the one that read the
+      first.
+    equation: "S_t = (E_t, K_t, Γ_t, 𝒱_t, P_t, A_t)"
+    audience: "Teams with recurring document streams: contracts and amendments, supplier invoices, clinical reports, research literature."
+    layers: [acquire, consolidate]
     state: [E, K, G, V, P, A]
+    how:
+      - title: "Read everything once"
+        body: "Each document becomes a tuple of pixels, tokens, boxes, structure graphs, parse trees and metadata. The observation is document-conditioned, not query-conditioned, so it serves questions nobody has asked yet."
+      - title: "Write with provenance"
+        body: "Evidence that passes the gate is appended to the episodic store with a timestamp and a link back to its source region."
+      - title: "Consolidate what recurs"
+        body: "Repeated document families become schemas, chosen by expected future utility minus storage cost. Common queries use the schema; tail queries still reach the episodic detail."
+      - title: "Answer from state"
+        body: "Queries are answered from the updated state, so reading the first document changes how the second is understood."
     capabilities:
+      - title: "Six stores, one state"
+        body: "Episodic evidence, consolidated schemas, an associative relation graph, a temporal validity index, a provenance ledger and an authorization state, updated together by one transition per session."
+        research: [2026-amnesia-by-design]
+      - title: "Schemas that pay for themselves"
+        body: "Recurring families shift processing from instance-level perception to schema-conditioned parsing; the target is a positive cumulative cost ratio over the stream, not a faster single document."
+        research: [2026-amnesia-by-design, 2024-multimodal-adaptive-inference]
       - title: "Multimodal reading"
-        body: "Classification, extraction and summarization from text, layout and image together, including few-shot classification and content-based retrieval of document images."
-        research: [2025-globaldoc, 2023-vlcdoc, 2021-eaml, 2025-docsum]
-      - title: "Efficient inference"
-        body: "Multimodal early exits reduced latency by over 20% while fully retaining baseline accuracy in our ICDAR 2024 study."
-        research: [2024-multimodal-adaptive-inference]
-      - title: "Beyond Latin script"
-        body: "Scene text and handwriting in low-resource scripts: Khmer benchmarks and a bilingual handwritten prescription dataset."
-        research: [2024-khmerst, 2025-wildkhmerst, 2026-khmer-scene-text-spotting, 2026-bhcp-doc]
-      - title: "Persistent, provenance-linked state"
-        body: "Episodic evidence, consolidated schemas, a relation graph, a temporal validity index, a provenance ledger and access policy: the six components of the state tuple."
+        body: "Cross-modal vision-language representations for classification, extraction and retrieval of document images, including low-resource scripts."
+        research: [2025-globaldoc, 2023-vlcdoc, 2021-eaml, 2025-wildkhmerst]
+      - title: "Hybrid by design"
+        body: "No single substrate offers persistence, inspection, relations, generalization, deletion and box-level grounding together, so the state is a composition."
         research: [2026-amnesia-by-design]
-      - title: "Reconciliation, not overwriting"
-        body: "New evidence supports, supersedes, coexists with, conflicts with, or escalates against what is stored, and the outcome is recorded."
+    spec:
+      - { ref: "§III-A", what: "Document tuple and state tuple, Eq. (3)–(4)" }
+      - { ref: "§III-B", what: "Per-session state transition, Algorithm 1" }
+      - { ref: "§III-C", what: "Architecture and degenerate regimes, Fig. 3" }
+      - { ref: "§III-E", what: "Substrate composition, Table III" }
+    metrics: [eg, ce]
+    demo: lifecycle
+    works_with: [argus, chronos, ariadne, lethe]
+
+  - id: argus
+    name: "Argus"
+    role: "Pre-write validation gate"
+    status: soon
+    tagline: "Nothing enters memory unverified."
+    pitch: >-
+      A memory that stores its own mistakes gets worse with use. Argus sits
+      between reading and remembering: every observation is corroborated
+      against the provenance ledger and scored for confidence, and anything
+      below threshold is rejected with the state left exactly as it was.
+    problem: >-
+      Writing a model's output straight into memory turns one misread tax ID
+      or transposed table cell into a durable error that every later session
+      inherits. Unvalidated writes drive contamination towards certainty.
+    equation: "P_cont(k) = 1 − (1 − p_e · p_c)^k"
+    audience: "Anyone who lets a model write to a store that other sessions read."
+    layers: [validate]
+    state: [E, P]
+    how:
+      - title: "Corroborate"
+        body: "Retrieve supporting or contradicting evidence for the new observation from the prior provenance ledger."
+      - title: "Score confidence"
+        body: "Compute epistemic confidence as the calibrated complement of predictive entropy over the extracted fields."
+      - title: "Admit or reject"
+        body: "Below the confidence threshold nothing is written; the session still answers, but the state is unchanged."
+      - title: "Measure the gate"
+        body: "Estimate the false-accept rate by injecting controlled corruption into a parallel stream, then read off the safe horizon."
+    capabilities:
+      - title: "A bound you can plan with"
+        body: "From the observation error rate and the gate's false-accept rate, the paper derives how many sessions the state can absorb before contamination exceeds a tolerated level δ."
         research: [2026-amnesia-by-design]
-      - title: "Verifiable forgetting"
-        body: "Deletion goes past the raw file to embeddings, graph nodes and consolidated schemas, and is measured with Forgetting Fidelity and Coverage Retention."
+      - title: "Rate, not asymptote"
+        body: "A perfect gate gives zero contamination; any imperfect gate only slows it, so the bound tells you when to re-verify, not that you never have to."
         research: [2026-amnesia-by-design]
+      - title: "Memory Harm, measured"
+        body: "Run a clean and a corrupted stream over the same documents and report the quality gap at each evaluation point."
+        research: [2026-amnesia-by-design]
+    spec:
+      - { ref: "§III-B", what: "Observe, corroborate, validate, Eq. (5)–(8)" }
+      - { ref: "§III-D", what: "Theorem III.4 and Corollary III.7" }
+      - { ref: "§IV-D", what: "Controlled corruption for Memory Harm" }
+      - { ref: "§V-A", what: "Memory contamination, Fig. 5a" }
+    metrics: [mh]
+    demo: contamination
+    works_with: [mnemos, ariadne]
+
+  - id: chronos
+    name: "Chronos"
+    role: "Bitemporal reconciliation"
+    status: soon
+    tagline: "Knows which clause is in force today."
+    pitch: >-
+      Documents revise one another. Chronos records, for every stored claim,
+      the interval during which it is authoritative, and resolves each new
+      conflict into one of five outcomes instead of overwriting: support,
+      supersede, scope-coexist, retain conflict, or escalate for review.
+    problem: >-
+      An amendment supersedes a clause only after its effective date. A
+      preliminary statement coexists with its audited version because the
+      two carry different authority. Overwrite-on-conflict loses both
+      distinctions, and the audit trail with them.
+    equation: "D_1 valid [t_a, t_c) · D_2 valid [t_c, t_e)"
+    audience: "Contract, compliance and audit work where documents amend, restate and contradict each other."
+    layers: [reconcile]
+    state: [V, K, P]
+    how:
+      - title: "Keep four clocks"
+        body: "Publication, event, effective and ingestion time are distinct axes; an amendment ingested today may take effect next quarter."
+      - title: "Classify the conflict"
+        body: "Each new claim is reconciled against the store into one of five outcomes, and the outcome itself is recorded."
+      - title: "Close, don't delete"
+        body: "Under supersede, the earlier claim's interval is closed at the effective time and kept for audit."
+      - title: "Answer for a date"
+        body: "Ask what holds today, or what held on the day a decision was taken, and get the clause that was valid then."
+    capabilities:
+      - title: "Five outcomes"
+        body: "Supersede and scope-coexist are defined in the paper; support, retain conflict and escalate for review are named there, and our product reading of them is labelled as such."
+        research: [2026-amnesia-by-design]
+      - title: "History kept for audit"
+        body: "Superseded claims stay queryable with their closed validity interval, so the system can show what changed and when."
+        research: [2026-amnesia-by-design]
+      - title: "Fresh at action time"
+        body: "A decision taken on one version of the facts is routed the news that changes it before its revision deadline."
+        research: [2026-fresh-at-decision]
+    spec:
+      - { ref: "§III-B", what: "Temporal supersession operator 𝒮_sup" }
+      - { ref: "§III-C", what: "Temporal layer 𝒱_t" }
+      - { ref: "§V-B", what: "Bitemporal supersession, Fig. 5b" }
+    metrics: [eg, mh]
+    demo: reconcile
+    works_with: [mnemos, ariadne]
+
+  - id: ariadne
+    name: "Ariadne"
+    role: "Recursive provenance"
+    status: soon
+    tagline: "Every answer, traced to the bounding box."
+    pitch: >-
+      Ariadne keeps the thread from any conclusion, however consolidated,
+      back to the document, region and version it came from. Provenance is
+      not an extra step; it is an invariant that every operation preserves,
+      through consolidation, supersession and repair.
+    problem: >-
+      Assistant "memory" features retain the fact but discard the evidence.
+      They cannot trace a remembered liability cap back to the box on page
+      four, so they cannot be used in an audit.
+    equation: "σ₂ ↝ σ₁ ↝ {e₁, e₂, e₃} ↝ {D_i, ℓ_i, v_i}"
+    audience: "Audit, legal and regulated teams who must show where every number came from."
+    layers: [trace]
+    state: [P]
+    how:
+      - title: "Tag at write"
+        body: "Every admitted observation carries its document, location and version into the ledger."
+      - title: "Survive abstraction"
+        body: "When evidence is consolidated into a schema, the schema keeps links to every observation it was built from."
+      - title: "Survive change"
+        body: "Supersession and forgetting repair the chain instead of cutting it."
+      - title: "Cite on answer"
+        body: "Answers point to the span, box or table cell they rely on, or abstain when nothing supports them."
+    capabilities:
+      - title: "Chains through schemas"
+        body: "Trace a consolidated claim through the schemas and observations below it, down to source bounding boxes."
+        research: [2026-amnesia-by-design]
+      - title: "Grounded, or silent"
+        body: "Generation may use only retrieved evidence and must abstain when it is insufficient."
+        research: [2025-hybrid-rag]
+    spec:
+      - { ref: "§III-A", what: "Provenance ledger P_t" }
+      - { ref: "§III-B", what: "Provenance invariant across operations" }
+      - { ref: "§V-B", what: "Recursive provenance" }
+      - { ref: "§IV-B", what: "Harness property 6: provenance queries" }
+    metrics: []
     demo: doc-inspector
+    works_with: [mnemos, chronos, lethe]
 
-  - id: synapsesearch
-    name: "SynapseSearch"
+  - id: lethe
+    name: "Lethe"
+    role: "Verifiable forgetting"
     status: soon
-    tagline: "Answers that cite the cell — or say they don't know."
-    original: "A semantic search engine for internal knowledge bases that understands context, not just keywords."
+    tagline: "Forget on request, and prove it."
     pitch: >-
-      SynapseSearch answers questions over a document collection only from
-      retrieved evidence. Queries are expanded and fused across phrasings and
-      languages, every answer cites the passage, page and region it relies on,
-      and when the evidence does not support an answer it abstains instead of
-      guessing. Because it reads from DocuMind's state, it answers from the
-      clause that is valid today and can show what it superseded.
-    audience: "Teams searching contracts, policies, technical and scientific documentation, in French and English."
-    layers: [answer]
-    state: [K, V, P]
+      Deleting the file is only Level 1. Lethe runs the five-level hierarchy:
+      physical removal, representation invalidation, consolidated schema
+      repair, parametric unlearning and certified non-recoverability. It
+      reports Forgetting Fidelity and Coverage Retention, so a deletion is
+      measured rather than assumed.
+    problem: >-
+      Current Document AI stops at Levels 1 and 2. A schema consolidated from
+      a deleted document still carries information about it, so an erasure
+      request under GDPR Article 17 is not actually honoured.
+    equation: "FF = 1 − Leak(X_del | S′_t) / Leak(X_del | S_t)"
+    audience: "Organisations with erasure, retention and data-residency obligations on what their systems remember."
+    layers: [forget]
+    state: [E, K, G, V, P, A]
+    how:
+      - title: "Remove the object"
+        body: "Purge the raw file, page images and OCR cache."
+      - title: "Invalidate representations"
+        body: "Delete the embeddings, graph nodes and index entries derived from it."
+      - title: "Repair schemas"
+        body: "Re-consolidate every schema that depended on the target and repair its provenance links."
+      - title: "Certify"
+        body: "Bound the residual leakage with membership and attribute-inference probes, and issue a certificate."
     capabilities:
-      - title: "Multilingual query expansion"
-        body: "Semantic query expansion with reciprocal rank fusion, for stability under rephrasing and terminology shifts."
-        research: [2025-hybrid-rag]
-      - title: "Strict grounding with abstention"
-        body: "The generator may only use retrieved evidence and must abstain when it is insufficient."
-        research: [2025-hybrid-rag]
-      - title: "Document-image retrieval"
-        body: "Content-based retrieval of document images with cross-modal representations."
-        research: [2025-globaldoc]
-      - title: "Time-aware answers"
-        body: "Retrieval respects validity intervals, so superseded clauses are shown as history, not as the answer."
+      - title: "Past Level 2"
+        body: "Schema repair is where today's systems stop and where leakage remains; it is the core of Lethe."
         research: [2026-amnesia-by-design]
-    demo: search-demo
+      - title: "Forgetting without collateral"
+        body: "Coverage Retention checks that knowledge which should survive the deletion still does."
+        research: [2026-amnesia-by-design]
+      - title: "Honest about the open part"
+        body: "The paper states schema-repair sufficiency as a conjecture with conditions that do not generally hold; Lethe reports which levels a deletion reached."
+        research: [2026-amnesia-by-design]
+    spec:
+      - { ref: "§III-D", what: "Forgetting Fidelity and Coverage Retention, Eq. (13)–(14)" }
+      - { ref: "§III-D", what: "Conjecture III.8, schema-repair sufficiency" }
+      - { ref: "§V-C", what: "Five-level hierarchy, Fig. 6 and Algorithm 2" }
+    metrics: [ff, cr]
+    demo: unlearning
+    works_with: [mnemos, ariadne]
 
-  - id: agentforge
-    name: "AgentForge"
-    status: soon
-    tagline: "Agents whose decisions stay right after they're made."
-    original: "A kit for building specialized AI agents with orchestration, memory and quality control built in."
+  - id: anamnesis
+    name: "Anamnesis"
+    role: "Longitudinal benchmark harness"
+    status: spec
+    tagline: "Prove that your system remembers."
     pitch: >-
-      An agent's decision is made at one time and carried out later, in a
-      world that keeps changing. AgentForge records every decision in a
-      ledger with its timestamps, evidence, background dossier and watch
-      conditions, routes incoming information to the open decisions it
-      affects before their revision deadlines, and lets the agent keep or
-      switch. Memory is governed: agents inherit DocuMind's access policy
-      and forgetting.
-    audience: "Operations, procurement and compliance workflows where decisions depend on documents that change."
-    layers: [decide, govern]
-    state: [E, V, P, A]
+      Leaderboards reward single-shot reading, so nobody builds memory.
+      Anamnesis evaluates persistence directly: the same model and the same
+      future documents under three arms (warm state, retrieval-only and
+      cold), over streams with session breaks, amendments, recurring
+      families, deletion requests and unanswerable questions.
+    problem: >-
+      None of the ten benchmarks audited in the paper tests cross-session
+      state evolution. Because benchmarks do not reward persistence,
+      researchers do not build it, and the reverse.
+    equation: "EG(k) = Q(D_k+1 | S_k) − Q(D_k+1 | R_k)"
+    audience: "Research and engineering teams who need to show that a memory system helps, and what it costs."
+    layers: [measure]
+    state: []
+    how:
+      - title: "Build the stream"
+        body: "Eight mandatory properties, from sequential presentation and cross-document dependency to forgetting requirements and abstention."
+      - title: "Run three arms"
+        body: "Warm state, an append-only retrieval index over the same stream, and a cold start, under identical weights."
+      - title: "Report five metrics"
+        body: "Experience Gain, Cost Efficiency, Memory Harm, Forgetting Fidelity and Coverage Retention, always together."
+      - title: "Model the dependence"
+        body: "A mixed-effects fit with a log-exposure term, family-level random effects and AR(1) residuals, or a paired bootstrap for small samples."
     capabilities:
-      - title: "Decision ledger"
-        body: "Six timestamps per decision: evidence written and verified, decision, revision deadline, action, outcome."
-        research: [2026-fresh-at-decision]
-      - title: "Routing to open decisions"
-        body: "Watch conditions written at decision time reach indirect dependencies. In controlled streams across five LLMs, models acted on decisive news once it arrived, switching in 90.6–100% of cases, so accuracy followed routing."
-        research: [2026-fresh-at-decision]
-      - title: "Governed memory"
-        body: "Authorization state and verifiable forgetting shared with DocuMind."
+      - title: "Statefulness audit"
+        body: "Code any benchmark, or your own evaluation suite, against the eight criteria of the paper's audit."
         research: [2026-amnesia-by-design]
-    demo: ledger-demo
+      - title: "Consolidation, not just access"
+        body: "The retrieval-only arm separates what consolidated state adds from what an index already gives."
+        research: [2026-amnesia-by-design]
+    spec:
+      - { ref: "§IV-A", what: "Statefulness audit, Table IV" }
+      - { ref: "§IV-B", what: "Harness and its eight properties, Fig. 4" }
+      - { ref: "§IV-C", what: "Counterfactual metrics, Eq. (15)–(16)" }
+      - { ref: "§IV-D", what: "Statistical design, Eq. (17)–(18)" }
+    metrics: [eg, ce, mh, ff, cr]
+    demo: harness
+    works_with: [mnemos, argus, lethe]
+
+# Earlier and companion publications, shown as "the research behind it":
+# what each one taught us and which product uses it.
+research:
+  - pub: 2025-globaldoc
+    name: "GlobalDoc"
+    venue: "WACV 2025"
+    feeds: mnemos
+    body: "A cross-modal transformer for real-world document image retrieval and few-shot classification."
+    lesson: "A document's identity lives in the joint vision-language representation, not in either modality alone."
+  - pub: 2023-vlcdoc
+    name: "VLCDoC"
+    venue: "Pattern Recognition 2023"
+    feeds: mnemos
+    body: "Contrastive vision-language pre-training for cross-modal document classification."
+    lesson: "Aligning modalities, rather than merging them, keeps what each one carries."
+  - pub: 2024-multimodal-adaptive-inference
+    name: "Anytime early exits"
+    venue: "ICDAR 2024"
+    feeds: mnemos
+    body: "The first multimodal early-exit design for document understanding: over 20% lower latency at full baseline accuracy."
+    lesson: "Compute can be spent where a document needs it, which is what a memory-warmed parser should do."
+  - pub: 2025-hybrid-rag
+    name: "MTRACE"
+    venue: "arXiv 2025"
+    feeds: ariadne
+    body: "Multilingual retrieval-augmented generation with strict grounding and explicit abstention, on French and English."
+    lesson: "An answer that cannot cite its evidence should not be given."
+  - pub: 2026-fresh-at-decision
+    name: "Fresh at Decision"
+    venue: "arXiv 2026"
+    feeds: chronos
+    body: "A timestamp theory of LLM decision validity and a decision ledger that routes new information to decisions already made."
+    lesson: "Being right when you decide is not being right when you act; validity needs a clock."
+  - pub: 2025-wildkhmerst
+    name: "WildKhmerST"
+    venue: "ICDAR 2025"
+    feeds: mnemos
+    body: "29,601 annotated Khmer text lines from 10,000 real-world images, with a detection and recognition benchmark."
+    lesson: "Most document corpora are English and Latin-script; reading has to work beyond them."
 
 # Published datasets, benchmarks and specifications.
 assets:

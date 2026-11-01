@@ -125,6 +125,8 @@ export default function init(root, ctx) {
   const lifeOps = Object.fromEntries((data.lifecycle || []).map((o) => [o.id, o]));
   const lifeOpFor = (id) => lifeOps[id === 'observe' ? 'acquire' : id];
   const view = { sc: 0, step: 0, playing: false, timer: 0, expanded: new Set() };
+  // Where the rest of the unlearning hierarchy is shown on this page, if anywhere.
+  const forgetHref = ['#forgetting', '#fig-unlearning'].find((sel) => $(sel)) || null;
 
   const scenario = () => scenarios[view.sc];
   const statusOf = (i) => (i === 0 ? 'start' : scenario().steps[i - 1].status);
@@ -373,9 +375,9 @@ export default function init(root, ctx) {
         : h('p', { class: 'c-lifecycle__now-log' }, rich(st.log || '')),
       st.list ? h('ol', { class: 'c-lifecycle__now-list' },
         st.list.map((l) => h('li', {}, h('span', { class: 'c-lifecycle__now-level' }, l.label), ' ', l.text))) : null,
-      st.list && $('#forgetting') ? h('p', { class: 'c-lifecycle__now-more' },
+      st.list && forgetHref ? h('p', { class: 'c-lifecycle__now-more' },
         'These are the first levels of the unlearning hierarchy: see ',
-        h('a', { href: '#forgetting' }, 'Verifiable forgetting'), ' for the rest.') : null);
+        h('a', { href: forgetHref }, 'Verifiable forgetting'), ' for the rest.') : null);
   }
 
   function renderRegisters() {

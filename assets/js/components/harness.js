@@ -190,6 +190,9 @@ export default function init(root, ctx) {
   const props = (data.properties || []).map(() => true);
   let current = metrics[0].id;
   let scenario = 'works';
+  // The contamination calculator: its section on the paper explorer, or the
+  // figure itself where it is included without that section (products page).
+  const calcHref = ['#contamination', '#fig-contamination'].find((sel) => $(sel)) || null;
   let announceTimer = 0;
 
   const nodes = Object.fromEntries($$('[data-node]', design).map((el) => [el.dataset.node, el]));
@@ -354,7 +357,7 @@ export default function init(root, ctx) {
     detail.verdict.replaceChildren(verdictBadge(r, logic.test), ' ', r.reading);
     if (current === 'mh') {
       detail.extra.hidden = false;
-      detail.extra.innerHTML = `<strong>How the clean twin is built.</strong> ${mathHTML(data.memory_harm_protocol || '')}${payload.harm ? ` ${payload.theorem || 'The theorem'} gives its expected value: <span class="math">${mathHTML(payload.harm)}</span> (<a href="#contamination">calculator</a>).` : ''}`;
+      detail.extra.innerHTML = `<strong>How the clean twin is built.</strong> ${mathHTML(data.memory_harm_protocol || '')}${payload.harm ? ` ${payload.theorem || 'The theorem'} gives its expected value: <span class="math">${mathHTML(payload.harm)}</span>${calcHref ? ` (<a href="${calcHref}">calculator</a>)` : ''}.` : ''}`;
     } else {
       detail.extra.hidden = true;
     }

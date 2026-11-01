@@ -55,10 +55,14 @@ layout: default
           </dd>
         </dl>
 
+        {%- comment -%} A product uses this publication when one of its capabilities cites it, or when a stack layer the product owns or covers does. {%- endcomment -%}
         {%- capture used_in -%}
           {%- for prod in products -%}
             {%- assign hit = false -%}
             {%- for cap in prod.capabilities -%}{%- if cap.research contains p.slug -%}{%- assign hit = true -%}{%- endif -%}{%- endfor -%}
+            {%- for layer in site.data.products.stack -%}
+              {%- if layer.product == prod.id or prod.layers contains layer.id -%}{%- if layer.research contains p.slug -%}{%- assign hit = true -%}{%- endif -%}{%- endif -%}
+            {%- endfor -%}
             {%- if hit %}<li><a href="{{ '/products/' | relative_url }}#{{ prod.id }}">{{ prod.name }}</a></li>{% endif -%}
           {%- endfor -%}
         {%- endcapture -%}

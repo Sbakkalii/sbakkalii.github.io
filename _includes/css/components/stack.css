@@ -1,7 +1,9 @@
-/* stack: six layers as a pipeline of tabs (Read → … → Govern), an accordion
-   stepper below 760 px, and a static list of cards without JavaScript. */
+/* stack: the layers as a pipeline of tabs (Acquire → … → Measure), an
+   accordion stepper below 760 px, and a static list of cards without
+   JavaScript. The figure sets --stack-n to the number of layers; from 1200 px
+   they sit on one row, below that four to a row. */
 
-.c-stack { --stack-gap: 1.75rem; }
+.c-stack { --stack-gap: 1.25rem; }
 
 /* --- Static baseline (also the no-JS view) -------------------------------- */
 .c-stack__static {
@@ -81,10 +83,10 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--stack-n, 7), minmax(0, 1fr));
   gap: var(--sp-7) var(--stack-gap);
 }
-@media (max-width: 1000px) { .c-stack__tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1199px) { .c-stack__tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 .c-stack__tile {
   position: relative;
@@ -108,10 +110,11 @@
 .c-stack__tile-name {
   margin-top: var(--sp-1);
   font-family: var(--font-serif);
-  font-size: var(--fs-xl);
+  font-size: var(--fs-lg);
   font-weight: 600;
   letter-spacing: var(--tracking-tight);
   line-height: 1.1;
+  overflow-wrap: anywhere;
 }
 .c-stack__tile-verb { margin-top: var(--sp-1); color: var(--ink-2); font-size: var(--fs-xs); line-height: 1.4; }
 .c-stack__tile-product { margin-top: auto; padding-top: var(--sp-3); }
@@ -168,7 +171,7 @@
   border-right: 1.5px solid var(--ink-3);
   transform: translateY(-50%) rotate(45deg);
 }
-@media (max-width: 1000px) { .c-stack__tile:nth-child(3n) .c-stack__arrow { display: none; } }
+@media (max-width: 1199px) { .c-stack__tile:nth-child(4n) .c-stack__arrow { display: none; } }
 
 /* Product highlight: dim the other layers, box each run of covered layers. */
 .c-stack.has-product .c-stack__tile:not(.is-in-product) { opacity: 0.4; }

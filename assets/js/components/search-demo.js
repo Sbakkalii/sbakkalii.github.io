@@ -1,5 +1,5 @@
-// SynapseSearch demo: ask the fictional contract file a question, in English
-// or French, as of a date. search-demo-engine.js expands the query, ranks the
+// MTRACE research prototype: ask the fictional contract file a question, in
+// English or French, as of a date. search-demo-engine.js expands the query, ranks the
 // passages with BM25 for every phrasing, fuses the rankings, filters them by
 // validity and either cites a passage in force or abstains. This module
 // renders the answer with its evidence, and the trace of how it was found.

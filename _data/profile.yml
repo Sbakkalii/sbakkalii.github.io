@@ -76,4 +76,6 @@ company:
   name: "SynaptYon SARL"
   role: "Co-founder · research & technology"
   url:
+  # Noindex preview of the company site; /products/ links to <preview_url>products/<id>/.
+  preview_url: "https://sbakkalii.github.io/synaptyon/"
   tagline: "Applied AI studio: research, products, consulting"

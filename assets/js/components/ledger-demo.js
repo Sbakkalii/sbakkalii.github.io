@@ -1,4 +1,5 @@
-// AgentForge decision-ledger demo.
+// Decision-ledger demo: research prototype of "Fresh at Decision, Stale at
+// Action" (products page, Research prototypes).
 //
 // A decision is made on fresh evidence and carried out weeks later; news
 // keeps arriving in between. A router decides which news reaches the open

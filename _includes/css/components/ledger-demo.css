@@ -1,4 +1,4 @@
-/* ledger-demo: the AgentForge decision-ledger demo (products page).
+/* ledger-demo: the decision-ledger research prototype (products page).
    Layout follows the component's own width (container "ledger"). */
 
 .c-ledger-demo { container: ledger / inline-size; }
