@@ -33,7 +33,7 @@ chain:
     slug: grammata
     name: "Grammata"
     label: "Read"
-    status: soon
+    status: development
     verb: "Every page, read"
     tagline: "Every page, read: printed or handwritten, new or centuries old."
     pitch: >-
@@ -51,7 +51,7 @@ chain:
     slug: kleis
     name: "Kleis"
     label: "Extract"
-    status: soon
+    status: development
     verb: "The data you need, from any document"
     tagline: "The data you need, from any document."
     pitch: >-
@@ -68,7 +68,7 @@ chain:
     slug: sibyl
     name: "Sibyl"
     label: "Ask"
-    status: soon
+    status: development
     verb: "Answers you can check"
     tagline: "Ask your documents. Get answers you can check."
     pitch: >-
@@ -220,7 +220,7 @@ products:
     name: "Agora"
     role: "Capture & quality checks"
     layer: ingest
-    status: soon
+    status: development
     tagline: "Every document, one front door."
     pitch: >-
       Grammata takes documents in from wherever they arrive (uploads, scanners,
@@ -249,7 +249,7 @@ products:
     name: "Grammata"
     role: "OCR & handwriting"
     layer: ingest
-    status: soon
+    status: development
     tagline: "Print, handwriting, and the scripts others skip."
     pitch: >-
       Grammata reads printed and handwritten text, line by line, with a
@@ -278,7 +278,7 @@ products:
     name: "Morphe"
     role: "Layout & tables"
     layer: ingest
-    status: soon
+    status: development
     tagline: "Regions, reading order, every table cell."
     pitch: >-
       Grammata turns a page into structure: titles, paragraphs, tables,
@@ -305,7 +305,7 @@ products:
     name: "Taxis"
     role: "Classification & routing"
     layer: understand
-    status: soon
+    status: development
     tagline: "Know what it is before you read it."
     pitch: >-
       Kleis recognises the document type from its text, layout and image
@@ -334,7 +334,7 @@ products:
     name: "Kleis"
     role: "Field extraction"
     layer: understand
-    status: soon
+    status: development
     tagline: "The fields you need, with the box they came from."
     pitch: >-
       Kleis pulls the fields a workflow needs (supplier, totals, dates,
@@ -363,7 +363,7 @@ products:
     name: "Onoma"
     role: "Names & entities"
     layer: understand
-    status: soon
+    status: development
     tagline: "Who, what, where and when, across documents."
     pitch: >-
       Kleis finds people, organisations, places, dates, amounts and domain
@@ -389,7 +389,7 @@ products:
     name: "Pistis"
     role: "Consistency & ID checks"
     layer: understand
-    status: soon
+    status: development
     tagline: "Is this document what it claims to be?"
     pitch: >-
       Kleis checks capture quality, the presence of the elements a document
@@ -419,7 +419,7 @@ products:
     name: "Sibyl"
     role: "Questions & answers"
     layer: apply
-    status: soon
+    status: development
     tagline: "Ask the document. Get the cell."
     pitch: >-
       Sibyl answers questions about a page, a file or a whole collection,
@@ -448,7 +448,7 @@ products:
     name: "Heuresis"
     role: "Search"
     layer: apply
-    status: soon
+    status: development
     tagline: "Find it by meaning, by language or by look."
     pitch: >-
       Sibyl searches collections by meaning rather than exact words,
@@ -476,7 +476,7 @@ products:
     name: "Epitome"
     role: "Summaries"
     layer: apply
-    status: soon
+    status: development
     tagline: "The page that replaces the file."
     pitch: >-
       Sibyl writes short, faithful summaries of long and administrative
@@ -501,7 +501,7 @@ products:
     name: "Hermeneus"
     role: "Translation"
     layer: apply
-    status: soon
+    status: development
     tagline: "Translation that keeps the terminology right."
     pitch: >-
       Sibyl translates documents with the vocabulary of their domain,
@@ -582,7 +582,7 @@ products:
     name: "HebbRAG"
     role: "Learns from use"
     layer: remember
-    status: soon
+    status: development
     tagline: "Sharper the more your team uses it."
     pitch: >-
       Every time an answer is verified, Mnemos strengthens the links between
@@ -612,7 +612,7 @@ products:
     inputs: ["Candidate fields and entities, with confidence"]
     outputs: ["Admitted evidence", "Rejected writes, with the reason", "Measured false-accept rate"]
     doc_types: [business, financial, healthcare, identity]
-    status: soon
+    status: development
     tagline: "Nothing enters memory unverified."
     pitch: >-
       A memory that stores its own mistakes gets worse with use. Mnemos sits
@@ -662,7 +662,7 @@ products:
     inputs: ["New claims from incoming documents"]
     outputs: ["Validity interval for every claim", "Reconciliation outcome", "Full version history"]
     doc_types: [legal, business, financial, healthcare]
-    status: soon
+    status: development
     tagline: "Knows which clause is in force today."
     pitch: >-
       Documents revise one another. Mnemos records, for every stored claim,
@@ -712,7 +712,7 @@ products:
     inputs: ["Every write, consolidation and repair"]
     outputs: ["Citation from any answer to document, region and version", "Audit trail through schemas"]
     doc_types: [financial, legal, business, healthcare]
-    status: soon
+    status: development
     tagline: "Every answer, traced to the bounding box."
     pitch: >-
       Mnemos keeps the thread from any conclusion, however consolidated,
@@ -759,7 +759,7 @@ products:
     inputs: ["Deletion and retention requests"]
     outputs: ["Deletion across every store", "Repaired schemas", "Audit certificate"]
     doc_types: [identity, healthcare, financial, legal]
-    status: soon
+    status: development
     tagline: "Forget on request, and prove it."
     pitch: >-
       Deleting the file is only Level 1. Mnemos runs the five-level hierarchy:
@@ -809,7 +809,7 @@ products:
     inputs: ["Your document stream", "Your system, or ours"]
     outputs: ["Five metrics, reported together", "Statefulness audit"]
     doc_types: [business, financial, legal, healthcare, historical]
-    status: spec
+    status: development
     tagline: "Prove that your system remembers."
     pitch: >-
       Leaderboards reward single-shot reading, so nobody builds memory.
